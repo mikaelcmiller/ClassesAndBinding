@@ -32,11 +32,11 @@ class Application(Frame):
 		self.master = master
 		self.master.title("Data Audit Window")
 		self.create_widgets()
-		#self.bind_all('<Return>', self.entercommand)
+		#self.bind_all('<Return>', self.entercommand) #Only needs to be bound to the erijobid input
 		self.bind_all('<Next>', self.nextpage)
 		self.bind_all('<Prior>', self.priorpage)
-		self.bind_all('<Control-f>',self.findfunction)
-		self.bind_all('<Control-F>',self.findfunction)
+		#self.bind_all('<Control-f>',self.navigation(event.keysym))
+		self.bind_all('<Control-F>',self.navigation(event.keysym))
 
 	
 	def create_widgets(self):
