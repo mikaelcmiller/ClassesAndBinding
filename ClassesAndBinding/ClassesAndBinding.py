@@ -80,8 +80,8 @@ class Application(Frame):
 		if x=='Next':
 			#print("Change index to original index | Obs# + 1 | Return row for review")
 			self.data.index_next()
-		if x=='f':
-			print("Prompt user for USERENTRY | Change index to erijobid | Search for erijobid==USERENTRY | Return row for review | ** Need Obs# from original index")
+		#if x=='f':
+		#	print("Prompt user for USERENTRY | Change index to erijobid | Search for erijobid==USERENTRY | Return row for review | ** Need Obs# from original index") # Covered by erijobidsearch from user input
 		if x=='Return':
 			self.data.find_by_erijobid()
 		if x=='Prior':
@@ -95,9 +95,13 @@ class Application(Frame):
 		self.navigation(event.keysym)
 
 	def jobidsearch(self, event):
-		self.intjobidentry = int(self.jobidentry.get())
-		print("User wishes to search for erijobid: %d" % self.intjobidentry)
-		self.navigation(event.keysym)
+		try:
+			self.intjobidentry = int(self.jobidentry.get())
+			print("User wishes to search for erijobid: %d" % self.intjobidentry)
+			self.navigation(event.keysym)
+		except ValueError:
+			print("Not a valid search entry.")
+			# Place a hidden error message that appears below entry box for this
 
 root = Tk()
 root.geometry("400x300")
