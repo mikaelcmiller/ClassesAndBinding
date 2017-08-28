@@ -4,7 +4,12 @@
 ########################################################
 ### AUDIT BAREBONE STRUCTURE
 
+import pandas as pd
+import numpy as np
+import pandas.io.sql as psql
+import pyodbc
 from tkinter import *
+from tkinter.ttk import *
 
 ##Testing Github mikael_test branch
 
@@ -13,10 +18,21 @@ class Datatraverse:
 		self.inititalizedataframe()
 	
 	def inititalizedataframe(self):
+		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};""SERVER=SNADSSQ3;DATABASE=assessorwork;""trusted_connection=yes;")
+		self.sql = """SELECT erijobid,jobdot,jobdottitle FROM sa.fname WHERE jobsource = 'E' and jobactive not in (0,3,5,7,9)"""
+		self.jobsdf = psql.read_sql(self.sql, self.pyocnxn)
+		print(self.jobsdf)
 		print("Dataframe loaded from SQL")
 
-	def find_by_erijobid(self):
-		print("Set_Index to erijobid | Search index==erijobid | Return if found, else error message")
+	def find_by_erijobid(self, entry):
+		idsearch = int(entry)
+		#print("Set_Index to erijobid | Search index==erijobid | Return if found, else error message")
+		try:
+			self.jobsdf.set_index('erijobid', inplace=True, drop=True)
+		except:
+			pass
+		jobname = self.jobsdf.loc[idsearch,'jobdottitle']
+		print(jobname)
 
 	def index_next(self):
 		print("Reset_index | Index = index+1 | If last_available_index, index=0")
@@ -56,14 +72,10 @@ class Application(Frame):
 	def user_command(self):
 		print("User clicked Button")
 
-	#def buttonentercommand(self, event):
-	#	print("User selected Button and hit 'Enter' key")
-	#	print(event.keysym)
-
-	def entercommand(self, event): # need two positional arguments (both self and event) to operate correctly. Why??
-		#print("User hit 'Enter' key")
-		#print(event.keysym)
-		self.navigation(event.keysym)
+	#def entercommand(self, event): # need two positional arguments (both self and event) to operate correctly.
+	#	#print("User hit 'Enter' key")
+	#	#print(event.keysym)
+	#	self.navigation(event.keysym)
 
 	def nextpage(self, event):
 		print("User hit 'Page Down' key")
@@ -80,10 +92,6 @@ class Application(Frame):
 		if x=='Next':
 			#print("Change index to original index | Obs# + 1 | Return row for review")
 			self.data.index_next()
-		#if x=='f':
-		#	print("Prompt user for USERENTRY | Change index to erijobid | Search for erijobid==USERENTRY | Return row for review | ** Need Obs# from original index") # Covered by erijobidsearch from user input
-		if x=='Return':
-			self.data.find_by_erijobid()
 		if x=='Prior':
 			#print("Change index to original index | Obs# - 1 | Return row for review")
 			self.data.index_last()
@@ -97,8 +105,8 @@ class Application(Frame):
 	def jobidsearch(self, event):
 		try:
 			self.intjobidentry = int(self.jobidentry.get())
-			print("User wishes to search for erijobid: %d" % self.intjobidentry)
-			self.navigation(event.keysym)
+			print("User wishes to search for erijobid: %d " % self.intjobidentry)
+			self.data.find_by_erijobid(self.intjobidentry)
 		except ValueError:
 			print("Not a valid search entry.")
 			# Place a hidden error message that appears below entry box for this
