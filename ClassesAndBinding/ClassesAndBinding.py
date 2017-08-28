@@ -6,7 +6,7 @@
 
 from tkinter import *
 
-##Testing Githum mikael_test branch
+##Testing Github mikael_test branch
 
 class Datatraverse:
 	def __init__(self):
@@ -92,7 +92,6 @@ class Application(Frame):
 
 	def findfunction(self, event):
 		#print(event.keysym)
-		print("User hit Ctrl+F")
 		self.navigation(event.keysym)
 
 	def jobidsearch(self, event):
