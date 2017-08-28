@@ -28,11 +28,14 @@ class Datatraverse:
 		idsearch = int(entry)
 		#print("Set_Index to erijobid | Search index==erijobid | Return if found, else error message")
 		try:
-			self.jobsdf.set_index('erijobid', inplace=True, drop=True)
-		except:
-			pass
-		jobname = self.jobsdf.loc[idsearch,'jobdottitle']
-		print(jobname)
+			try:
+				self.jobsdf.set_index('erijobid', inplace=True, drop=True)
+			except:
+				pass
+			jobname = self.jobsdf.loc[idsearch,'jobdottitle']
+			print(jobname)
+		except KeyError:
+			print("Cannot find job with ERIJobId == %s" % entry)
 
 	def index_next(self):
 		print("Reset_index | Index = index+1 | If last_available_index, index=0")
