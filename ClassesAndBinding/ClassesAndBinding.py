@@ -20,6 +20,7 @@ from tkinter.ttk import *
 class Datatraverse:
 	def __init__(self):
 		self.inititalizedataframe()
+		self.current_index = 0
 	
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};""SERVER=SNADSSQ3;DATABASE=assessorwork;""trusted_connection=yes;")
@@ -27,6 +28,7 @@ class Datatraverse:
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		print(self.jobsdf)
 		print("Dataframe loaded from SQL")
+		self.last_index = self.jobsdf.last_valid_index()
 
 	def find_by_erijobid(self, entry):
 		idsearch = int(entry)
@@ -44,18 +46,32 @@ class Datatraverse:
 			print("Cannot find job with ERIJobId == %s" % entry)
 
 	def index_next(self):
-		print("Reset_index | Index = index+1 | If last_available_index, index=0")
+		#print("Reset_index | Index = index+1 | If last_available_index, index=0")
 		## Following still runs into issues when index hits values which don't exist. Needs work.
-		#self.jobsdf.reset_index()
-		#self.current_index = self.current_index + 1
+		try:
+			self.jobsdf.reset_index(inplace=True)
+		except:
+			pass
+		if self.current_index < self.last_index:
+			self.current_index = self.current_index + 1
+		else: self.current_index = 0
 		#print(self.jobsdf.index.get_loc(self.current_index))
-		#print(self.jobsdf.loc[self.current_index,'jobdottitle'])
+		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
+		print(jobname)
 
 	def index_prior(self):
-		print("Reset_index | Index = index-1 | If index==0, index=last_available_index")
-		#self.jobsdf.reset_index()
-		#self.current_index = self.current_index - 1
-		#print(self.jobsdf.loc[self.current_index,'jobdottitle'])
+		#print("Reset_index | Index = index-1 | If index==0, index=last_available_index")
+		try:
+			self.jobsdf.reset_index(inplace=True)
+		except:
+			pass
+		if self.current_index > 0:
+			self.current_index = self.current_index - 1
+		else: self.current_index = self.last_index
+		#print(self.jobsdf.index.get_loc(self.current_index))
+		#print(self.current_index)
+		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
+		print(jobname)
 
 
 class Application(Frame):
@@ -94,17 +110,17 @@ class Application(Frame):
 		#self.navigation(event.keysym)
 
 	def nextpage(self, event):
-		print("User hit 'Page Down' key")
-		print(event.keysym)
+		#print("User hit 'Page Down' key")
+		#print(event.keysym)
 		self.navigation(event.keysym)
 
 	def priorpage(self, event):
-		print("User hit 'Page Up' key")
-		print(event.keysym)
+		#print("User hit 'Page Up' key")
+		#print(event.keysym)
 		self.navigation(event.keysym)
 
 	def navigation(self, x):
-		print (":::RUNNAV:::")
+		#print (":::RUNNAV:::")
 		if x=='Next':
 			#print("Change index to original index | Obs# + 1 | Return row for review")
 			self.data.index_next()
@@ -121,7 +137,7 @@ class Application(Frame):
 	def jobidsearch(self, event):
 		try:
 			self.intjobidentry = int(self.jobidentry.get())
-			print("User wishes to search for erijobid: %d " % self.intjobidentry)
+			#print("User wishes to search for erijobid: %d " % self.intjobidentry)
 			self.data.find_by_erijobid(self.intjobidentry)
 		except ValueError:
 			print("Not a valid search entry.")
