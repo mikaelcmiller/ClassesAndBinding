@@ -16,7 +16,6 @@ from tkinter import *
 from tkinter.ttk import *
 
 
-
 class Datatraverse:
 	def __init__(self):
 		self.inititalizedataframe()
@@ -35,7 +34,7 @@ class Datatraverse:
 		#print("Set_Index to erijobid | Search index==erijobid | Return if found, else error message")
 		try:
 			try:
-				self.jobsdf.set_index('erijobid', inplace=True, drop=True)
+				self.jobsdf.set_index('erijobid', inplace=True)
 			except:
 				pass
 			jobname = self.jobsdf.loc[idsearch,'jobdottitle']
@@ -45,7 +44,7 @@ class Datatraverse:
 		except KeyError:
 			print("Cannot find job with ERIJobId == %s" % entry)
 
-	def index_next(self):
+	def index_next(self ,*event):
 		#print("Reset_index | Index = index+1 | If last_available_index, index=0")
 		## Following still runs into issues when index hits values which don't exist. Needs work.
 		try:
@@ -59,7 +58,7 @@ class Datatraverse:
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		print(jobname)
 
-	def index_prior(self):
+	def index_prior(self, *event):
 		#print("Reset_index | Index = index-1 | If index==0, index=last_available_index")
 		try:
 			self.jobsdf.reset_index(inplace=True)
