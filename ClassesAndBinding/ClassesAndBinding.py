@@ -51,7 +51,7 @@ class Datatraverse:
 		#print(self.jobsdf.index.get_loc(self.current_index))
 		#print(self.jobsdf.loc[self.current_index,'jobdottitle'])
 
-	def index_last(self):
+	def index_prior(self):
 		print("Reset_index | Index = index-1 | If index==0, index=last_available_index")
 		#self.jobsdf.reset_index()
 		#self.current_index = self.current_index - 1
@@ -110,7 +110,7 @@ class Application(Frame):
 			self.data.index_next()
 		if x=='Prior':
 			#print("Change index to original index | Obs# - 1 | Return row for review")
-			self.data.index_last()
+			self.data.index_prior()
 		if x=='F':
 			print("Why would the user hit Ctrl+Shift+f? That's strange..")
 
