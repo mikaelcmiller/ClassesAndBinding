@@ -24,7 +24,7 @@ class Datatraverse:
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};""SERVER=SNADSSQ3;DATABASE=assessorwork;""trusted_connection=yes;")
 		self.sql = """SELECT erijobid,jobdot,jobdottitle FROM sa.fname WHERE jobsource = 'E' and jobactive not in (0,3,5,7,9)"""
-		self.jobsdf = psql.read_sql(self.sql, self.pyocnxn)
+		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		print(self.jobsdf)
 		print("Dataframe loaded from SQL")
 
@@ -38,14 +38,24 @@ class Datatraverse:
 				pass
 			jobname = self.jobsdf.loc[idsearch,'jobdottitle']
 			print(jobname)
+			self.current_index = self.jobsdf.index.get_loc(idsearch)
+			#print(self.current_index)
 		except KeyError:
 			print("Cannot find job with ERIJobId == %s" % entry)
 
 	def index_next(self):
 		print("Reset_index | Index = index+1 | If last_available_index, index=0")
+		## Following still runs into issues when index hits values which don't exist. Needs work.
+		#self.jobsdf.reset_index()
+		#self.current_index = self.current_index + 1
+		#print(self.jobsdf.index.get_loc(self.current_index))
+		#print(self.jobsdf.loc[self.current_index,'jobdottitle'])
 
-	def index_last(self):
+	def index_prior(self):
 		print("Reset_index | Index = index-1 | If index==0, index=last_available_index")
+		#self.jobsdf.reset_index()
+		#self.current_index = self.current_index - 1
+		#print(self.jobsdf.loc[self.current_index,'jobdottitle'])
 
 
 class Application(Frame):
@@ -100,7 +110,7 @@ class Application(Frame):
 			self.data.index_next()
 		if x=='Prior':
 			#print("Change index to original index | Obs# - 1 | Return row for review")
-			self.data.index_last()
+			self.data.index_prior()
 		if x=='F':
 			print("Why would the user hit Ctrl+Shift+f? That's strange..")
 
