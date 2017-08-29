@@ -2,7 +2,11 @@
 
 
 ########################################################
-### AUDIT BAREBONE STRUCTURE
+
+
+
+########################################################
+### DATA AUDIT WORK
 
 import pandas as pd
 import numpy as np
@@ -11,7 +15,7 @@ import pyodbc
 from tkinter import *
 from tkinter.ttk import *
 
-##Testing Github mikael_test branch
+
 
 class Datatraverse:
 	def __init__(self):
@@ -57,7 +61,7 @@ class Application(Frame):
 		#self.bind_all('<Control-f>',self.findfunction)
 		self.bind_all('<Control-F>',self.findfunction)
 
-	
+
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
 		
@@ -65,20 +69,19 @@ class Application(Frame):
 		
 		testButton = Button(self,text="Print Command", command=self.user_command)
 		testButton.place(x=50,y=200)
-	#	testButton.bind('<Return>',self.buttonentercommand)
+		#testButton.bind('<Return>',self.buttonentercommand)
 		
 		self.jobidentry = Entry(self, width=15)
 		self.jobidentry.place(x=5,y=5)
 		self.jobidentry.bind('<Return>',self.jobidsearch)
-		
 
 	def user_command(self):
 		print("User clicked Button")
 
 	#def entercommand(self, event): # need two positional arguments (both self and event) to operate correctly.
-	#	#print("User hit 'Enter' key")
-	#	#print(event.keysym)
-	#	self.navigation(event.keysym)
+		##print("User hit 'Enter' key")
+		##print(event.keysym)
+		#self.navigation(event.keysym)
 
 	def nextpage(self, event):
 		print("User hit 'Page Down' key")
@@ -120,6 +123,60 @@ app = Application(root)
 root.mainloop()
 
 
+########################################################
+#### STACK OVERFLOW QUESTION EXAMPLE
+## https://stackoverflow.com/questions/45945883/python-3-pandas-set-index-in-tkinter-application
+
+#import pandas as pd
+#from tkinter import *
+
+
+#class CustomerData:
+#	def __init__(self):
+#		self.initializedataframe()
+
+#	def initializedataframe(self):
+#		col = ['CustomerId','CustomerName']
+#		self.data = pd.DataFrame([[1,'Pat'],[2,'Kris'],[4,'Sam'],[5,'Ryan'],[6,'Alex']], columns=col) # Placeholder data
+#		print(self.data)
+#		print('-------------\n')
+
+#	def findcustomerbyid(self, input):
+#		cxid = int(input)
+#		try:
+#			self.data.set_index('CustomerId', inplace=True) # Trouble spot, can't set_index more than one time with same column
+#		except KeyError:
+#			pass
+#		cx_out = self.data.loc[input,'CustomerName']
+#		print(cx_out)
+#		return(cx_out)
+
+
+#class App(Frame):
+#	def __init__(self, master):
+#		"""Initialize the Frame"""
+#		Frame.__init__(self, master)
+#		self.master = master
+#		self.create_widgets()
+
+#	def create_widgets(self):
+#		self.pack(fill=BOTH, expand=1)
+#		self.data = CustomerData()
+		
+#		self.cxsearch = Entry(self, width=15)
+#		self.cxsearch.place(x=5,y=5)
+#		self.cxsearch.bind('<Return>',self.findcx)
+
+#	def findcx(self, event):
+#		intcxsearch = int(self.cxsearch.get())
+#		self.data.findcustomerbyid(intcxsearch)
+
+
+#root = Tk()
+#root.geometry("400x300")
+#app = App(root)
+#root.mainloop()
+
 
 ########################################################
 ### Multi-Function Class Examples, Cross-Class Function Connections, Inheritance Examples
@@ -160,7 +217,6 @@ root.mainloop()
 #d = inherited
 #d.function1(d)
 #d.f112(d)
-
 
 
 ########################################################
