@@ -100,6 +100,8 @@ class Application(Frame):
 		self.jobidentry.place(x=5,y=5)
 		self.jobidentry.bind('<Return>',self.jobidsearch)
 
+		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
+
 	def user_command(self):
 		print("User clicked Button")
 
@@ -138,8 +140,12 @@ class Application(Frame):
 			self.intjobidentry = int(self.jobidentry.get())
 			#print("User wishes to search for erijobid: %d " % self.intjobidentry)
 			self.data.find_by_erijobid(self.intjobidentry)
+			self.invalidsearchwarning.pack_forget()
+			self.invalidsearchwarning.place_forget()
 		except ValueError:
 			print("Not a valid search entry.")
+			self.invalidsearchwarning.pack()
+			self.invalidsearchwarning.place(x=5,y=26)
 			# Place a hidden error message that appears below entry box for this
 
 root = Tk()
