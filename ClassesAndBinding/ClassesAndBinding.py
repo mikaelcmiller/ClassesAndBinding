@@ -22,7 +22,7 @@ class Datatraverse:
 		self.current_index = 0
 	
 	def inititalizedataframe(self):
-		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};""SERVER=SNADSSQ3;DATABASE=assessorwork;""trusted_connection=yes;")
+		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		self.sql = """SELECT erijobid,jobdot,jobdottitle FROM sa.fname WHERE jobsource = 'E' and jobactive not in (0,3,5,7,9)"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		print(self.jobsdf)
