@@ -140,11 +140,9 @@ class Application(Frame):
 			self.intjobidentry = int(self.jobidentry.get())
 			#print("User wishes to search for erijobid: %d " % self.intjobidentry)
 			self.data.find_by_erijobid(self.intjobidentry)
-			self.invalidsearchwarning.pack_forget()
 			self.invalidsearchwarning.place_forget()
 		except ValueError:
 			print("Not a valid search entry.")
-			self.invalidsearchwarning.pack()
 			self.invalidsearchwarning.place(x=5,y=26)
 			# Place a hidden error message that appears below entry box for this
 
