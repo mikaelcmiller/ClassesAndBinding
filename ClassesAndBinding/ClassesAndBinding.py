@@ -38,11 +38,12 @@ class Datatraverse:
 			except:
 				pass
 			jobname = self.jobsdf.loc[idsearch,'jobdottitle']
-			print(jobname)
+			return jobname
+			#print(jobname)
 			self.current_index = self.jobsdf.index.get_loc(idsearch)
 			#print(self.current_index)
 		except KeyError:
-			print("Cannot find job with ERIJobId == %s" % entry)
+			return ("No job found")
 
 	def index_next(self ,*event):
 		#print("Reset_index | Index = index+1 | If last_available_index, index=0")
@@ -99,6 +100,8 @@ class Application(Frame):
 		self.jobidentry = Entry(self, width=15)
 		self.jobidentry.place(x=5,y=5)
 		self.jobidentry.bind('<Return>',self.jobidsearch)
+		
+		self.jobfound = Label(self)
 
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
 
@@ -139,9 +142,15 @@ class Application(Frame):
 		try:
 			self.intjobidentry = int(self.jobidentry.get())
 			#print("User wishes to search for erijobid: %d " % self.intjobidentry)
-			self.data.find_by_erijobid(self.intjobidentry)
+			jobtext = self.data.find_by_erijobid(self.intjobidentry)
 			self.invalidsearchwarning.place_forget()
+			print(jobtext)
+			self.jobfound.config(text=jobtext)
+			if jobtext=="No job found": self.jobfound.config(foreground="Red")
+			else: self.jobfound.config(foreground="Black")
+			self.jobfound.place(x=5, y=26)
 		except ValueError:
+			self.jobfound.place_forget()
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.place(x=5,y=26)
 			# Place a hidden error message that appears below entry box for this
