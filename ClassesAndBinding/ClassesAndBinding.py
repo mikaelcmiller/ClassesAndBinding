@@ -111,25 +111,24 @@ class Application(Frame):
 		self.jobidentry.delete(0, END)
 		self.jobidentry.insert(0, str(self.data.current_id))
 
+	def foundit(self, entry):
+		self.jobfound.config(text=entry, foreground="Black")
+		self.jobfound.place(x=5, y=26)
+		self.invalidsearchwarning.place_forget()
+
 	def navigation(self, x):
 		if x=='Next':
 			jobtext = self.data.index_next()
 			print(jobtext)
-			self.jobfound.config(text=jobtext, foreground="Black")
-			self.jobfound.place(x=5, y=26)
-			self.invalidsearchwarning.place_forget()
+			self.foundit(jobtext)
 		if x=='Prior':
-			#self.data.index_prior()
 			jobtext = self.data.index_prior()
 			print(jobtext)
-			self.jobfound.config(text=jobtext, foreground="Black")
-			self.jobfound.place(x=5, y=26)
-			self.invalidsearchwarning.place_forget()
+			self.foundit(jobtext)
 		if x=='F':
 			print("Why would the user hit Ctrl+Shift+f? That's strange..")
 
 	def findfunction(self, event):
-		#print(event.keysym)
 		self.navigation(event.keysym)
 
 	def jobidsearch(self, event):
