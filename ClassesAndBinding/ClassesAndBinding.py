@@ -117,12 +117,14 @@ class Application(Frame):
 			print(jobtext)
 			self.jobfound.config(text=jobtext, foreground="Black")
 			self.jobfound.place(x=5, y=26)
+			self.invalidsearchwarning.place_forget()
 		if x=='Prior':
 			#self.data.index_prior()
 			jobtext = self.data.index_prior()
 			print(jobtext)
 			self.jobfound.config(text=jobtext, foreground="Black")
 			self.jobfound.place(x=5, y=26)
+			self.invalidsearchwarning.place_forget()
 		if x=='F':
 			print("Why would the user hit Ctrl+Shift+f? That's strange..")
 
