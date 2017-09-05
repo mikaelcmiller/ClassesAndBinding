@@ -20,7 +20,8 @@ class Datatraverse:
 	def __init__(self):
 		self.inititalizedataframe()
 		self.current_index = 0
-	
+		print("DF Initialized")
+
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		self.sql = """SELECT erijobid,jobdot,jobdottitle FROM sa.fname WHERE jobsource = 'E' and jobactive not in (0,3,5,7,9)"""
@@ -38,26 +39,24 @@ class Datatraverse:
 			except:
 				pass
 			jobname = self.jobsdf.loc[idsearch,'jobdottitle']
-			return jobname
 			#print(jobname)
 			self.current_index = self.jobsdf.index.get_loc(idsearch)
-			#print(self.current_index)
+			return jobname
 		except KeyError:
+			print(self.current_index)
 			return ("No job found")
 
 	def index_next(self ,*event):
 		#print("Reset_index | Index = index+1 | If last_available_index, index=0")
-		## Following still runs into issues when index hits values which don't exist. Needs work.
 		try:
 			self.jobsdf.reset_index(inplace=True)
 		except:
 			pass
-		if self.current_index < self.last_index:
-			self.current_index = self.current_index + 1
+		if self.current_index < self.last_index: self.current_index = self.current_index + 1
 		else: self.current_index = 0
-		#print(self.jobsdf.index.get_loc(self.current_index))
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
-		print(jobname)
+		#print(jobname)
+		return jobname
 
 	def index_prior(self, *event):
 		#print("Reset_index | Index = index-1 | If index==0, index=last_available_index")
@@ -65,13 +64,13 @@ class Datatraverse:
 			self.jobsdf.reset_index(inplace=True)
 		except:
 			pass
-		if self.current_index > 0:
-			self.current_index = self.current_index - 1
+		if self.current_index > 0: self.current_index = self.current_index - 1
 		else: self.current_index = self.last_index
 		#print(self.jobsdf.index.get_loc(self.current_index))
 		#print(self.current_index)
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
-		print(jobname)
+		#print(jobname)
+		return jobname
 
 
 class Application(Frame):
@@ -127,10 +126,17 @@ class Application(Frame):
 		#print (":::RUNNAV:::")
 		if x=='Next':
 			#print("Change index to original index | Obs# + 1 | Return row for review")
-			self.data.index_next()
+			jobtext = self.data.index_next()
+			print(jobtext)
+			self.jobfound.config(text=jobtext, foreground="Black")
+			self.jobfound.place(x=5, y=26)
 		if x=='Prior':
 			#print("Change index to original index | Obs# - 1 | Return row for review")
-			self.data.index_prior()
+			#self.data.index_prior()
+			jobtext = self.data.index_prior()
+			print(jobtext)
+			self.jobfound.config(text=jobtext, foreground="Black")
+			self.jobfound.place(x=5, y=26)
 		if x=='F':
 			print("Why would the user hit Ctrl+Shift+f? That's strange..")
 
