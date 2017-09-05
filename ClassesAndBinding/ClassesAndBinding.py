@@ -32,22 +32,18 @@ class Datatraverse:
 
 	def find_by_erijobid(self, entry):
 		idsearch = int(entry)
-		#print("Set_Index to erijobid | Search index==erijobid | Return if found, else error message")
 		try:
 			try:
 				self.jobsdf.set_index('erijobid', inplace=True)
 			except:
 				pass
 			jobname = self.jobsdf.loc[idsearch,'jobdottitle']
-			#print(jobname)
 			self.current_index = self.jobsdf.index.get_loc(idsearch)
 			return jobname
 		except KeyError:
-			print(self.current_index)
 			return ("No job found")
 
 	def index_next(self ,*event):
-		#print("Reset_index | Index = index+1 | If last_available_index, index=0")
 		try:
 			self.jobsdf.reset_index(inplace=True)
 		except:
@@ -55,11 +51,9 @@ class Datatraverse:
 		if self.current_index < self.last_index: self.current_index = self.current_index + 1
 		else: self.current_index = 0
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
-		#print(jobname)
 		return jobname
 
 	def index_prior(self, *event):
-		#print("Reset_index | Index = index-1 | If index==0, index=last_available_index")
 		try:
 			self.jobsdf.reset_index(inplace=True)
 		except:
@@ -67,9 +61,7 @@ class Datatraverse:
 		if self.current_index > 0: self.current_index = self.current_index - 1
 		else: self.current_index = self.last_index
 		#print(self.jobsdf.index.get_loc(self.current_index))
-		#print(self.current_index)
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
-		#print(jobname)
 		return jobname
 
 
@@ -80,10 +72,8 @@ class Application(Frame):
 		self.master = master
 		self.master.title("Data Audit Window")
 		self.create_widgets()
-		#self.bind_all('<Return>', self.entercommand) #Only needs to be bound to the erijobid input
 		self.bind_all('<Next>', self.nextpage)
 		self.bind_all('<Prior>', self.priorpage)
-		#self.bind_all('<Control-f>',self.findfunction)
 		self.bind_all('<Control-F>',self.findfunction)
 
 
@@ -107,31 +97,19 @@ class Application(Frame):
 	def user_command(self):
 		print("User clicked Button")
 
-	#def entercommand(self, event): # need two positional arguments (both self and event) to operate correctly.
-		##print("User hit 'Enter' key")
-		##print(event.keysym)
-		#self.navigation(event.keysym)
-
 	def nextpage(self, event):
-		#print("User hit 'Page Down' key")
-		#print(event.keysym)
 		self.navigation(event.keysym)
 
 	def priorpage(self, event):
-		#print("User hit 'Page Up' key")
-		#print(event.keysym)
 		self.navigation(event.keysym)
 
 	def navigation(self, x):
-		#print (":::RUNNAV:::")
 		if x=='Next':
-			#print("Change index to original index | Obs# + 1 | Return row for review")
 			jobtext = self.data.index_next()
 			print(jobtext)
 			self.jobfound.config(text=jobtext, foreground="Black")
 			self.jobfound.place(x=5, y=26)
 		if x=='Prior':
-			#print("Change index to original index | Obs# - 1 | Return row for review")
 			#self.data.index_prior()
 			jobtext = self.data.index_prior()
 			print(jobtext)
@@ -147,7 +125,6 @@ class Application(Frame):
 	def jobidsearch(self, event):
 		try:
 			self.intjobidentry = int(self.jobidentry.get())
-			#print("User wishes to search for erijobid: %d " % self.intjobidentry)
 			jobtext = self.data.find_by_erijobid(self.intjobidentry)
 			self.invalidsearchwarning.place_forget()
 			print(jobtext)
@@ -159,7 +136,6 @@ class Application(Frame):
 			self.jobfound.place_forget()
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.place(x=5,y=26)
-			# Place a hidden error message that appears below entry box for this
 
 root = Tk()
 root.geometry("400x300")
