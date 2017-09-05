@@ -20,6 +20,7 @@ class Datatraverse:
 	def __init__(self):
 		self.inititalizedataframe()
 		self.current_index = 0
+		self.current_id = 0
 		print("DF Initialized")
 
 	def inititalizedataframe(self):
@@ -50,6 +51,7 @@ class Datatraverse:
 			pass
 		if self.current_index < self.last_index: self.current_index = self.current_index + 1
 		else: self.current_index = 0
+		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		return jobname
 
@@ -62,6 +64,7 @@ class Datatraverse:
 		else: self.current_index = self.last_index
 		#print(self.jobsdf.index.get_loc(self.current_index))
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
+		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		return jobname
 
 
@@ -86,12 +89,13 @@ class Application(Frame):
 		testButton.place(x=50,y=200)
 		#testButton.bind('<Return>',self.buttonentercommand)
 		
-		self.jobidentry = Entry(self, width=15)
+		self.jid = StringVar()
+		self.jobidentry = Entry(self, width=15, text=self.jid)
 		self.jobidentry.place(x=5,y=5)
 		self.jobidentry.bind('<Return>',self.jobidsearch)
 		
 		self.jobfound = Label(self)
-
+		
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
 
 	def user_command(self):
@@ -99,9 +103,13 @@ class Application(Frame):
 
 	def nextpage(self, event):
 		self.navigation(event.keysym)
+		self.jobidentry.delete(0, END)
+		self.jobidentry.insert(0, str(self.data.current_id))
 
 	def priorpage(self, event):
 		self.navigation(event.keysym)
+		self.jobidentry.delete(0, END)
+		self.jobidentry.insert(0, str(self.data.current_id))
 
 	def navigation(self, x):
 		if x=='Next':
