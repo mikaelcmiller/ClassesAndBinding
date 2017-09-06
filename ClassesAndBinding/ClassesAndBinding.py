@@ -34,7 +34,7 @@ class Datatraverse:
 			self.current_index = self.jobsdf.index.get_loc(idsearch)
 			return jobname
 		except KeyError:
-			return ("No job found")
+			return "No job found"
 
 	def index_next(self ,*event):
 		try:
@@ -54,7 +54,6 @@ class Datatraverse:
 			pass
 		if self.current_index > 0: self.current_index = self.current_index - 1
 		else: self.current_index = self.last_index
-		#print(self.jobsdf.index.get_loc(self.current_index))
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		return jobname
