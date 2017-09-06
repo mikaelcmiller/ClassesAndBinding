@@ -125,8 +125,6 @@ class Application(Frame):
 			jobtext = self.data.index_prior()
 			print(jobtext)
 			self.foundit(jobtext)
-		if x=='F':
-			print("Why would the user hit Ctrl+Shift+f? That's strange..")
 
 	def findfunction(self, event):
 		self.navigation(event.keysym)
