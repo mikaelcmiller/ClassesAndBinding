@@ -77,17 +77,15 @@ class Application(Frame):
 		self.create_widgets()
 		self.bind_all('<Next>', self.nextpage)
 		self.bind_all('<Prior>', self.priorpage)
-		self.bind_all('<Control-F>',self.findfunction)
-
 
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
 		
 		self.data = Datatraverse()
 		
-		testButton = Button(self,text="Print Command", command=self.user_command)
-		testButton.place(x=50,y=200)
-		#testButton.bind('<Return>',self.buttonentercommand)
+		#testButton = Button(self,text="Print Command", command=self.user_command)
+		#testButton.place(x=50,y=200)
+		#testButton.bind('<Return>',self.buttonentercommand) #tested binding of keyboard commands with selected buttons
 		
 		self.jid = StringVar()
 		self.jobidentry = Entry(self, width=15, text=self.jid)
@@ -121,15 +119,10 @@ class Application(Frame):
 	def navigation(self, x):
 		if x=='Next':
 			jobtext = self.data.index_next()
-			print(jobtext)
-			self.foundit(jobtext)
 		if x=='Prior':
 			jobtext = self.data.index_prior()
-			print(jobtext)
-			self.foundit(jobtext)
-
-	def findfunction(self, event):
-		self.navigation(event.keysym)
+		print(jobtext)
+		self.foundit(jobtext)
 
 	def jobidsearch(self, event):
 		try:
