@@ -103,11 +103,13 @@ class Application(Frame):
 
 	def nextpage(self, event):
 		self.navigation(event.keysym)
-		self.jobidentry.delete(0, END)
-		self.jobidentry.insert(0, str(self.data.current_id))
+		self.jobentryreplace()
 
 	def priorpage(self, event):
 		self.navigation(event.keysym)
+		self.jobentryreplace()
+
+	def jobentryreplace(self):
 		self.jobidentry.delete(0, END)
 		self.jobidentry.insert(0, str(self.data.current_id))
 
@@ -125,8 +127,6 @@ class Application(Frame):
 			jobtext = self.data.index_prior()
 			print(jobtext)
 			self.foundit(jobtext)
-		if x=='F':
-			print("Why would the user hit Ctrl+Shift+f? That's strange..")
 
 	def findfunction(self, event):
 		self.navigation(event.keysym)
