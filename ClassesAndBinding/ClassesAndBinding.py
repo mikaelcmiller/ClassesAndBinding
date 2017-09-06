@@ -100,11 +100,15 @@ class Application(Frame):
 		print("User clicked Button")
 
 	def nextpage(self, event):
-		self.navigation(event.keysym)
+		jobtext = self.data.index_next()
+		print(jobtext)
+		self.foundit(jobtext)
 		self.jobentryreplace()
 
 	def priorpage(self, event):
-		self.navigation(event.keysym)
+		jobtext = self.data.index_prior()
+		print(jobtext)
+		self.foundit(jobtext)
 		self.jobentryreplace()
 
 	def jobentryreplace(self):
@@ -115,14 +119,6 @@ class Application(Frame):
 		self.jobfound.config(text=entry, foreground="Black")
 		self.jobfound.place(x=5, y=26)
 		self.invalidsearchwarning.place_forget()
-
-	def navigation(self, x):
-		if x=='Next':
-			jobtext = self.data.index_next()
-		if x=='Prior':
-			jobtext = self.data.index_prior()
-		print(jobtext)
-		self.foundit(jobtext)
 
 	def jobidsearch(self, event):
 		try:
