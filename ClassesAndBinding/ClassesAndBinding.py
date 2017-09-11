@@ -71,24 +71,13 @@ class Application(Frame):
 
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
-		
 		self.data = Datatraverse()
-		
-		#testButton = Button(self,text="Print Command", command=self.user_command)
-		#testButton.place(x=50,y=200)
-		#testButton.bind('<Return>',self.buttonentercommand) #tested binding of keyboard commands with selected buttons
-		
-		self.jid = StringVar()
-		self.jobidentry = Entry(self, width=15, text=self.jid)
+		#self.jid = StringVar()
+		self.jobidentry = Entry(self, width=15)
 		self.jobidentry.place(x=5,y=5)
 		self.jobidentry.bind('<Return>',self.jobidsearch)
-		
 		self.jobfound = Label(self)
-		
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
-
-	def user_command(self):
-		print("User clicked Button")
 
 	def nextpage(self, event):
 		jobtext = self.data.index_next()
@@ -127,7 +116,7 @@ class Application(Frame):
 			self.invalidsearchwarning.place(x=5,y=26)
 
 root = Tk()
-root.geometry("400x300")
+root.geometry("1000x750")
 app = Application(root)
 root.mainloop()
 
