@@ -17,7 +17,7 @@ class Datatraverse:
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		self.sql = """SELECT f.erijobid, jobdot, jobdottitle, years FROM sa.fname f join (select erijobid, case when yearsmediansalaryexperience>40 then 1 else 0 end as years from sa.job) j on j.erijobid=f.erijobid WHERE f.jobsource = 'E' and f.jobactive not in (0,3,5,7,9)"""
+		self.sql = """SELECT f.erijobid, jobdot, jobdottitle, execjobs FROM assessorwork.sa.fname f join (select erijobid, case when yearsmediansalaryexperience>40 then 1 else 0 end as execjobs from assessorwork.sa.job) j on j.erijobid=f.erijobid WHERE f.jobsource = 'E' and f.jobactive not in (0,3,5,7,9) order by execjobs desc, erijobid"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		print(self.jobsdf)
 		print("Dataframe loaded from SQL")
