@@ -14,6 +14,7 @@ class Datatraverse:
 		self.current_index = 0
 		self.current_id = 0
 		print("DF Initialized")
+		self.jobexec=0
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
@@ -30,9 +31,10 @@ class Datatraverse:
 				self.jobsdf.set_index('erijobid', inplace=True)
 			except:
 				pass
-			jobname = self.jobsdf.loc[idsearch,'jobdottitle']
+			self.jobname = self.jobsdf.loc[idsearch,'jobdottitle']
+			self.jobexec = self.jobsdf.loc[idsearch,'execjobs']
 			self.current_index = self.jobsdf.index.get_loc(idsearch)
-			return jobname
+			return self.jobname
 		except KeyError:
 			return "No job found"
 
@@ -104,6 +106,8 @@ class Application(Frame):
 		try:
 			self.intjobidentry = int(self.jobidentry.get())
 			jobtext = self.data.find_by_erijobid(self.intjobidentry)
+			if self.data.jobexec == 1: print("Executive Job")
+			else: print("Non-Exec Job")
 			self.invalidsearchwarning.place_forget()
 			print(jobtext)
 			self.jobfound.config(text=jobtext)
