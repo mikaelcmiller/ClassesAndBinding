@@ -47,6 +47,7 @@ class Datatraverse:
 		else: self.current_index = 0
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
+		self.jobexec = self.jobsdf.loc[self.current_index,'execjobs']
 		return jobname
 
 	def index_prior(self, *event):
@@ -58,6 +59,7 @@ class Datatraverse:
 		else: self.current_index = self.last_index
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
+		self.jobexec = self.jobsdf.loc[self.current_index,'execjobs']
 		return jobname
 
 
@@ -79,18 +81,22 @@ class Application(Frame):
 		self.jobidentry.grid(row=0, column=0)
 		self.jobidentry.bind('<Return>',self.jobidsearch)
 		self.jobfound = Label(self)
+		self.execjob = Label(self)
+		self.execjob.grid(row=2, column=0)
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
 
 	def nextpage(self, event):
 		jobtext = self.data.index_next()
 		print(jobtext)
 		self.foundit(jobtext)
+		self.exec_job()
 		self.jobentryreplace()
 
 	def priorpage(self, event):
 		jobtext = self.data.index_prior()
 		print(jobtext)
 		self.foundit(jobtext)
+		self.exec_job()
 		self.jobentryreplace()
 
 	def jobentryreplace(self):
@@ -102,12 +108,17 @@ class Application(Frame):
 		self.jobfound.grid(row=1, column=0)
 		self.invalidsearchwarning.grid_forget()
 
+	def exec_job(self):
+		if self.data.jobexec == 1:
+			self.execjob.config(text="Executive Job")
+		else: 
+			self.execjob.config(text="Non-Executive Job")
+
 	def jobidsearch(self, event):
 		try:
 			self.intjobidentry = int(self.jobidentry.get())
 			jobtext = self.data.find_by_erijobid(self.intjobidentry)
-			if self.data.jobexec == 1: print("Executive Job")
-			else: print("Non-Exec Job")
+			self.exec_job()
 			self.invalidsearchwarning.grid_forget()
 			print(jobtext)
 			self.jobfound.config(text=jobtext)
