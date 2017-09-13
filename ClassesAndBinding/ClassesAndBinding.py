@@ -81,8 +81,8 @@ class Application(Frame):
 		self.jobidentry.grid(row=0, column=0)
 		self.jobidentry.bind('<Return>',self.jobidsearch)
 		self.jobfound = Label(self)
-		self.execjob = Label(self)
-		self.execjob.grid(row=2, column=0)
+		self.execjoblabel = Label(self)
+		self.execjoblabel.grid(row=2, column=0)
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
 
 	def nextpage(self, event):
@@ -109,10 +109,11 @@ class Application(Frame):
 		self.invalidsearchwarning.grid_forget()
 
 	def exec_job(self):
+		self.execjoblabel.grid(row=2, column=0)
 		if self.data.jobexec == 1:
-			self.execjob.config(text="Executive Job")
+			self.execjoblabel.config(text="Executive Job")
 		else: 
-			self.execjob.config(text="Non-Executive Job")
+			self.execjoblabel.config(text="Non-Executive Job")
 
 	def jobidsearch(self, event):
 		try:
@@ -122,11 +123,14 @@ class Application(Frame):
 			self.invalidsearchwarning.grid_forget()
 			print(jobtext)
 			self.jobfound.config(text=jobtext)
-			if jobtext=="No job found": self.jobfound.config(foreground="Red")
+			if jobtext=="No job found": 
+				self.jobfound.config(foreground="Red")
+				self.execjoblabel.grid_forget()
 			else: self.jobfound.config(foreground="Black")
 			self.jobfound.grid(row=1, column=0)
 		except ValueError:
 			self.jobfound.grid_forget()
+			self.execjoblabel.grid_forget()
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.grid(row=1, column=0)
 
