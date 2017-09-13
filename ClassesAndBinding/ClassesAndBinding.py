@@ -18,7 +18,7 @@ class Datatraverse:
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		self.sql = """SELECT f.erijobid, f.jobdot, f.jobdottitle, j.execjobs FROM assessorwork.sa.fname f join (select erijobid, case when yearsmediansalaryexperience>40 then 1 else 0 end as execjobs from assessorwork.sa.job) j on j.erijobid=f.erijobid WHERE f.jobsource = 'E' and f.jobactive not in (0,3,5,7,9) order by execjobs desc, erijobid"""
+		self.sql = """SELECT f.erijobid, f.jobdot, f.jobdottitle, j.execjobs FROM assessorwork.sa.fname f join (select erijobid, case when (yearsmediansalaryexperience>40 and yearsmediansalaryexperience<99) then 1 else 0 end as execjobs from assessorwork.sa.job) j on j.erijobid=f.erijobid WHERE f.jobsource = 'E' and f.jobactive not in (0,3,5,7,9) order by execjobs desc, erijobid"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		print(self.jobsdf)
 		print("Dataframe loaded from SQL")
@@ -76,7 +76,7 @@ class Application(Frame):
 		self.data = Datatraverse()
 		#self.jid = StringVar()
 		self.jobidentry = Entry(self, width=15)
-		self.jobidentry.place(x=5,y=5)
+		self.jobidentry.grid(row=0, column=0)
 		self.jobidentry.bind('<Return>',self.jobidsearch)
 		self.jobfound = Label(self)
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
@@ -99,8 +99,8 @@ class Application(Frame):
 
 	def foundit(self, entry):
 		self.jobfound.config(text=entry, foreground="Black")
-		self.jobfound.place(x=5, y=26)
-		self.invalidsearchwarning.place_forget()
+		self.jobfound.grid(row=1, column=0)
+		self.invalidsearchwarning.grid_forget()
 
 	def jobidsearch(self, event):
 		try:
@@ -108,16 +108,16 @@ class Application(Frame):
 			jobtext = self.data.find_by_erijobid(self.intjobidentry)
 			if self.data.jobexec == 1: print("Executive Job")
 			else: print("Non-Exec Job")
-			self.invalidsearchwarning.place_forget()
+			self.invalidsearchwarning.grid_forget()
 			print(jobtext)
 			self.jobfound.config(text=jobtext)
 			if jobtext=="No job found": self.jobfound.config(foreground="Red")
 			else: self.jobfound.config(foreground="Black")
-			self.jobfound.place(x=5, y=26)
+			self.jobfound.grid(row=1, column=0)
 		except ValueError:
-			self.jobfound.place_forget()
+			self.jobfound.grid_forget()
 			print("Not a valid search entry.")
-			self.invalidsearchwarning.place(x=5,y=26)
+			self.invalidsearchwarning.grid(row=1, column=0)
 
 root = Tk()
 root.geometry("1000x750")
