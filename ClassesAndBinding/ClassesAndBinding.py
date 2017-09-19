@@ -64,7 +64,7 @@ class Datatraverse:
 
 
 class SQLWrite:
-	def write_current():
+	def write_current(self):
 		print("writing to sql")
 
 
@@ -77,6 +77,7 @@ class Application(Frame):
 		self.create_widgets()
 		self.bind_all('<Next>', self.nextpage)
 		self.bind_all('<Prior>', self.priorpage)
+		self.bind_all('p',self.writesql)
 
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
