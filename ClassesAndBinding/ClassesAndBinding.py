@@ -63,6 +63,11 @@ class Datatraverse:
 		return jobname
 
 
+class SQLWrite:
+	def write_current(self):
+		print("writing to sql")
+
+
 class Application(Frame):
 	def __init__(self, master):
 		"""Initialize the Frame"""
@@ -72,10 +77,12 @@ class Application(Frame):
 		self.create_widgets()
 		self.bind_all('<Next>', self.nextpage)
 		self.bind_all('<Prior>', self.priorpage)
+		self.bind_all('p',self.writesql)
 
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
 		self.data = Datatraverse()
+		self.write = SQLWrite()
 		#self.jid = StringVar()
 		self.jobidentry = Entry(self, width=15)
 		self.jobidentry.grid(row=0, column=0)
@@ -133,6 +140,9 @@ class Application(Frame):
 			self.execjoblabel.grid_forget()
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.grid(row=1, column=0)
+	
+	def writesql(self, event):
+		self.write.write_current()
 
 root = Tk()
 root.geometry("1000x750")
