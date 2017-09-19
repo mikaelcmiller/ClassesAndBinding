@@ -38,6 +38,7 @@ class Datatraverse:
 			self.jobname = self.jobsdf.loc[idsearch,'jobdottitle']
 			self.jobexec = self.jobsdf.loc[idsearch,'execjobs']
 			self.current_index = self.jobsdf.index.get_loc(idsearch)
+			self.current_id = idsearch
 			return self.jobname
 		except KeyError:
 			return "No job found"
@@ -70,7 +71,12 @@ class Datatraverse:
 
 	def write_to_sql(self, *event):
 		print("writing data to sql")
-		print(self.jobsdf.loc[self.current_index,:])
+		try:
+			self.jobsdf.set_index('indexsearch', inplace=True)
+			self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
+		except:
+			pass
+		print(self.jobsdf.loc[self.current_id,:])
 
 
 class Application(Frame):
