@@ -139,6 +139,9 @@ class Application(Frame):
 			self.execjoblabel.grid_forget()
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.grid(row=1, column=0)
+	
+	def writesql(self, event):
+		self.write.write_current()
 
 root = Tk()
 root.geometry("1000x750")
