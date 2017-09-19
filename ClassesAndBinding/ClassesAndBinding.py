@@ -28,6 +28,7 @@ class Datatraverse:
 		idsearch = int(entry)
 		try:
 			try:
+				# No append=True
 				self.jobsdf.set_index('erijobid', inplace=True)
 			except:
 				pass
