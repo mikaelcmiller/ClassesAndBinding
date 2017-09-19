@@ -64,7 +64,7 @@ class Datatraverse:
 
 	def write_to_sql(self, *event):
 		print("writing data to sql")
-		print(self.jobsdf.loc[current_id,:])
+		print(self.jobsdf.loc[self.current_index,:])
 
 
 class Application(Frame):
