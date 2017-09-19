@@ -63,6 +63,11 @@ class Datatraverse:
 		return jobname
 
 
+class SQLWrite:
+	def write_current():
+		print("writing to sql")
+
+
 class Application(Frame):
 	def __init__(self, master):
 		"""Initialize the Frame"""
@@ -76,6 +81,7 @@ class Application(Frame):
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
 		self.data = Datatraverse()
+		self.write = SQLWrite()
 		#self.jid = StringVar()
 		self.jobidentry = Entry(self, width=15)
 		self.jobidentry.grid(row=0, column=0)
