@@ -83,6 +83,7 @@ class Datatraverse:
 		servconnect = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		cur = servconnect.cursor()
 		## Might consider an update statement or temporary dataframe to store new values
+		## Will compare all new/old values before writing to SQL, row by row?
 		cur.execute('''INSERT INTO dbo.AuditTest(erijobid, title) VALUES (?,?)''',jobid,jobtitle,jobid)
 		cur.commit()
 		cur.close()
