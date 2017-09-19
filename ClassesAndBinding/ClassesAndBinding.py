@@ -20,6 +20,9 @@ class Datatraverse:
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		self.sql = """SELECT f.erijobid, f.jobdot, f.jobdottitle, j.execjobs FROM assessorwork.sa.fname f join (select erijobid, case when (yearsmediansalaryexperience>40 and yearsmediansalaryexperience<99) then 1 else 0 end as execjobs from assessorwork.sa.job) j on j.erijobid=f.erijobid WHERE f.jobsource = 'E' and f.jobactive not in (0,3,5,7,9) order by execjobs desc, erijobid"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
+		self.jobsdf['indexmaster'] = self.jobsdf.index
+		self.jobsdf['index1'] = self.jobsdf['indexmaster']
+		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 		print(self.jobsdf)
 		print("Dataframe loaded from SQL")
 		self.last_index = self.jobsdf.last_valid_index()
@@ -28,7 +31,8 @@ class Datatraverse:
 		idsearch = int(entry)
 		try:
 			try:
-				self.jobsdf.set_index('erijobid', inplace=True)
+				self.jobsdf.set_index('indexsearch', inplace=True)
+				self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 			except:
 				pass
 			self.jobname = self.jobsdf.loc[idsearch,'jobdottitle']
@@ -40,7 +44,8 @@ class Datatraverse:
 
 	def index_next(self ,*event):
 		try:
-			self.jobsdf.reset_index(inplace=True)
+			self.jobsdf.set_index('index1', inplace=True)
+			self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		except:
 			pass
 		if self.current_index < self.last_index: self.current_index = self.current_index + 1
@@ -52,7 +57,8 @@ class Datatraverse:
 
 	def index_prior(self, *event):
 		try:
-			self.jobsdf.reset_index(inplace=True)
+			self.jobsdf.set_index('index1', inplace=True)
+			self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		except:
 			pass
 		if self.current_index > 0: self.current_index = self.current_index - 1
