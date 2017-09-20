@@ -9,7 +9,7 @@ from tkinter import *
 from tkinter.ttk import *
 
 
-class Datatraverse:
+class Dataverse:
 	def __init__(self):
 		self.inititalizedataframe()
 		self.current_index = 0
@@ -102,7 +102,7 @@ class Application(Frame):
 
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
-		self.data = Datatraverse()
+		self.data = Dataverse()
 		#self.jid = StringVar()
 		self.jobidentry = Entry(self, width=15)
 		self.jobidentry.grid(row=0, column=0)
