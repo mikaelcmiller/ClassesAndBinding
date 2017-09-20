@@ -5,6 +5,7 @@ import numpy as np
 import pandas.io.sql as psql
 import pyodbc
 import sqlalchemy
+import datetime
 from tkinter import *
 from tkinter.ttk import *
 
@@ -25,6 +26,7 @@ class Dataverse:
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 		self.outputdf = pd.DataFrame(columns=self.jobsdf.columns)
+		self.outputdf['timestamp']=""
 		print(self.jobsdf)
 		print(self.outputdf)
 		print("Dataframe loaded from SQL")
@@ -83,7 +85,9 @@ class Dataverse:
 			print("Overwriting "+str(self.current_id))
 			self.outputdf.update(self.jobsdf.loc[self.current_id,:])
 		else: self.outputdf = self.outputdf.append(self.jobsdf.loc[self.current_id,:])
-		print(self.outputdf[0:10])
+		self.outputdf.set_value(self.current_id,'timestamp',datetime.datetime.now())
+		print(self.outputdf)
+		
 		#print(self.outputdf)
 		#jobid = int(self.jobsdf.loc[self.current_id,'erijobid'])
 		#jobtitle = str(self.jobsdf.loc[self.current_id,'jobdottitle'])
