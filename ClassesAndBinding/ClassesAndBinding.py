@@ -78,16 +78,17 @@ class Dataverse:
 			self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 		except:
 			pass
-		print(self.jobsdf.loc[self.current_id,:])
-		jobid = int(self.jobsdf.loc[self.current_id,'erijobid'])
-		jobtitle = str(self.jobsdf.loc[self.current_id,'jobdottitle'])
-		servconnect = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		cur = servconnect.cursor()
+		self.outputdf = self.outputdf.append(self.jobsdf.loc[self.current_id,:])
+		print(self.outputdf)
+		#jobid = int(self.jobsdf.loc[self.current_id,'erijobid'])
+		#jobtitle = str(self.jobsdf.loc[self.current_id,'jobdottitle'])
+		#servconnect = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
+		#cur = servconnect.cursor()
 		## Might consider an update statement or temporary dataframe to store new values
 		## Will compare all new/old values before writing to SQL, row by row?
-		cur.execute('''INSERT INTO dbo.AuditTest(erijobid, title) VALUES (?,?)''',jobid,jobtitle)
-		cur.commit()
-		cur.close()
+		#cur.execute('''INSERT INTO dbo.AuditTest(erijobid, title) VALUES (?,?)''',jobid,jobtitle)
+		#cur.commit()
+		#cur.close()
 
 
 class Application(Frame):
