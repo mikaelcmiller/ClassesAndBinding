@@ -25,12 +25,12 @@ class Dataverse:
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
+		self.last_index = self.jobsdf.last_valid_index()
 		self.outputdf = pd.DataFrame(columns=self.jobsdf.columns)
 		self.outputdf['timestamp']=""
 		print(self.jobsdf)
 		print(self.outputdf)
 		print("Dataframe loaded from SQL")
-		self.last_index = self.jobsdf.last_valid_index()
 
 	def find_by_erijobid(self, entry):
 		idsearch = int(entry)
@@ -74,7 +74,7 @@ class Dataverse:
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 		return jobname
 
-	def write_to_sql(self, *event):
+	def write_to_outputdf(self, *event):
 		print("writing data to sql")
 		try:
 			self.jobsdf.set_index('indexsearch', inplace=True)
@@ -173,7 +173,7 @@ class Application(Frame):
 			self.invalidsearchwarning.grid(row=1, column=0)
 
 	def write_sql(self, event):
-		self.data.write_to_sql()
+		self.data.write_to_outputdf()
 
 
 root = Tk()
