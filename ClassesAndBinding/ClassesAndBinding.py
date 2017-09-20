@@ -24,6 +24,7 @@ class Dataverse:
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
+		self.outputdf = pd.DataFrame()
 		print(self.jobsdf)
 		print("Dataframe loaded from SQL")
 		self.last_index = self.jobsdf.last_valid_index()
