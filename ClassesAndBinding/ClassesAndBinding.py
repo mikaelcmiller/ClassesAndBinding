@@ -79,8 +79,11 @@ class Dataverse:
 			self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 		except:
 			pass
-		self.outputdf = self.outputdf.append(self.jobsdf.loc[self.current_id,:])
-		print((self.outputdf['erijobid']==self.current_id).any())
+		if ((self.outputdf['erijobid']==self.current_id).any()):
+			print("Overwriting "+str(self.current_id))
+			self.outputdf.update(self.jobsdf.loc[self.current_id,:])
+		else: self.outputdf = self.outputdf.append(self.jobsdf.loc[self.current_id,:])
+		print(self.outputdf[0:10])
 		#print(self.outputdf)
 		#jobid = int(self.jobsdf.loc[self.current_id,'erijobid'])
 		#jobtitle = str(self.jobsdf.loc[self.current_id,'jobdottitle'])
