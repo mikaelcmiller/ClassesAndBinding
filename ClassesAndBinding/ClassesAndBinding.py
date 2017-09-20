@@ -13,9 +13,9 @@ class Dataverse:
 	def __init__(self):
 		self.inititalizedataframe()
 		self.current_index = 0
-		self.current_id = 0
+		self.current_id = 1
+		self.jobexec=1
 		print("DF Initialized")
-		self.jobexec=0
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
@@ -24,8 +24,9 @@ class Dataverse:
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
-		self.outputdf = pd.DataFrame()
+		self.outputdf = pd.DataFrame(columns=self.jobsdf.columns)
 		print(self.jobsdf)
+		print(self.outputdf)
 		print("Dataframe loaded from SQL")
 		self.last_index = self.jobsdf.last_valid_index()
 
@@ -79,7 +80,8 @@ class Dataverse:
 		except:
 			pass
 		self.outputdf = self.outputdf.append(self.jobsdf.loc[self.current_id,:])
-		print(self.outputdf)
+		print((self.outputdf['erijobid']==self.current_id).any())
+		#print(self.outputdf)
 		#jobid = int(self.jobsdf.loc[self.current_id,'erijobid'])
 		#jobtitle = str(self.jobsdf.loc[self.current_id,'jobdottitle'])
 		#servconnect = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
