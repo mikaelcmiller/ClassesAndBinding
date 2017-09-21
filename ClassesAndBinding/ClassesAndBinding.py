@@ -94,7 +94,6 @@ class Dataverse:
 		engine = sqlalchemy.create_engine('mssql+pyodbc://SNADSSQ3/AssessorWork?driver=SQL+Server+Native+Client+11.0')
 		self.sqldf.to_sql('AuditTest_',engine,schema='dbo',if_exists='append',index=False)
 		print("Dataframe written to SQL")
-		
 
 
 class Application(Frame):
