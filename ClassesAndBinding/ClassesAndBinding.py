@@ -99,6 +99,13 @@ class Dataverse:
 		#cur.commit()
 		#cur.close()
 
+	def write_to_sql(self, *event):
+		self.sqldf = self.outputdf[['erijobid','jobdot','jobdottitle','execjob']].copy()
+		engine = sqlalchemy.create_engine('mssql+pyodbc://SNADSSQ3/AssessorWork?driver=SQL+Server+Native+Client+11.0')
+		self.sqldf.to_sql('AuditTest_',engine,schema='dbo',if_exists='append',index=False)
+		print("Dataframe written to SQL")
+		
+
 
 class Application(Frame):
 	def __init__(self, master):
@@ -109,7 +116,8 @@ class Application(Frame):
 		self.create_widgets()
 		self.bind_all('<Next>', self.nextpage)
 		self.bind_all('<Prior>', self.priorpage)
-		self.bind_all('<Insert>', self.write_sql)
+		self.bind_all('<Insert>', self.write_output)
+		self.bind_all('<Control-p>', self.write_sql)
 
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
@@ -172,8 +180,11 @@ class Application(Frame):
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.grid(row=1, column=0)
 
-	def write_sql(self, event):
+	def write_output(self, event):
 		self.data.write_to_outputdf()
+
+	def write_sql(self, event):
+		self.data.write_to_sql()
 
 
 root = Tk()
