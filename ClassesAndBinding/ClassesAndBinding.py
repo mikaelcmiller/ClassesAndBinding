@@ -100,6 +100,7 @@ class Dataverse:
 		#cur.close()
 
 	def write_to_sql(self, *event):
+		## Cut out unnecessary columns like timestamp and index columns from outputdf
 		self.sqldf = self.outputdf[['erijobid','jobdot','jobdottitle','execjob']].copy()
 		engine = sqlalchemy.create_engine('mssql+pyodbc://SNADSSQ3/AssessorWork?driver=SQL+Server+Native+Client+11.0')
 		self.sqldf.to_sql('AuditTest_',engine,schema='dbo',if_exists='append',index=False)
