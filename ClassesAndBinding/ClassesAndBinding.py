@@ -81,23 +81,12 @@ class Dataverse:
 			self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 		except:
 			pass
-		if ((self.outputdf['erijobid']==self.current_id).any()):
+		if (self.outputdf['erijobid']==self.current_id).any():
 			print("Overwriting "+str(self.current_id))
 			self.outputdf.update(self.jobsdf.loc[self.current_id,:])
 		else: self.outputdf = self.outputdf.append(self.jobsdf.loc[self.current_id,:])
 		self.outputdf.set_value(self.current_id,'timestamp',datetime.datetime.now())
 		print(self.outputdf)
-		
-		#print(self.outputdf)
-		#jobid = int(self.jobsdf.loc[self.current_id,'erijobid'])
-		#jobtitle = str(self.jobsdf.loc[self.current_id,'jobdottitle'])
-		#servconnect = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		#cur = servconnect.cursor()
-		## Might consider an update statement or temporary dataframe to store new values
-		## Will compare all new/old values before writing to SQL, row by row?
-		#cur.execute('''INSERT INTO dbo.AuditTest(erijobid, title) VALUES (?,?)''',jobid,jobtitle)
-		#cur.commit()
-		#cur.close()
 
 	def write_to_sql(self, *event):
 		## Cut out unnecessary columns like timestamp and index columns from outputdf
