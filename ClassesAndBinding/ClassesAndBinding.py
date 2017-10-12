@@ -21,7 +21,7 @@ class Dataverse:
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		self.sql = """SELECT p.erijobid
-			, p.jobdot, p.jobdottitle, case when (p.medyrs>40 and p.medyrs<99) then 1 else 0 end as execjob 
+			, p.jobdot, p.jobdottitle, medsal, case when (p.medyrs>40 and p.medyrs<99) then 1 else 0 end as execjob 
 			FROM assessorwork.sa.pct p order by execjob desc, erijobid"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		self.jobsdf['indexmaster'] = self.jobsdf.index
@@ -92,7 +92,7 @@ class Dataverse:
 
 	def write_to_sql(self, *event):
 		## Cut out unnecessary columns like index columns from outputdf
-		self.sqldf = self.outputdf[['erijobid','jobdot','jobdottitle','execjob','timestamp']].copy()
+		self.sqldf = self.outputdf[['erijobid','jobdot','jobdottitle','execjob','medsal','timestamp']].copy()
 		engine = sqlalchemy.create_engine('mssql+pyodbc://SNADSSQ3/AssessorWork?driver=SQL+Server+Native+Client+11.0')
 		self.sqldf.to_sql('AuditTest_',engine,schema='dbo',if_exists='append',index=False)
 		print("Dataframe written to SQL")
