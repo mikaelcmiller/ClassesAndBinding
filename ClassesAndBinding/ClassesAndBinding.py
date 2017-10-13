@@ -182,9 +182,16 @@ class Dataverse:
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 		return jobname
+	
+	def set_Sal1Mil(self, entry, *event):
+		# Ensure a row for current_id exists to update Sal1Mil value
+		self.write_to_outputdf()
+		# Set Sal1Mil to entry (entry is set by user)
+		self.outputdf.at[self.current_id,'Sal1Mil'] = entry
+		print(self.outputdf.loc[self.current_id,'erijobid':'Sal1Mil'])
 
 	def write_to_outputdf(self, *event):
-		print("writing data to sql")
+		print("writing data to OutputDF")
 		try:
 			self.jobsdf.set_index('indexsearch', inplace=True)
 			self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
@@ -236,6 +243,7 @@ class Application(Frame):
 		self.Sal1Mil.bind('<Return>',self.Set1Mil)
 
 	def nextpage(self, event):
+		self.clear_Sal1MilEntry()
 		jobtext = self.data.index_next()
 		print(jobtext)
 		self.foundit(jobtext)
@@ -243,6 +251,7 @@ class Application(Frame):
 		self.jobentryreplace()
 
 	def priorpage(self, event):
+		self.clear_Sal1MilEntry()
 		jobtext = self.data.index_prior()
 		print(jobtext)
 		self.foundit(jobtext)
@@ -265,7 +274,11 @@ class Application(Frame):
 		else: 
 			self.execjoblabel.config(text="Non-Executive Job")
 
+	def clear_Sal1MilEntry(self, *event):
+		self.Sal1Mil.delete(0, END)
+
 	def jobidsearch(self, event):
+		self.clear_Sal1MilEntry()
 		try:
 			self.intjobidentry = int(self.jobidentry.get())
 			jobtext = self.data.find_by_erijobid(self.intjobidentry)
@@ -285,8 +298,9 @@ class Application(Frame):
 			self.invalidsearchwarning.grid(row=1, column=0)
 
 	def Set1Mil(self, event):
-		print(str(self.Sal1Mil.get()))
+		#print(str(self.Sal1Mil.get()))
 		#Update output DF Sal1Mil == self.Sal1Mil.get()
+		if self.Sal1Mil.get() != "": self.data.set_Sal1Mil(int(self.Sal1Mil.get()))
 
 	def write_output(self, event):
 		self.data.write_to_outputdf()
