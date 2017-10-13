@@ -20,8 +20,9 @@ class Dataverse:
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		self.sql = """SELECT *, case when (p.medyrs>40 and p.medyrs<99) then 1 else 0 end as execjob 
-			FROM assessorwork.sa.pct p order by execjob desc, erijobid"""
+		self.sql = """SELECT pct.*, bench.USBenchMed, bench.CanBenchMed, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob 
+			FROM assessorwork.sa.pct pct 
+			left join assessorwork.sa.bench bench on bench.erijobid=pct.erijobid and bench.releaseid=pct.releaseid order by execjob desc, pct.erijobid"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
