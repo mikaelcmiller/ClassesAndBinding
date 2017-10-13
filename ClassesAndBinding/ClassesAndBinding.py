@@ -20,7 +20,114 @@ class Dataverse:
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		self.sql = """SELECT pct.*, bench.USBenchMed, bench.CanBenchMed, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob 
+		self.sql = """SELECT pct.[erijobid]
+			, pct.[jobdot]
+			, pct.[jobdottitle]
+			, pct.[CAN_AVE]
+			, pct.[Sal1Mil]
+			, pct.[LOWSAL]
+			, pct.[MEDSAL]
+			, pct.[HIGHSAL]
+			, pct.[Sal100Bil]
+			, pct.[Yr3Sal]
+			, pct.[CAN_PCT]
+			, pct.[Pct_1Mil]
+			, pct.[LOW_F]
+			, pct.[US_PCT]
+			, pct.[HIGH_F]
+			, pct.[Pct_100Bil]
+			, pct.[CANPK_C]
+			, pct.[USPK_C]
+			, pct.[USPK_C1]
+			, pct.[CanBonusPct]
+			, pct.[BonusPct1Mil]
+			, pct.[LowBonusPct]
+			, pct.[MedBonusPct]
+			, pct.[HighBonusPct]
+			, pct.[BonusPct100Bil]
+			, pct.[StdErr]
+			, pct.[Q11Mil]
+			, pct.[Q1Low]
+			, pct.[Q1Med]
+			, pct.[Q1High]
+			, pct.[Q1100Bil]
+			, pct.[Repto]
+			, pct.[ReptoTitle]
+			, pct.[ReptoSal]
+			, pct.[ReptoYr3]
+			, pct.[JobXRef]
+			, pct.[XRefTitle]
+			, pct.[XRefMed]
+			, pct.[XRefCan]
+			, pct.[Medyrs]
+			, pct.[OldMyrs]
+			, pct.[N_Medyrs]
+			, pct.[AverageYears]
+			, pct.[EstimatedYears]
+			, pct.[SurveySampleSize]
+			, pct.[Y_Base]
+			, pct.[Y_Bpct]
+			, pct.[LowPred]
+			, pct.[MedPred]
+			, pct.[HighPred]
+			, pct.[CanPred]
+			, pct.[CanPoly1]
+			, pct.[CanPoly2]
+			, pct.[CanPoly3]
+			, pct.[AvgCanPoly]
+			, pct.[AvgCanModels]
+			, pct.[AvgCan3Qtr]
+			, pct.[Low3QTR_1Mil]
+			, pct.[Low3Qtr]
+			, pct.[Med3Qtr]
+			, pct.[High3Qtr]
+			, pct.[High3Qtr_100Bil]
+			, pct.[Low10thPercentile_1Mil]
+			, pct.[Low10thPercentile]
+			, pct.[Med10thPercentile]
+			, pct.[High10thPercentile]
+			, pct.[High10thPercentile_100Bil]
+			, pct.[Low90thPercentile_1Mil]
+			, pct.[Low90thPercentile]
+			, pct.[Med90thPercentile]
+			, pct.[High90thPercentile]
+			, pct.[High90thPercentile_100bil]
+			, pct.[TotalComp1Mil]
+			, pct.[LowTotalComp]
+			, pct.[MedTotalComp]
+			, pct.[HighTotalComp]
+			, pct.[TotalComp100Bil]
+			, pct.[CPCNO]
+			, pct.[CPCSalary]
+			, pct.[CPCSampleSize]
+			, pct.[DegreeType]
+			, pct.[CPCYearlyIncrease]
+			, pct.[Adder]
+			, pct.[DegreeName]
+			, pct.[SOC]
+			, pct.[OccAve]
+			, pct.[USPop]
+			, pct.[JobPopPct]
+			, pct.[Funno]
+			, pct.[SOC16pct]
+			, pct.[SOC66pct]
+			, pct.[LowSOCGrowthPct]
+			, pct.[HighSOCGrothPct]
+			, pct.[GrowthRate]
+			, pct.[LowGrowthRate]
+			, pct.[HighGrowthRate]
+			, pct.[Indusdiffcode]
+			, pct.[eriSurveyCode]
+			, pct.[Profile]
+			, pct.[DOTMatch]
+			, pct.[Math]
+			, pct.[Verb]
+			, pct.[Reas]
+			, pct.[SVP]
+			, pct.[ReleaseId]
+			, bench.USBenchMed
+			, bench.CanBenchMed
+			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob 
 			FROM assessorwork.sa.pct pct 
 			left join assessorwork.sa.bench bench on bench.erijobid=pct.erijobid and bench.releaseid=pct.releaseid order by execjob desc, pct.erijobid"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
@@ -123,6 +230,10 @@ class Application(Frame):
 		self.execjoblabel = Label(self)
 		self.execjoblabel.grid(row=2, column=0)
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
+		#new
+		self.Sal1Mil = Entry(self, width=15)
+		self.Sal1Mil.grid(row=0,column=1)
+		self.Sal1Mil.bind('<Return>',self.Set1Mil)
 
 	def nextpage(self, event):
 		jobtext = self.data.index_next()
@@ -172,6 +283,10 @@ class Application(Frame):
 			self.execjoblabel.grid_forget()
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.grid(row=1, column=0)
+
+	def Set1Mil(self, event):
+		print(str(self.Sal1Mil.get()))
+		#Update output DF Sal1Mil == self.Sal1Mil.get()
 
 	def write_output(self, event):
 		self.data.write_to_outputdf()
