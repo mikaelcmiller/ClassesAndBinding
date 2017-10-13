@@ -90,9 +90,9 @@ class Dataverse:
 		print(self.outputdf)
 
 	def write_to_sql(self, *event):
-		## Cut out unnecessary columns like index columns from outputdf
-		#self.sqldf = self.outputdf[['erijobid','jobdot','jobdottitle','execjob','MEDSAL','timestamp']].copy()
+		# Copy output DataFrame to SQL DataFrame before printing
 		self.sqldf = self.outputdf.copy()
+		# Drop specific columns from SQL DataFrame before writing to SQL database
 		self.sqldf = self.sqldf.drop(['execjob','indexmaster','index1','indexsearch'],axis=1)
 		engine = sqlalchemy.create_engine('mssql+pyodbc://SNADSSQ3/AssessorWork?driver=SQL+Server+Native+Client+11.0')
 		self.sqldf.to_sql('AuditTest_',engine,schema='dbo',if_exists='append',index=False)
