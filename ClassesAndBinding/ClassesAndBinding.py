@@ -146,8 +146,10 @@ class Application(Frame):
 		self.LowSalEntry.bind('<Return>',self.SetLowSal)
 		self.LowSalLabel = Label(self, text="LowSal")
 		self.LowSalLabel.grid(row=6,column=1)
+		self.Sal1MilLabel = Label(self,text="Sal1Mil")
+		self.Sal1MilLabel.grid(row=7,column=1)
 		self.Sal1MilEntry = Entry(self, width=15)
-		self.Sal1MilEntry.grid(row=7,column=1)
+		self.Sal1MilEntry.grid(row=7,column=2)
 		self.Sal1MilEntry.bind('<Return>',self.Set1Mil)
 
 	def nextpage(self, event):
