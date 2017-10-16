@@ -131,20 +131,24 @@ class Application(Frame):
 		self.pack(fill=BOTH, expand=1)
 		self.data = Dataverse()
 		#self.jid = StringVar()
+		self.JobIdLabel = Label(self,text="JobId")
+		self.JobIdLabel.grid(row=0,column=0)
 		self.jobidentry = Entry(self, width=15)
-		self.jobidentry.grid(row=0, column=0)
+		self.jobidentry.grid(row=0, column=1)
 		self.jobidentry.bind('<Return>',self.jobidsearch)
 		self.jobfound = Label(self)
+		self.blank = Label(self,text=" ")
 		self.execjoblabel = Label(self)
-		self.execjoblabel.grid(row=2, column=0)
+		self.execjoblabel.grid(row=2, column=1)
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
-		#new
-		self.Sal1Mil = Entry(self, width=15)
-		self.Sal1Mil.grid(row=0,column=1)
-		self.Sal1Mil.bind('<Return>',self.Set1Mil)
-		self.LowSal = Entry(self, width=15)
-		self.LowSal.grid(row=0,column=2)
-		self.LowSal.bind('<Return>',self.SetLowSal)
+		self.LowSalEntry = Entry(self, width=15)
+		self.LowSalEntry.grid(row=6,column=2)
+		self.LowSalEntry.bind('<Return>',self.SetLowSal)
+		self.LowSalLabel = Label(self, text="LowSal")
+		self.LowSalLabel.grid(row=6,column=1)
+		self.Sal1MilEntry = Entry(self, width=15)
+		self.Sal1MilEntry.grid(row=7,column=1)
+		self.Sal1MilEntry.bind('<Return>',self.Set1Mil)
 
 	def nextpage(self, event):
 		self.clear_Overwrite_Entries()
@@ -168,19 +172,19 @@ class Application(Frame):
 
 	def foundit(self, entry):
 		self.jobfound.config(text=entry, foreground="Black")
-		self.jobfound.grid(row=1, column=0)
+		self.jobfound.grid(row=1, column=1)
 		self.invalidsearchwarning.grid_forget()
 
 	def exec_job(self):
-		self.execjoblabel.grid(row=2, column=0)
+		self.execjoblabel.grid(row=2, column=1)
 		if self.data.jobexec == 1:
 			self.execjoblabel.config(text="Executive Job")
 		else: 
 			self.execjoblabel.config(text="Non-Executive Job")
 
 	def clear_Overwrite_Entries(self, *event):
-		self.Sal1Mil.delete(0, END)
-		self.LowSal.delete(0, END)
+		self.Sal1MilEntry.delete(0, END)
+		self.LowSalEntry.delete(0, END)
 
 	def jobidsearch(self, event):
 		self.clear_Overwrite_Entries()
@@ -195,20 +199,20 @@ class Application(Frame):
 				self.jobfound.config(foreground="Red")
 				self.execjoblabel.grid_forget()
 			else: self.jobfound.config(foreground="Black")
-			self.jobfound.grid(row=1, column=0)
+			self.jobfound.grid(row=1, column=1)
 		except ValueError:
 			self.jobfound.grid_forget()
 			self.execjoblabel.grid_forget()
 			print("Not a valid search entry.")
-			self.invalidsearchwarning.grid(row=1, column=0)
+			self.invalidsearchwarning.grid(row=1, column=1)
 
 	def Set1Mil(self, event):
 		#print(str(self.Sal1Mil.get()))
 		#Update output DF Sal1Mil == self.Sal1Mil.get()
-		if self.Sal1Mil.get() != "": self.data.set_Sal1Mil(int(self.Sal1Mil.get()))
+		if self.Sal1MilEntry.get() != "": self.data.set_Sal1Mil(int(self.Sal1MilEntry.get()))
 
 	def SetLowSal(self, event):
-		if self.LowSal.get() != "": self.data.set_LowSal(int(self.LowSal.get()))
+		if self.LowSalEntry.get() != "": self.data.set_LowSal(int(self.LowSalEntry.get()))
 
 	def write_output(self, event):
 		self.data.write_to_outputdf()
