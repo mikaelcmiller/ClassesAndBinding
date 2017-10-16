@@ -20,111 +20,7 @@ class Dataverse:
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		self.sql = """SELECT pct.[erijobid]
-			, pct.[jobdot]
-			, pct.[jobdottitle]
-			, pct.[CAN_AVE]
-			, pct.[Sal1Mil]
-			, pct.[LOWSAL]
-			, pct.[MEDSAL]
-			, pct.[HIGHSAL]
-			, pct.[Sal100Bil]
-			, pct.[Yr3Sal]
-			, pct.[CAN_PCT]
-			, pct.[Pct_1Mil]
-			, pct.[LOW_F]
-			, pct.[US_PCT]
-			, pct.[HIGH_F]
-			, pct.[Pct_100Bil]
-			, pct.[CANPK_C]
-			, pct.[USPK_C]
-			, pct.[USPK_C1]
-			, pct.[CanBonusPct]
-			, pct.[BonusPct1Mil]
-			, pct.[LowBonusPct]
-			, pct.[MedBonusPct]
-			, pct.[HighBonusPct]
-			, pct.[BonusPct100Bil]
-			, pct.[StdErr]
-			, pct.[Q11Mil]
-			, pct.[Q1Low]
-			, pct.[Q1Med]
-			, pct.[Q1High]
-			, pct.[Q1100Bil]
-			, pct.[Repto]
-			, pct.[ReptoTitle]
-			, pct.[ReptoSal]
-			, pct.[ReptoYr3]
-			, pct.[JobXRef]
-			, pct.[XRefTitle]
-			, pct.[XRefMed]
-			, pct.[XRefCan]
-			, pct.[Medyrs]
-			, pct.[OldMyrs]
-			, pct.[N_Medyrs]
-			, pct.[AverageYears]
-			, pct.[EstimatedYears]
-			, pct.[SurveySampleSize]
-			, pct.[Y_Base]
-			, pct.[Y_Bpct]
-			, pct.[LowPred]
-			, pct.[MedPred]
-			, pct.[HighPred]
-			, pct.[CanPred]
-			, pct.[CanPoly1]
-			, pct.[CanPoly2]
-			, pct.[CanPoly3]
-			, pct.[AvgCanPoly]
-			, pct.[AvgCanModels]
-			, pct.[AvgCan3Qtr]
-			, pct.[Low3QTR_1Mil]
-			, pct.[Low3Qtr]
-			, pct.[Med3Qtr]
-			, pct.[High3Qtr]
-			, pct.[High3Qtr_100Bil]
-			, pct.[Low10thPercentile_1Mil]
-			, pct.[Low10thPercentile]
-			, pct.[Med10thPercentile]
-			, pct.[High10thPercentile]
-			, pct.[High10thPercentile_100Bil]
-			, pct.[Low90thPercentile_1Mil]
-			, pct.[Low90thPercentile]
-			, pct.[Med90thPercentile]
-			, pct.[High90thPercentile]
-			, pct.[High90thPercentile_100bil]
-			, pct.[TotalComp1Mil]
-			, pct.[LowTotalComp]
-			, pct.[MedTotalComp]
-			, pct.[HighTotalComp]
-			, pct.[TotalComp100Bil]
-			, pct.[CPCNO]
-			, pct.[CPCSalary]
-			, pct.[CPCSampleSize]
-			, pct.[DegreeType]
-			, pct.[CPCYearlyIncrease]
-			, pct.[Adder]
-			, pct.[DegreeName]
-			, pct.[SOC]
-			, pct.[OccAve]
-			, pct.[USPop]
-			, pct.[JobPopPct]
-			, pct.[Funno]
-			, pct.[SOC16pct]
-			, pct.[SOC66pct]
-			, pct.[LowSOCGrowthPct]
-			, pct.[HighSOCGrothPct]
-			, pct.[GrowthRate]
-			, pct.[LowGrowthRate]
-			, pct.[HighGrowthRate]
-			, pct.[Indusdiffcode]
-			, pct.[eriSurveyCode]
-			, pct.[Profile]
-			, pct.[DOTMatch]
-			, pct.[Math]
-			, pct.[Verb]
-			, pct.[Reas]
-			, pct.[SVP]
-			, pct.[ReleaseId]
+		self.sql = """SELECT pct.*
 			, bench.USBenchMed
 			, bench.CanBenchMed
 			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob 
@@ -190,6 +86,11 @@ class Dataverse:
 		self.outputdf.at[self.current_id,'Sal1Mil'] = entry
 		print(self.outputdf.loc[self.current_id,'erijobid':'Sal1Mil'])
 
+	def set_LowSal(self, entry, *event):
+		self.write_to_outputdf()
+		self.outputdf.at[self.current_id,'LOWSAL'] = entry
+		print(str(self.outputdf.loc[self.current_id,'erijobid'])+" || "+str(self.outputdf.loc[self.current_id,'LOWSAL']))
+
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
 		try:
@@ -241,9 +142,12 @@ class Application(Frame):
 		self.Sal1Mil = Entry(self, width=15)
 		self.Sal1Mil.grid(row=0,column=1)
 		self.Sal1Mil.bind('<Return>',self.Set1Mil)
+		self.LowSal = Entry(self, width=15)
+		self.LowSal.grid(row=0,column=2)
+		self.LowSal.bind('<Return>',self.SetLowSal)
 
 	def nextpage(self, event):
-		self.clear_Sal1MilEntry()
+		self.clear_Overwrite_Entries()
 		jobtext = self.data.index_next()
 		print(jobtext)
 		self.foundit(jobtext)
@@ -251,7 +155,7 @@ class Application(Frame):
 		self.jobentryreplace()
 
 	def priorpage(self, event):
-		self.clear_Sal1MilEntry()
+		self.clear_Overwrite_Entries()
 		jobtext = self.data.index_prior()
 		print(jobtext)
 		self.foundit(jobtext)
@@ -274,11 +178,12 @@ class Application(Frame):
 		else: 
 			self.execjoblabel.config(text="Non-Executive Job")
 
-	def clear_Sal1MilEntry(self, *event):
+	def clear_Overwrite_Entries(self, *event):
 		self.Sal1Mil.delete(0, END)
+		self.LowSal.delete(0, END)
 
 	def jobidsearch(self, event):
-		self.clear_Sal1MilEntry()
+		self.clear_Overwrite_Entries()
 		try:
 			self.intjobidentry = int(self.jobidentry.get())
 			jobtext = self.data.find_by_erijobid(self.intjobidentry)
@@ -301,6 +206,9 @@ class Application(Frame):
 		#print(str(self.Sal1Mil.get()))
 		#Update output DF Sal1Mil == self.Sal1Mil.get()
 		if self.Sal1Mil.get() != "": self.data.set_Sal1Mil(int(self.Sal1Mil.get()))
+
+	def SetLowSal(self, event):
+		if self.LowSal.get() != "": self.data.set_LowSal(int(self.LowSal.get()))
 
 	def write_output(self, event):
 		self.data.write_to_outputdf()
