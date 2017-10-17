@@ -126,11 +126,15 @@ class Application(Frame):
 		self.bind_all('<Prior>', self.priorpage)
 		self.bind_all('<Insert>', self.write_output)
 		self.bind_all('<Control-p>', self.write_sql)
+		# Bind self.write_sql to button also
 
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
 		self.data = Dataverse()
-		#self.jid = StringVar()
+		self.SaveButton = Button(self,text="Save Changes",command=self.write_output)
+		self.SaveButton.grid(row=0,column=8)
+		self.SQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
+		self.SQLButton.grid(row=0,column=9)
 		self.JobIdLabel = Label(self,text="JobId")
 		self.JobIdLabel.grid(row=0,column=0)
 		self.jobidentry = Entry(self, width=15)
@@ -143,14 +147,14 @@ class Application(Frame):
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
 		self.LowSalEntry = Entry(self, width=15)
 		self.LowSalEntry.grid(row=6,column=2)
-		self.LowSalEntry.bind('<Return>',self.SetLowSal)
+		self.LowSalEntry.bind('<Return>',self.write_output)
 		self.LowSalLabel = Label(self, text="LowSal")
 		self.LowSalLabel.grid(row=6,column=1)
 		self.Sal1MilLabel = Label(self,text="Sal1Mil")
 		self.Sal1MilLabel.grid(row=7,column=1)
 		self.Sal1MilEntry = Entry(self, width=15)
 		self.Sal1MilEntry.grid(row=7,column=2)
-		self.Sal1MilEntry.bind('<Return>',self.Set1Mil)
+		self.Sal1MilEntry.bind('<Return>',self.write_output)
 
 	def nextpage(self, event):
 		self.clear_Overwrite_Entries()
@@ -207,19 +211,14 @@ class Application(Frame):
 			self.execjoblabel.grid_forget()
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.grid(row=1, column=1)
-
-	def Set1Mil(self, event):
-		#print(str(self.Sal1Mil.get()))
-		#Update output DF Sal1Mil == self.Sal1Mil.get()
+	
+	def write_output(self, *event):
+		#If any changes are made, these will update those; else, these will input what was there before
 		if self.Sal1MilEntry.get() != "": self.data.set_Sal1Mil(int(self.Sal1MilEntry.get()))
-
-	def SetLowSal(self, event):
 		if self.LowSalEntry.get() != "": self.data.set_LowSal(int(self.LowSalEntry.get()))
-
-	def write_output(self, event):
 		self.data.write_to_outputdf()
 
-	def write_sql(self, event):
+	def write_sql(self, *event):
 		self.data.write_to_sql()
 
 
