@@ -49,8 +49,10 @@ class Dataverse:
 			self.jobexec = self.jobsdf.loc[idsearch,'execjob']
 			self.current_index = self.jobsdf.index.get_loc(idsearch)
 			self.current_id = idsearch
-			self.Sal1Mil = self.jobsdf.loc[self.current_id,'Sal1Mil']
-			self.LowSal = self.jobsdf.loc[self.current_id,'LOWSAL']
+			if self.jobsdf.loc[self.current_id,'Sal1Mil']==None: self.Sal1Mil=""
+			else: self.Sal1Mil = self.jobsdf.loc[self.current_id,'Sal1Mil']
+			if self.jobsdf.loc[self.current_id,'LOWSAL']==None: self.LowSal=""
+			else: self.LowSal = self.jobsdf.loc[self.current_id,'LOWSAL']
 			return self.jobname
 		except KeyError:
 			return "No job found"
@@ -66,8 +68,10 @@ class Dataverse:
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
-		self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
-		self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
+		if self.jobsdf.loc[self.current_index,'Sal1Mil']==None: self.Sal1Mil=""
+		else: self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
+		if self.jobsdf.loc[self.current_index,'LOWSAL']==None: self.LowSal=""
+		else: self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
 		return jobname
 
 	def index_prior(self, *event):
@@ -81,8 +85,10 @@ class Dataverse:
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
-		self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
-		self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
+		if self.jobsdf.loc[self.current_index,'Sal1Mil']==None: self.Sal1Mil=""
+		else: self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
+		if self.jobsdf.loc[self.current_index,'LOWSAL']==None: self.LowSal=""
+		else: self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
 		return jobname
 
 	def set_Sal1Mil(self, entry, *event):
