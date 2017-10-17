@@ -126,11 +126,15 @@ class Application(Frame):
 		self.bind_all('<Prior>', self.priorpage)
 		self.bind_all('<Insert>', self.write_output)
 		self.bind_all('<Control-p>', self.write_sql)
+		# Bind self.write_sql to button also
 
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
 		self.data = Dataverse()
-		#self.jid = StringVar()
+		self.SaveButton = Button(self,text="Save Changes",command=self.write_output)
+		self.SaveButton.grid(row=0,column=8)
+		self.SQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
+		self.SQLButton.grid(row=0,column=9)
 		self.JobIdLabel = Label(self,text="JobId")
 		self.JobIdLabel.grid(row=0,column=0)
 		self.jobidentry = Entry(self, width=15)
@@ -208,18 +212,19 @@ class Application(Frame):
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.grid(row=1, column=1)
 
-	def Set1Mil(self, event):
-		#print(str(self.Sal1Mil.get()))
+	def Set1Mil(self, *event):
 		#Update output DF Sal1Mil == self.Sal1Mil.get()
 		if self.Sal1MilEntry.get() != "": self.data.set_Sal1Mil(int(self.Sal1MilEntry.get()))
 
-	def SetLowSal(self, event):
+	def SetLowSal(self, *event):
 		if self.LowSalEntry.get() != "": self.data.set_LowSal(int(self.LowSalEntry.get()))
 
-	def write_output(self, event):
+	def write_output(self, *event):
+		self.SetLowSal()
+		self.Set1Mil()
 		self.data.write_to_outputdf()
 
-	def write_sql(self, event):
+	def write_sql(self, *event):
 		self.data.write_to_sql()
 
 
