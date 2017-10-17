@@ -212,12 +212,12 @@ class Application(Frame):
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.grid(row=1, column=1)
 
-	def Set1Mil(self, *event):
+	#def Set1Mil(self, *event):
 		#Update output DF Sal1Mil == self.Sal1Mil.get()
-		if self.Sal1MilEntry.get() != "": self.data.set_Sal1Mil(int(self.Sal1MilEntry.get()))
+	#	if self.Sal1MilEntry.get() != "": self.data.set_Sal1Mil(int(self.Sal1MilEntry.get()))
 
-	def SetLowSal(self, *event):
-		if self.LowSalEntry.get() != "": self.data.set_LowSal(int(self.LowSalEntry.get()))
+	#def SetLowSal(self, *event):
+	#	if self.LowSalEntry.get() != "": self.data.set_LowSal(int(self.LowSalEntry.get()))
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
