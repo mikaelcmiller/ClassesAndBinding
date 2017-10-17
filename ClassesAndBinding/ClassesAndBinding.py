@@ -25,7 +25,8 @@ class Dataverse:
 			, bench.CanBenchMed
 			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob 
 			FROM assessorwork.sa.pct pct 
-			left join assessorwork.sa.bench bench on bench.erijobid=pct.erijobid and bench.releaseid=pct.releaseid order by execjob desc, pct.erijobid"""
+			left join assessorwork.sa.bench bench on bench.erijobid=pct.erijobid and bench.releaseid=pct.releaseid
+			order by execjob desc, pct.erijobid"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
@@ -33,8 +34,8 @@ class Dataverse:
 		self.last_index = self.jobsdf.last_valid_index()
 		self.outputdf = pd.DataFrame(columns=self.jobsdf.columns)
 		self.outputdf['timestamp']=""
-		print(self.jobsdf)
-		print(self.outputdf)
+		#print(self.jobsdf)
+		#print(self.outputdf)
 		print("Dataframe loaded from SQL")
 
 	def find_by_erijobid(self, entry):
