@@ -138,11 +138,12 @@ class Application(Frame):
 		self.bind_all('<Prior>', self.priorpage)
 		self.bind_all('<Insert>', self.write_output)
 		self.bind_all('<Control-p>', self.write_sql)
-		# Bind self.write_sql to button also
 
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
 		self.data = Dataverse()
+		self.ReloadButton = Button(self, text="Reload data",command=self.load_Entries)
+		self.ReloadButton.grid(row=0,column=7)
 		self.SaveButton = Button(self,text="Save Changes",command=self.write_output)
 		self.SaveButton.grid(row=0,column=8)
 		self.SQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
@@ -207,6 +208,7 @@ class Application(Frame):
 		self.LowSalEntry.delete(0, END)
 	
 	def load_Entries(self, *event):
+		self.clear_Entries()
 		self.Sal1MilEntry.insert(0, str(self.data.Sal1Mil))
 		self.LowSalEntry.insert(0, str(self.data.LowSal))
 
