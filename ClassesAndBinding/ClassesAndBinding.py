@@ -49,6 +49,8 @@ class Dataverse:
 			self.jobexec = self.jobsdf.loc[idsearch,'execjob']
 			self.current_index = self.jobsdf.index.get_loc(idsearch)
 			self.current_id = idsearch
+			self.Sal1Mil = self.jobsdf.loc[self.current_id,'Sal1Mil']
+			self.LowSal = self.jobsdf.loc[self.current_id,'LOWSAL']
 			return self.jobname
 		except KeyError:
 			return "No job found"
@@ -64,6 +66,8 @@ class Dataverse:
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
+		self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
+		self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
 		return jobname
 
 	def index_prior(self, *event):
@@ -77,8 +81,10 @@ class Dataverse:
 		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
+		self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
+		self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
 		return jobname
-	
+
 	def set_Sal1Mil(self, entry, *event):
 		# Ensure a row for current_id exists to update Sal1Mil value
 		self.write_to_outputdf()
@@ -157,20 +163,22 @@ class Application(Frame):
 		self.Sal1MilEntry.bind('<Return>',self.write_output)
 
 	def nextpage(self, event):
-		self.clear_Overwrite_Entries()
+		self.clear_Entries()
 		jobtext = self.data.index_next()
 		print(jobtext)
 		self.foundit(jobtext)
 		self.exec_job()
 		self.jobentryreplace()
+		self.load_Entries()
 
 	def priorpage(self, event):
-		self.clear_Overwrite_Entries()
+		self.clear_Entries()
 		jobtext = self.data.index_prior()
 		print(jobtext)
 		self.foundit(jobtext)
 		self.exec_job()
 		self.jobentryreplace()
+		self.load_Entries()
 
 	def jobentryreplace(self):
 		self.jobidentry.delete(0, END)
@@ -188,12 +196,16 @@ class Application(Frame):
 		else: 
 			self.execjoblabel.config(text="Non-Executive Job")
 
-	def clear_Overwrite_Entries(self, *event):
+	def clear_Entries(self, *event):
 		self.Sal1MilEntry.delete(0, END)
 		self.LowSalEntry.delete(0, END)
+	
+	def load_Entries(self, *event):
+		self.Sal1MilEntry.insert(0, str(self.data.Sal1Mil))
+		self.LowSalEntry.insert(0, str(self.data.LowSal))
 
 	def jobidsearch(self, event):
-		self.clear_Overwrite_Entries()
+		self.clear_Entries()
 		try:
 			self.intjobidentry = int(self.jobidentry.get())
 			jobtext = self.data.find_by_erijobid(self.intjobidentry)
@@ -206,11 +218,13 @@ class Application(Frame):
 				self.execjoblabel.grid_forget()
 			else: self.jobfound.config(foreground="Black")
 			self.jobfound.grid(row=1, column=1)
+			self.load_Entries()
 		except ValueError:
 			self.jobfound.grid_forget()
 			self.execjoblabel.grid_forget()
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.grid(row=1, column=1)
+			self.clear_Entries()
 	
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
