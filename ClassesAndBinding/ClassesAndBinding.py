@@ -147,14 +147,14 @@ class Application(Frame):
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
 		self.LowSalEntry = Entry(self, width=15)
 		self.LowSalEntry.grid(row=6,column=2)
-		self.LowSalEntry.bind('<Return>',self.SetLowSal)
+		self.LowSalEntry.bind('<Return>',self.write_output)
 		self.LowSalLabel = Label(self, text="LowSal")
 		self.LowSalLabel.grid(row=6,column=1)
 		self.Sal1MilLabel = Label(self,text="Sal1Mil")
 		self.Sal1MilLabel.grid(row=7,column=1)
 		self.Sal1MilEntry = Entry(self, width=15)
 		self.Sal1MilEntry.grid(row=7,column=2)
-		self.Sal1MilEntry.bind('<Return>',self.Set1Mil)
+		self.Sal1MilEntry.bind('<Return>',self.write_output)
 
 	def nextpage(self, event):
 		self.clear_Overwrite_Entries()
@@ -220,8 +220,9 @@ class Application(Frame):
 		if self.LowSalEntry.get() != "": self.data.set_LowSal(int(self.LowSalEntry.get()))
 
 	def write_output(self, *event):
-		self.SetLowSal()
-		self.Set1Mil()
+		#If any changes are made, these will update those; else, these will input what was there before
+		if self.Sal1MilEntry.get() != "": self.data.set_Sal1Mil(int(self.Sal1MilEntry.get()))
+		if self.LowSalEntry.get() != "": self.data.set_LowSal(int(self.LowSalEntry.get()))
 		self.data.write_to_outputdf()
 
 	def write_sql(self, *event):
