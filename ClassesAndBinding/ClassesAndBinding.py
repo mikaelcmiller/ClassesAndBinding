@@ -143,12 +143,6 @@ class Application(Frame):
 	def create_widgets(self):
 		self.pack(fill=BOTH, expand=1)
 		self.data = Dataverse()
-		self.ReloadButton = Button(self, text="Reload data",command=self.load_Entries)
-		self.ReloadButton.grid(row=0,column=7)
-		self.SaveButton = Button(self,text="Save Changes",command=self.write_output)
-		self.SaveButton.grid(row=0,column=8)
-		self.SQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
-		self.SQLButton.grid(row=0,column=9)
 		self.JobIdLabel = Label(self,text="JobId")
 		self.JobIdLabel.grid(row=0,column=0)
 		self.jobidentry = Entry(self, width=15)
@@ -169,6 +163,12 @@ class Application(Frame):
 		self.Sal1MilEntry = Entry(self, width=15)
 		self.Sal1MilEntry.grid(row=7,column=2)
 		self.Sal1MilEntry.bind('<Return>',self.write_output)
+		self.ReloadButton = Button(self, text="Reload data",command=self.load_Entries)
+		self.ReloadButton.grid(row=0,column=7)
+		self.SaveButton = Button(self,text="Save Changes",command=self.write_output)
+		self.SaveButton.grid(row=0,column=8)
+		self.SQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
+		self.SQLButton.grid(row=0,column=9)
 
 	def nextpage(self, event):
 		self.clear_Entries()
@@ -225,9 +225,11 @@ class Application(Frame):
 			if jobtext=="No job found": 
 				self.jobfound.config(foreground="Red")
 				self.execjoblabel.grid_forget()
-			else: self.jobfound.config(foreground="Black")
+				self.clear_Entries()
+			else:
+				self.jobfound.config(foreground="Black")
+				self.load_Entries()
 			self.jobfound.grid(row=1, column=1)
-			self.load_Entries()
 		except ValueError:
 			self.jobfound.grid_forget()
 			self.execjoblabel.grid_forget()
