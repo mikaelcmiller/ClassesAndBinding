@@ -50,6 +50,8 @@ class Dataverse:
 			self.jobexec = self.jobsdf.loc[idsearch,'execjob']
 			self.current_index = self.jobsdf.index.get_loc(idsearch)
 			self.current_id = idsearch
+			
+			#Need to check if exists in outputdf, if so: pull from output df instead of jobsdf
 			if self.jobsdf.loc[self.current_id,'Sal1Mil']==None: self.Sal1Mil=""
 			else: self.Sal1Mil = self.jobsdf.loc[self.current_id,'Sal1Mil']
 			if self.jobsdf.loc[self.current_id,'LOWSAL']==None: self.LowSal=""
