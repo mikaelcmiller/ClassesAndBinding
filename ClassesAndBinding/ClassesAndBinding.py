@@ -56,9 +56,9 @@ class Dataverse:
 			else: self.Sal1Mil = self.jobsdf.loc[self.current_id,'Sal1Mil']
 			if self.jobsdf.loc[self.current_id,'LOWSAL']==None: self.LowSal=""
 			else: self.LowSal = self.jobsdf.loc[self.current_id,'LOWSAL']
-			return self.jobname
+			#return self.jobname
 		except KeyError:
-			return "No job found"
+			self.jobname = "No job found"
 
 	def index_next(self ,*event):
 		try:
@@ -69,13 +69,13 @@ class Dataverse:
 		if self.current_index < self.last_index: self.current_index = self.current_index + 1
 		else: self.current_index = 0
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
-		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
+		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 		if self.jobsdf.loc[self.current_index,'Sal1Mil']==None: self.Sal1Mil=""
 		else: self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
 		if self.jobsdf.loc[self.current_index,'LOWSAL']==None: self.LowSal=""
 		else: self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
-		return jobname
+		#return jobname
 
 	def index_prior(self, *event):
 		try:
@@ -85,14 +85,14 @@ class Dataverse:
 			pass
 		if self.current_index > 0: self.current_index = self.current_index - 1
 		else: self.current_index = self.last_index
-		jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
+		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 		if self.jobsdf.loc[self.current_index,'Sal1Mil']==None: self.Sal1Mil=""
 		else: self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
 		if self.jobsdf.loc[self.current_index,'LOWSAL']==None: self.LowSal=""
 		else: self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
-		return jobname
+		#return jobname
 
 	def set_Sal1Mil(self, entry, *event):
 		# Ensure a row for current_id exists to update Sal1Mil value
@@ -153,7 +153,7 @@ class Application(Frame):
 		self.jobfound = Label(self)
 		self.blank = Label(self,text=" ")
 		self.execjoblabel = Label(self)
-		self.execjoblabel.grid(row=2, column=1)
+		self.execjoblabel.grid(row=2, column=1) 
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
 		self.LowSalEntry = Entry(self, width=15)
 		self.LowSalEntry.grid(row=6,column=2)
@@ -174,7 +174,8 @@ class Application(Frame):
 
 	def nextpage(self, event):
 		self.clear_Entries()
-		jobtext = self.data.index_next()
+		self.data.index_next()
+		jobtext = self.data.jobname
 		print(jobtext)
 		self.foundit(jobtext)
 		self.exec_job()
@@ -183,7 +184,8 @@ class Application(Frame):
 
 	def priorpage(self, event):
 		self.clear_Entries()
-		jobtext = self.data.index_prior()
+		self.data.index_prior()
+		jobtext = self.data.jobname
 		print(jobtext)
 		self.foundit(jobtext)
 		self.exec_job()
@@ -219,7 +221,8 @@ class Application(Frame):
 		self.clear_Entries()
 		try:
 			self.intjobidentry = int(self.jobidentry.get())
-			jobtext = self.data.find_by_erijobid(self.intjobidentry)
+			self.data.find_by_erijobid(self.intjobidentry)
+			jobtext = self.data.jobname
 			self.exec_job()
 			self.invalidsearchwarning.grid_forget()
 			print(jobtext)
