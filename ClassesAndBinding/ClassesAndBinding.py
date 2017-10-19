@@ -171,7 +171,7 @@ class Application(Frame):
 		self.SaveButton.grid(row=0,column=8)
 		self.SQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
 		self.SQLButton.grid(row=0,column=9)
-
+## Navigation
 	def nextpage(self, event):
 		self.clear_Entries()
 		self.data.index_next()
@@ -191,6 +191,31 @@ class Application(Frame):
 		self.exec_job()
 		self.jobentryreplace()
 		self.load_Entries()
+
+	def jobidsearch(self, event):
+		self.clear_Entries()
+		try:
+			self.intjobidentry = int(self.jobidentry.get())
+			self.data.find_by_erijobid(self.intjobidentry)
+			jobtext = self.data.jobname
+			self.exec_job()
+			self.invalidsearchwarning.grid_forget()
+			print(jobtext)
+			self.jobfound.config(text=jobtext)
+			if jobtext=="No job found": 
+				self.jobfound.config(foreground="Red")
+				self.execjoblabel.grid_forget()
+				self.clear_Entries()
+			else:
+				self.jobfound.config(foreground="Black")
+				self.load_Entries()
+			self.jobfound.grid(row=1, column=1)
+		except ValueError:
+			self.jobfound.grid_forget()
+			self.execjoblabel.grid_forget()
+			print("Not a valid search entry.")
+			self.invalidsearchwarning.grid(row=1, column=1)
+			self.clear_Entries()
 
 	def jobentryreplace(self):
 		self.jobidentry.delete(0, END)
@@ -217,30 +242,6 @@ class Application(Frame):
 		self.Sal1MilEntry.insert(0, str(self.data.Sal1Mil))
 		self.LowSalEntry.insert(0, str(self.data.LowSal))
 
-	def jobidsearch(self, event):
-		self.clear_Entries()
-		try:
-			self.intjobidentry = int(self.jobidentry.get())
-			self.data.find_by_erijobid(self.intjobidentry)
-			jobtext = self.data.jobname
-			self.exec_job()
-			self.invalidsearchwarning.grid_forget()
-			print(jobtext)
-			self.jobfound.config(text=jobtext)
-			if jobtext=="No job found": 
-				self.jobfound.config(foreground="Red")
-				self.execjoblabel.grid_forget()
-				self.clear_Entries()
-			else:
-				self.jobfound.config(foreground="Black")
-				self.load_Entries()
-			self.jobfound.grid(row=1, column=1)
-		except ValueError:
-			self.jobfound.grid_forget()
-			self.execjoblabel.grid_forget()
-			print("Not a valid search entry.")
-			self.invalidsearchwarning.grid(row=1, column=1)
-			self.clear_Entries()
 	
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
