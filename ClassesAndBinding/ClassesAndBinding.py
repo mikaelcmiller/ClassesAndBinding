@@ -169,8 +169,8 @@ class Application(Frame):
 		self.ReloadButton.grid(row=0,column=7)
 		self.SaveButton = Button(self,text="Save Changes",command=self.write_output)
 		self.SaveButton.grid(row=0,column=8)
-		self.SQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
-		self.SQLButton.grid(row=0,column=9)
+		self.WriteSQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
+		self.WriteSQLButton.grid(row=0,column=9)
 ## Navigation
 	def nextpage(self, event):
 		self.clear_Entries()
