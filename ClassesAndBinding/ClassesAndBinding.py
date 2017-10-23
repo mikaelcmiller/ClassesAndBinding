@@ -147,9 +147,9 @@ class Application(Frame):
 		self.data = Dataverse()
 		self.JobIdLabel = Label(self,text="JobId")
 		self.JobIdLabel.grid(row=0,column=0)
-		self.jobidentry = Entry(self, width=15)
-		self.jobidentry.grid(row=0, column=1)
-		self.jobidentry.bind('<Return>',self.jobidsearch)
+		self.jobidsearchentry = Entry(self, width=15)
+		self.jobidsearchentry.grid(row=0, column=1)
+		self.jobidsearchentry.bind('<Return>',self.jobidsearch)
 		self.jobfound = Label(self)
 		self.blank = Label(self,text=" ")
 		self.execjoblabel = Label(self)
@@ -195,8 +195,8 @@ class Application(Frame):
 	def jobidsearch(self, event):
 		self.clear_Entries()
 		try:
-			self.intjobidentry = int(self.jobidentry.get())
-			self.data.find_by_erijobid(self.intjobidentry)
+			self.intjobidsearchentry = int(self.jobidsearchentry.get())
+			self.data.find_by_erijobid(self.intjobidsearchentry)
 			jobtext = self.data.jobname
 			self.exec_job()
 			self.invalidsearchwarning.grid_forget()
@@ -218,8 +218,8 @@ class Application(Frame):
 			self.clear_Entries()
 
 	def jobentryreplace(self):
-		self.jobidentry.delete(0, END)
-		self.jobidentry.insert(0, str(self.data.current_id))
+		self.jobidsearchentry.delete(0, END)
+		self.jobidsearchentry.insert(0, str(self.data.current_id))
 
 	def foundit(self, entry):
 		self.jobfound.config(text=entry, foreground="Black")
@@ -242,7 +242,6 @@ class Application(Frame):
 		self.Sal1MilEntry.insert(0, str(self.data.Sal1Mil))
 		self.LowSalEntry.insert(0, str(self.data.LowSal))
 
-	
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
 		if self.Sal1MilEntry.get() != "": self.data.set_Sal1Mil(int(self.Sal1MilEntry.get()))
