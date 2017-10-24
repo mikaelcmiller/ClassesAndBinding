@@ -143,6 +143,16 @@ class Application(Frame):
 		self.bind_all('<Control-p>', self.write_sql)
 
 	def create_widgets(self):
+		# Widget templates :
+		# Entry box (user types in entry box) [editable]: self.[EntryName] = Entry(self, width=[15])
+		# Button (activates functions when pressed): self.[BtnName] = Button(self, text="[BtnText]", command=[python function])
+		# # # Binding button to entry key when highlighted: self.[BtnName].bind('<Return>',[same python function referenced in command= in button definition])
+		# Universal Label (does not update, static) [noedit]: self.[LabelName] = Label(self, text="[Label Text]")
+		# Update Label (updates with user entry) [noedit]: self.[LabelName] = Label(self, text="[initial text]", relief="groove")
+		# # # Overwriting an update label:
+		# # #		self.[LabelVarName].delete(0, END)
+		# # #		self.[LabelVarName].insert(0, [value to pull])
+		# /End widget formats
 		self.pack(fill=BOTH, expand=1)
 		self.data = Dataverse()
 		self.JobIdLabel = Label(self,text="JobId")
@@ -169,6 +179,7 @@ class Application(Frame):
 		self.Sal1MilEntry.bind('<Return>',self.write_output)
 		self.ReloadBtn = Button(self, text="Reload data",command=self.load_Entries)
 		self.ReloadBtn.grid(row=0,column=7)
+		self.ReloadBtn.bind('<Return>', self.load_Entries)
 		self.CommitBtn = Button(self,text="Save Changes",command=self.write_output)
 		self.CommitBtn.grid(row=0,column=8)
 		self.WriteSQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
