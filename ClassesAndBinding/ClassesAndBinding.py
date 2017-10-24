@@ -160,6 +160,8 @@ class Application(Frame):
 		self.LowSalEntry = Entry(self, width=15)
 		self.LowSalEntry.grid(row=6,column=2)
 		self.LowSalEntry.bind('<Return>',self.write_output)
+		self.AutoUpdateLabel = Label(self, text="Auto-update label", borderwidth=2, relief="groove")
+		self.AutoUpdateLabel.grid(row=6, column=3)
 		self.Sal1MilLabel = Label(self,text="Sal1Mil")
 		self.Sal1MilLabel.grid(row=7,column=1)
 		self.Sal1MilEntry = Entry(self, width=15)
