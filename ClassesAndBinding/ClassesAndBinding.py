@@ -160,7 +160,7 @@ class Application(Frame):
 		#self.JobIdSearchEntry = Entry(self, width=15)
 		#self.JobIdSearchEntry.grid(row=0, column=1)
 		#self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
-		self.jobfound = Label(self)
+		self.JobTitleLabel = Label(self)
 		#self.blank = Label(self,text=" ")
 		self.execjoblabel = Label(self)
 		#self.execjoblabel.grid(row=2, column=1)
@@ -184,6 +184,7 @@ class Application(Frame):
 		#self.CommitBtn.grid(row=0,column=8)
 		self.WriteSQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
 		#self.WriteSQLButton.grid(row=0,column=9)
+		self.columnconfigure(0, minsize=50)
 		
 ###########################
 #### Created from Google Sheet 
@@ -373,7 +374,7 @@ class Application(Frame):
 		self.Adder.grid(row=31, column=7)
 		self.Description = Label(self,text="Job Description")
 		self.Description.grid(row=32, column=0)
-		self.JobTitleLabel = Label(self, text="[Initial Text]", relief="groove")
+		self.JobTitleLabel = Label(self, text="[Initial Text]", relief="groove", width=45)
 		self.JobTitleLabel.grid(row=2, column=0)
 		self.ERIJobIdLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.ERIJobIdLabel.grid(row=2, column=2)
@@ -472,7 +473,7 @@ class Application(Frame):
 		self.CanPolyMeanQCLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.CanPolyMeanQCLabel.grid(row=27, column=6)
 		self.ReptoLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.ReptoLabel.grid(row=29, column=0)
+		self.ReptoLabel.grid(row=29, column=0, sticky="E")
 		self.ReptoSalLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.ReptoSalLabel.grid(row=29, column=4)
 		self.ReptoYr3Label = Label(self, text="[Initial Text]", relief="groove")
@@ -524,17 +525,17 @@ class Application(Frame):
 			self.exec_job()
 			self.invalidsearchwarning.grid_forget()
 			print(jobtext)
-			self.jobfound.config(text=jobtext)
+			self.JobTitleLabel.config(text=jobtext)
 			if jobtext=="No job found": 
-				self.jobfound.config(foreground="Red")
+				self.JobTitleLabel.config(foreground="Red")
 				self.execjoblabel.grid_forget()
 				self.clear_Entries()
 			else:
-				self.jobfound.config(foreground="Black")
+				self.JobTitleLabel.config(foreground="Black")
 				self.load_Entries()
-			self.jobfound.grid(row=1, column=1)
+			self.JobTitleLabel.grid(row=2, column=0)
 		except ValueError:
-			self.jobfound.grid_forget()
+			self.JobTitleLabel.grid_forget()
 			self.execjoblabel.grid_forget()
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.grid(row=1, column=1)
@@ -545,8 +546,8 @@ class Application(Frame):
 		self.JobIdSearchEntry.insert(0, str(self.data.current_id))
 
 	def foundit(self, entry):
-		self.jobfound.config(text=entry, foreground="Black")
-		self.jobfound.grid(row=1, column=1)
+		self.JobTitleLabel.config(text=entry, foreground="Black")
+		self.JobTitleLabel.grid(row=2, column=0)
 		self.invalidsearchwarning.grid_forget()
 
 	def exec_job(self):
