@@ -392,8 +392,12 @@ class Application(Frame):
 		self.Pct90B100Label.grid(row=4, column=4)
 		self.B100Q1Label = Label(self, text="[Initial Text]", relief="groove")
 		self.B100Q1Label.grid(row=4, column=6)
-		self.RawDataLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.RawDataLabel.grid(row=5, column=0)
+		self.RawDataLabel = Label(self, text="""[Initial 
+
+
+
+					Text]""", relief="groove", width=50)
+		self.RawDataLabel.grid(row=5, column=0, rowspan=21, sticky="N")
 		self.Pct10HighB1Label = Label(self, text="[Initial Text]", relief="groove")
 		self.Pct10HighB1Label.grid(row=5, column=2)
 		self.MeanHigh1BLabel = Label(self, text="[Initial Text]", relief="groove")
@@ -577,7 +581,7 @@ class Application(Frame):
 
 
 root = Tk()
-root.geometry("1000x750")
+root.geometry("1100x750")
 app = Application(root)
 root.mainloop()
 
