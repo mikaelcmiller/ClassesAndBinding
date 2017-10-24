@@ -135,7 +135,9 @@ class Application(Frame):
 		"""Initialize the Frame"""
 		Frame.__init__(self, master)
 		self.master = master
+		self.data = Dataverse()
 		self.master.title("Data Audit Window")
+		self.pack(fill=BOTH, expand=0)
 		self.create_widgets()
 		self.bind_all('<Next>', self.nextpage)
 		self.bind_all('<Prior>', self.priorpage)
@@ -153,8 +155,6 @@ class Application(Frame):
 		# # #		self.[LabelVarName].delete(0, END)
 		# # #		self.[LabelVarName].insert(0, [value to pull])
 		# /End widget formats
-		self.pack(fill=BOTH, expand=1)
-		self.data = Dataverse()
 		self.JobIdLabel = Label(self,text="JobId")
 		self.JobIdLabel.grid(row=0,column=0)
 		self.jobidsearchentry = Entry(self, width=15)
