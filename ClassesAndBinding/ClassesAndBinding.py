@@ -99,7 +99,8 @@ class Dataverse:
 		self.MedTotalCompData = self.jobsdf.loc[self.current_index,'MedTotalComp']
 		self.LowTotalCompData = self.jobsdf.loc[self.current_index,'LowTotalComp']
 		self.Mil1TotalCompData = self.jobsdf.loc[self.current_index,'TotalComp1Mil']
-		print(  str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData)+" | "+str(self.HighPredPctData)  )
+		if pd.isnull(self.jobsdf.loc[self.current_index,'EstimatedYears']) : self.EstimatedYears = "NA"
+		else: self.EstimatedYears = int(self.jobsdf.loc[self.current_index,'EstimatedYears'])
 
 	def set_datavariables_id(self, *event):
 		self.JobTitleData = self.jobsdf.loc[self.current_id,'jobdottitle']
@@ -112,7 +113,8 @@ class Dataverse:
 		self.MedTotalCompData = self.jobsdf.loc[self.current_id,'MedTotalComp']
 		self.LowTotalCompData = self.jobsdf.loc[self.current_id,'LowTotalComp']
 		self.Mil1TotalCompData = self.jobsdf.loc[self.current_id,'TotalComp1Mil']
-		print(  str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData)+" | "+str(self.HighPredPctData)  )
+		if pd.isnull(self.jobsdf.loc[self.current_id,'EstimatedYears']) : self.EstimatedYears = "NA"
+		else: self.EstimatedYears = int(self.jobsdf.loc[self.current_id,'EstimatedYears'])
 
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
@@ -576,6 +578,7 @@ class Application(Frame):
 		self.MedTotalCompLabel.config(text="    ")
 		self.LowTotalCompLabel.config(text="    ")
 		self.Mil1TotalCompLabel.config(text="    ")
+		self.EstimatedYearsLabel.config(text="    ")
 
 	def labels_reload(self, *event):
 		if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
@@ -589,6 +592,7 @@ class Application(Frame):
 		self.MedTotalCompLabel.config(text= self.data.MedTotalCompData)
 		self.LowTotalCompLabel.config(text= self.data.LowTotalCompData)
 		self.Mil1TotalCompLabel.config(text= self.data.Mil1TotalCompData)
+		self.EstimatedYearsLabel.config(text= self.data.EstimatedYears)
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
