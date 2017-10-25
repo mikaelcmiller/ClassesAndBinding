@@ -16,6 +16,8 @@ class Dataverse:
 		self.current_index = 0
 		self.current_id = 1
 		self.jobexec=1
+		self.jobname = "Chief Executive Officer"
+		self.set_datavariables_index()
 		print("DF Initialized")
 
 	def inititalizedataframe(self):
@@ -131,6 +133,7 @@ class Application(Frame):
 		self.master.title("Data Audit Window")
 		self.pack(fill=BOTH, expand=0)
 		self.create_widgets()
+		self.labels_reload()
 		self.bind_all('<Next>', self.nextpage)
 		self.bind_all('<Prior>', self.priorpage)
 		self.bind_all('<Insert>', self.write_output)
@@ -498,7 +501,8 @@ class Application(Frame):
 		#self.load_Entries()
 
 	def jobidsearch(self, event):
-		self.clear_Entries()
+		self.labels_clear()
+		#self.clear_Entries()
 		try:
 			self.intJobIdSearchEntry = int(self.JobIdSearchEntry.get())
 			print(str(self.JobIdSearchEntry.get()))
@@ -507,19 +511,21 @@ class Application(Frame):
 			#self.exec_job()
 			self.invalidsearchwarning.grid_forget()
 			self.labels_reload()
-			if self.data.jobname=="No job found": 
+			if self.data.jobname=="No job found":
 				self.JobTitleLabel.config(foreground="Red")
-				self.clear_Entries()
+				self.labels_clear()
 			else:
 				self.JobTitleLabel.config(foreground="Black")
-				self.load_Entries()
-			self.JobTitleLabel.grid(row=2, column=0)
+				#self.load_Entries()
+			#self.JobTitleLabel.grid(row=2, column=0)
 		except ValueError:
-			self.JobTitleLabel.grid_forget()
+			#self.JobTitleLabel.grid_forget()
 			#self.execjoblabel.grid_forget()
-			print("Not a valid search entry.")
-			self.invalidsearchwarning.grid(row=1, column=1)
-			self.clear_Entries()
+			#print("Not a valid search entry.")
+			#self.invalidsearchwarning.grid(row=2, column=0)
+			#self.clear_Entries()
+			self.JobTitleLabel.config(text="Not a valid search entry")
+			self.labels_clear()
 
 ### Text Editing
 	def jobentryreplace(self):
@@ -545,7 +551,8 @@ class Application(Frame):
 		pass
 
 	def labels_clear(self, *event):
-		self.JobDotLabel.config(text="")
+		self.JobDotLabel.config(text="    ")
+		self.ExecJobLabel.config(text="    ")
 
 	def labels_reload(self, *event):
 		self.JobTitleLabel.config(text= self.data.jobname)
