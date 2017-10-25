@@ -102,6 +102,11 @@ class Dataverse:
 		self.Mil1TotalCompData = self.jobsdf.loc[self.current_index,'TotalComp1Mil']
 		if pd.isnull(self.jobsdf.loc[self.current_index,'EstimatedYears']) : self.EstimatedYears = "NA"
 		else: self.EstimatedYears = int(self.jobsdf.loc[self.current_index,'EstimatedYears'])
+		self.B100Q1Data = self.jobsdf.loc[self.current_index,'Q1100Bil']
+		self.HighQ1Data = self.jobsdf.loc[self.current_index,'Q1High']
+		self.MedQ1Data = self.jobsdf.loc[self.current_index,'Q1Med']
+		self.LowQ1Data = self.jobsdf.loc[self.current_index,'Q1Low']
+		self.Mil1Q1Data = self.jobsdf.loc[self.current_index,'Q11Mil']
 
 	def set_datavariables_id(self, *event):
 		self.JobTitleData = self.jobsdf.loc[self.current_id,'jobdottitle']
@@ -117,6 +122,11 @@ class Dataverse:
 		self.Mil1TotalCompData = self.jobsdf.loc[self.current_id,'TotalComp1Mil']
 		if pd.isnull(self.jobsdf.loc[self.current_id,'EstimatedYears']) : self.EstimatedYears = "NA"
 		else: self.EstimatedYears = int(self.jobsdf.loc[self.current_id,'EstimatedYears'])
+		self.B100Q1Data = self.jobsdf.loc[self.current_id,'Q1100Bil']
+		self.HighQ1Data = self.jobsdf.loc[self.current_id,'Q1High']
+		self.MedQ1Data = self.jobsdf.loc[self.current_id,'Q1Med']
+		self.LowQ1Data = self.jobsdf.loc[self.current_id,'Q1Low']
+		self.Mil1Q1Data = self.jobsdf.loc[self.current_id,'Q11Mil']
 
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
@@ -581,6 +591,11 @@ class Application(Frame):
 		self.LowTotalCompLabel.config(text="    ")
 		self.Mil1TotalCompLabel.config(text="    ")
 		self.EstimatedYearsLabel.config(text="    ")
+		self.B100Q1Label.config(text="    ")
+		self.HighQ1Label.config(text="    ")
+		self.MedQ1Label.config(text="    ")
+		self.LowQ1Label.config(text="    ")
+		self.Mil1Q1Label.config(text="    ")
 
 	def labels_reload(self, *event):
 		if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
@@ -596,6 +611,11 @@ class Application(Frame):
 		self.LowTotalCompLabel.config(text= self.data.LowTotalCompData)
 		self.Mil1TotalCompLabel.config(text= self.data.Mil1TotalCompData)
 		self.EstimatedYearsLabel.config(text= self.data.EstimatedYears)
+		self.B100Q1Label.config(text= self.data.B100Q1Data)
+		self.HighQ1Label.config(text= self.data.HighQ1Data)
+		self.MedQ1Label.config(text= self.data.MedQ1Data)
+		self.LowQ1Label.config(text= self.data.LowQ1Data)
+		self.Mil1Q1Label.config(text= self.data.Mil1Q1Data)
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
