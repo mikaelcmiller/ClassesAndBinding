@@ -20,7 +20,7 @@ class Dataverse:
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		self.sql = """SELECT pct.*
+		self.sql = """SELECT pct.*, round((LowPred/MedPred),.01) as LowPredCalc
 			, bench.USBenchMed
 			, bench.CanBenchMed
 			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob 
@@ -34,6 +34,8 @@ class Dataverse:
 		self.last_index = self.jobsdf.last_valid_index()
 		self.outputdf = pd.DataFrame(columns=self.jobsdf.columns)
 		self.outputdf['timestamp']=""
+		print(self.jobsdf[['indexmaster','indexsearch']])
+		#print(sorted(list(self.jobsdf.columns.values)))
 		#print(self.jobsdf)
 		#print(self.outputdf)
 		print("Dataframe loaded from SQL")
@@ -48,9 +50,9 @@ class Dataverse:
 				pass
 			self.jobname = self.jobsdf.loc[idsearch,'jobdottitle']
 			self.jobexec = self.jobsdf.loc[idsearch,'execjob']
-			self.current_index = self.jobsdf.index.get_loc(idsearch)
 			self.current_id = idsearch
-			
+			self.current_index = self.jobsdf.loc[self.current_id,'index1'] #self.jobsdf.index.get_loc(idsearch)
+			self.set_datavariables_id()
 			#Need to check if exists in outputdf, if so: pull from output df instead of jobsdf
 			if self.jobsdf.loc[self.current_id,'Sal1Mil']==None: self.Sal1Mil=""
 			else: self.Sal1Mil = self.jobsdf.loc[self.current_id,'Sal1Mil']
@@ -71,6 +73,7 @@ class Dataverse:
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
+		self.set_datavariables_index()
 		if self.jobsdf.loc[self.current_index,'Sal1Mil']==None: self.Sal1Mil=""
 		else: self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
 		if self.jobsdf.loc[self.current_index,'LOWSAL']==None: self.LowSal=""
@@ -88,23 +91,36 @@ class Dataverse:
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
+		self.set_datavariables_index()
 		if self.jobsdf.loc[self.current_index,'Sal1Mil']==None: self.Sal1Mil=""
 		else: self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
 		if self.jobsdf.loc[self.current_index,'LOWSAL']==None: self.LowSal=""
 		else: self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
 		#return jobname
 
+	def set_datavariables_index(self, *event):
+		self.JobTitleData = self.jobsdf.loc[self.current_index,'jobdottitle']
+		self.ERIJobIdData = self.jobsdf.loc[self.current_index,'erijobid']
+		self.JobDotData = self.jobsdf.loc[self.current_index,'jobdot']
+		print(str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData))
+
+	def set_datavariables_id(self, *event):
+		self.JobTitleData = self.jobsdf.loc[self.current_id,'jobdottitle']
+		self.ERIJobIdData = self.jobsdf.loc[self.current_id,'erijobid']
+		self.JobDotData = self.jobsdf.loc[self.current_id,'jobdot']
+		print(str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData))
+
 	def set_Sal1Mil(self, entry, *event):
 		# Ensure a row for current_id exists to update Sal1Mil value
 		self.write_to_outputdf()
 		# Set Sal1Mil to entry (entry is set by user)
 		self.outputdf.at[self.current_id,'Sal1Mil'] = entry
-		print(self.outputdf.loc[self.current_id,'erijobid':'Sal1Mil'])
+		#print(self.outputdf.loc[self.current_id,'erijobid':'Sal1Mil'])
 
 	def set_LowSal(self, entry, *event):
 		self.write_to_outputdf()
 		self.outputdf.at[self.current_id,'LOWSAL'] = entry
-		print(str(self.outputdf.loc[self.current_id,'erijobid'])+" || "+str(self.outputdf.loc[self.current_id,'LOWSAL']))
+		#print(str(self.outputdf.loc[self.current_id,'erijobid'])+" || "+str(self.outputdf.loc[self.current_id,'LOWSAL']))
 
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
@@ -180,7 +196,7 @@ class Application(Frame):
 		self.ReloadBtn = Button(self, text="Reload data",command=self.load_Entries)
 		#self.ReloadBtn.grid(row=0,column=7)
 		#self.ReloadBtn.bind('<Return>', self.load_Entries)
-		self.CommitBtn = Button(self,text="Save Changes",command=self.write_output)
+		self.CommitBtn = Button(self,text="Save Changes", command=self.write_output)
 		#self.CommitBtn.grid(row=0,column=8)
 		self.WriteSQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
 		#self.WriteSQLButton.grid(row=0,column=9)
@@ -196,6 +212,7 @@ class Application(Frame):
 		self.WriteSQLBtn.grid(row=0, column=7)
 		self.JobIdSearchEntry = Entry(self, width=15)
 		self.JobIdSearchEntry.grid(row=0, column=2)
+		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.B100PctEntry = Entry(self, width=15)
 		self.B100PctEntry.grid(row=10, column=3)
 		self.HighPctEntry = Entry(self, width=15)
@@ -456,8 +473,8 @@ class Application(Frame):
 		self.Mil1TotalCompLabel.grid(row=19, column=2)
 		self.StdErrPredLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.StdErrPredLabel.grid(row=20, column=2)
-		self.EstimatedYears = Label(self, text="[Initial Text]", relief="groove")
-		self.EstimatedYears.grid(row=21, column=2)
+		self.EstimatedYearsLabel = Label(self, text="[Initial Text]", relief="groove")
+		self.EstimatedYearsLabel.grid(row=21, column=2)
 		self.QCCheckCanLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.QCCheckCanLabel.grid(row=22, column=6)
 		self.CanMeanLabel = Label(self, text="[Initial Text]", relief="groove")
@@ -504,7 +521,7 @@ class Application(Frame):
 		self.clear_Entries()
 		self.data.index_next()
 		jobtext = self.data.jobname
-		print(jobtext)
+		#print(jobtext)
 		self.foundit(jobtext)
 		self.exec_job()
 		self.jobentryreplace()
@@ -514,7 +531,7 @@ class Application(Frame):
 		self.clear_Entries()
 		self.data.index_prior()
 		jobtext = self.data.jobname
-		print(jobtext)
+		#print(jobtext)
 		self.foundit(jobtext)
 		self.exec_job()
 		self.jobentryreplace()
@@ -524,11 +541,12 @@ class Application(Frame):
 		self.clear_Entries()
 		try:
 			self.intJobIdSearchEntry = int(self.JobIdSearchEntry.get())
+			print(str(self.JobIdSearchEntry.get()))
 			self.data.find_by_erijobid(self.intJobIdSearchEntry)
 			jobtext = self.data.jobname
 			self.exec_job()
 			self.invalidsearchwarning.grid_forget()
-			print(jobtext)
+			#print(jobtext)
 			self.JobTitleLabel.config(text=jobtext)
 			if jobtext=="No job found": 
 				self.JobTitleLabel.config(foreground="Red")
