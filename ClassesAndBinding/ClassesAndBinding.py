@@ -36,7 +36,7 @@ class Dataverse:
 		self.last_index = self.jobsdf.last_valid_index()
 		self.outputdf = pd.DataFrame(columns=self.jobsdf.columns)
 		self.outputdf['timestamp']=""
-		print(self.jobsdf[['indexmaster','indexsearch']])
+		#print(self.jobsdf[['indexmaster','indexsearch']])
 		#print(sorted(list(self.jobsdf.columns.values)))
 		#print(self.jobsdf)
 		#print(self.outputdf)
@@ -92,6 +92,7 @@ class Dataverse:
 		self.JobTitleData = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.ERIJobIdData = self.jobsdf.loc[self.current_index,'erijobid']
 		self.JobDotData = self.jobsdf.loc[self.current_index,'jobdot']
+		self.JobSocData = self.jobsdf.loc[self.current_index,'SOC']
 		self.HighPredPctData = self.jobsdf.loc[self.current_index,'HighPredCalc']
 		self.LowPredPctData = self.jobsdf.loc[self.current_index,'LowPredCalc']
 		self.B100TotalCompData = self.jobsdf.loc[self.current_index,'TotalComp100Bil']
@@ -106,6 +107,7 @@ class Dataverse:
 		self.JobTitleData = self.jobsdf.loc[self.current_id,'jobdottitle']
 		self.ERIJobIdData = self.jobsdf.loc[self.current_id,'erijobid']
 		self.JobDotData = self.jobsdf.loc[self.current_id,'jobdot']
+		self.JobSocData = self.jobsdf.loc[self.current_id,'SOC']
 		self.HighPredPctData = self.jobsdf.loc[self.current_id,'HighPredCalc']
 		self.LowPredPctData = self.jobsdf.loc[self.current_id,'LowPredCalc']
 		self.B100TotalCompData = self.jobsdf.loc[self.current_id,'TotalComp100Bil']
@@ -522,7 +524,6 @@ class Application(Frame):
 		#self.clear_Entries()
 		try:
 			self.intJobIdSearchEntry = int(self.JobIdSearchEntry.get())
-			print(str(self.JobIdSearchEntry.get()))
 			self.data.find_by_erijobid(self.intJobIdSearchEntry)
 			#jobtext = self.data.jobname
 			#self.exec_job()
@@ -571,6 +572,7 @@ class Application(Frame):
 	def labels_clear(self, *event):
 		self.JobDotLabel.config(text="    ")
 		self.ExecJobLabel.config(text="    ")
+		self.JobSocLabel.config(text="    ")
 		self.HighPredPctLabel.config(text="    ")
 		self.LowPredPctLabel.config(text="    ")
 		self.B100TotalCompLabel.config(text="    ")
@@ -585,6 +587,7 @@ class Application(Frame):
 		else : self.ExecJobLabel.config(text="Non-Exec")
 		self.JobTitleLabel.config(text= self.data.jobname)
 		self.JobDotLabel.config(text= self.data.JobDotData)
+		self.JobSocLabel.config(text= self.data.JobSocData)
 		self.HighPredPctLabel.config(text= str(round(self.data.HighPredPctData, 2)))
 		self.LowPredPctLabel.config(text= str(round(self.data.LowPredPctData, 2)))
 		self.B100TotalCompLabel.config(text= self.data.B100TotalCompData)
