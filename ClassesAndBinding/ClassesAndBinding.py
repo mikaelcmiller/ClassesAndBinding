@@ -107,6 +107,10 @@ class Dataverse:
 		self.MedQ1Data = self.jobsdf.loc[self.current_index,'Q1Med']
 		self.LowQ1Data = self.jobsdf.loc[self.current_index,'Q1Low']
 		self.Mil1Q1Data = self.jobsdf.loc[self.current_index,'Q11Mil']
+		self.QCCheckData = self.jobsdf.loc[self.current_index,'MedPred']
+		self.SocPredData = self.jobsdf.loc[self.current_index,'OccAve']
+		self.SurveyMeanData = self.jobsdf.loc[self.current_index,'Y_Base']
+		self.SurveyIncumbentsData = self.jobsdf.loc[self.current_index,'SurveySampleSize']
 
 	def set_datavariables_id(self, *event):
 		self.JobTitleData = self.jobsdf.loc[self.current_id,'jobdottitle']
@@ -127,6 +131,10 @@ class Dataverse:
 		self.MedQ1Data = self.jobsdf.loc[self.current_id,'Q1Med']
 		self.LowQ1Data = self.jobsdf.loc[self.current_id,'Q1Low']
 		self.Mil1Q1Data = self.jobsdf.loc[self.current_id,'Q11Mil']
+		self.QCCheckData = self.jobsdf.loc[self.current_id,'MedPred']
+		self.SocPredData = self.jobsdf.loc[self.current_id,'OccAve']
+		self.SurveyMeanData = self.jobsdf.loc[self.current_id,'Y_Base']
+		self.SurveyIncumbentsData = self.jobsdf.loc[self.current_id,'SurveySampleSize']
 
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
@@ -596,6 +604,10 @@ class Application(Frame):
 		self.MedQ1Label.config(text="    ")
 		self.LowQ1Label.config(text="    ")
 		self.Mil1Q1Label.config(text="    ")
+		self.QCCheckLabel.config(text= "    ")
+		self.SocPredLabel.config(text= "    ")
+		self.SurveyMeanLabel.config(text= "    ")
+		self.SurveyIncumbentsLabel.config(text= "    ")
 
 	def labels_reload(self, *event):
 		if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
@@ -616,6 +628,10 @@ class Application(Frame):
 		self.MedQ1Label.config(text= self.data.MedQ1Data)
 		self.LowQ1Label.config(text= self.data.LowQ1Data)
 		self.Mil1Q1Label.config(text= self.data.Mil1Q1Data)
+		self.QCCheckLabel.config(text= self.data.QCCheckData)
+		self.SocPredLabel.config(text= self.data.SocPredData)
+		self.SurveyMeanLabel.config(text= self.data.SurveyMeanData)
+		self.SurveyIncumbentsLabel.config(text= self.data.SurveyIncumbentsData)
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
