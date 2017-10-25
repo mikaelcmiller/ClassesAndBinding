@@ -110,18 +110,6 @@ class Dataverse:
 		self.JobDotData = self.jobsdf.loc[self.current_id,'jobdot']
 		print(str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData))
 
-	def set_Sal1Mil(self, entry, *event):
-		# Ensure a row for current_id exists to update Sal1Mil value
-		self.write_to_outputdf()
-		# Set Sal1Mil to entry (entry is set by user)
-		self.outputdf.at[self.current_id,'Sal1Mil'] = entry
-		#print(self.outputdf.loc[self.current_id,'erijobid':'Sal1Mil'])
-
-	def set_LowSal(self, entry, *event):
-		self.write_to_outputdf()
-		self.outputdf.at[self.current_id,'LOWSAL'] = entry
-		#print(str(self.outputdf.loc[self.current_id,'erijobid'])+" || "+str(self.outputdf.loc[self.current_id,'LOWSAL']))
-
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
 		try:
@@ -601,8 +589,6 @@ class Application(Frame):
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
-		if self.Sal1MilEntry.get() != "": self.data.set_Sal1Mil(int(self.Sal1MilEntry.get()))
-		if self.LowSalEntry.get() != "": self.data.set_LowSal(int(self.LowSalEntry.get()))
 		self.data.write_to_outputdf()
 
 	def write_sql(self, *event):
