@@ -22,7 +22,7 @@ class Dataverse:
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		self.sql = """SELECT pct.*, round((LowPred/MedPred),.01) as LowPredCalc
+		self.sql = """SELECT pct.*, round((LowPred/MedPred), 2) as LowPredCalc, round(cast(HighPred as float)/MedPred, 2) as HighPredCalc
 			, bench.USBenchMed
 			, bench.CanBenchMed
 			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob 
@@ -92,13 +92,15 @@ class Dataverse:
 		self.JobTitleData = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.ERIJobIdData = self.jobsdf.loc[self.current_index,'erijobid']
 		self.JobDotData = self.jobsdf.loc[self.current_index,'jobdot']
-		print(str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData))
+		self.HighPredPctData = self.jobsdf.loc[self.current_index,'HighPredCalc']
+		print(  str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData)+" | "+str(self.HighPredPctData)  )
 
 	def set_datavariables_id(self, *event):
 		self.JobTitleData = self.jobsdf.loc[self.current_id,'jobdottitle']
 		self.ERIJobIdData = self.jobsdf.loc[self.current_id,'erijobid']
 		self.JobDotData = self.jobsdf.loc[self.current_id,'jobdot']
-		print(str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData))
+		self.HighPredPctData = self.jobsdf.loc[self.current_id,'HighPredCalc']
+		print(  str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData)+" | "+str(self.HighPredPctData)  )
 
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
@@ -474,6 +476,7 @@ class Application(Frame):
 		####
 		###########################
 		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
+		self.JobIdSearchEntry.insert(0, "1")
 
 ## Navigation
 	def nextpage(self, event):
@@ -524,6 +527,7 @@ class Application(Frame):
 			#print("Not a valid search entry.")
 			#self.invalidsearchwarning.grid(row=2, column=0)
 			#self.clear_Entries()
+			self.JobTitleLabel.config(foreground="Red")
 			self.JobTitleLabel.config(text="Not a valid search entry")
 			self.labels_clear()
 
@@ -553,12 +557,14 @@ class Application(Frame):
 	def labels_clear(self, *event):
 		self.JobDotLabel.config(text="    ")
 		self.ExecJobLabel.config(text="    ")
+		self.HighPredPctLabel.config(text="    ")
 
 	def labels_reload(self, *event):
-		self.JobTitleLabel.config(text= self.data.jobname)
-		self.JobDotLabel.config(text= self.data.JobDotData)
 		if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
 		else: self.ExecJobLabel.config(text="Non-Exec")
+		self.JobTitleLabel.config(text= self.data.jobname)
+		self.JobDotLabel.config(text= self.data.JobDotData)
+		self.HighPredPctLabel.config(text= self.data.HighPredPctData)
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
