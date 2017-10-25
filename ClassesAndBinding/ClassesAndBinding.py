@@ -111,6 +111,21 @@ class Dataverse:
 		self.SocPredData = self.jobsdf.loc[self.current_index,'OccAve']
 		self.SurveyMeanData = self.jobsdf.loc[self.current_index,'Y_Base']
 		self.SurveyIncumbentsData = self.jobsdf.loc[self.current_index,'SurveySampleSize']
+		self.QCCheckCanData = self.jobsdf.loc[self.current_index,'CanPred']
+		self.CanPoly1Data = self.jobsdf.loc[self.current_index,'CanPoly1']
+		self.CanPoly2Data = self.jobsdf.loc[self.current_index,'CanPoly2']
+		self.CanPoly3Data = self.jobsdf.loc[self.current_index,'CanPoly3']
+		self.CanPolyMeanData = self.jobsdf.loc[self.current_index,'AvgCanPoly']
+		self.CanPolyMeanQCData = self.jobsdf.loc[self.current_index,'AvgCanModels']
+		self.ReptoData = self.jobsdf.loc[self.current_index,'ReptoTitle']
+		self.ReptoSalData = self.jobsdf.loc[self.current_index,'ReptoSal']
+		self.ReptoYr3Data = self.jobsdf.loc[self.current_index,'ReptoYr3']
+		self.XRefData = self.jobsdf.loc[self.current_index,'XRefTitle']
+		self.XrefUSData = self.jobsdf.loc[self.current_index,'XRefMed']
+		self.XRefCanData = self.jobsdf.loc[self.current_index,'XRefCan']
+		self.DegreeNameData = self.jobsdf.loc[self.current_index,'DegreeName']
+		self.CPCSalData = self.jobsdf.loc[self.current_index,'CPCSalary']
+		self.AdderData = self.jobsdf.loc[self.current_index,'Adder']
 
 	def set_datavariables_id(self, *event):
 		self.JobTitleData = self.jobsdf.loc[self.current_id,'jobdottitle']
@@ -135,6 +150,21 @@ class Dataverse:
 		self.SocPredData = self.jobsdf.loc[self.current_id,'OccAve']
 		self.SurveyMeanData = self.jobsdf.loc[self.current_id,'Y_Base']
 		self.SurveyIncumbentsData = self.jobsdf.loc[self.current_id,'SurveySampleSize']
+		self.QCCheckCanData = self.jobsdf.loc[self.current_id,'CanPred']
+		self.CanPoly1Data = self.jobsdf.loc[self.current_id,'CanPoly1']
+		self.CanPoly2Data = self.jobsdf.loc[self.current_id,'CanPoly2']
+		self.CanPoly3Data = self.jobsdf.loc[self.current_id,'CanPoly3']
+		self.CanPolyMeanData = self.jobsdf.loc[self.current_id,'AvgCanPoly']
+		self.CanPolyMeanQCData = self.jobsdf.loc[self.current_id,'AvgCanModels']
+		self.ReptoData = self.jobsdf.loc[self.current_id,'ReptoTitle']
+		self.ReptoSalData = self.jobsdf.loc[self.current_id,'ReptoSal']
+		self.ReptoYr3Data = self.jobsdf.loc[self.current_id,'ReptoYr3']
+		self.XRefData = self.jobsdf.loc[self.current_id,'XRefTitle']
+		self.XrefUSData = self.jobsdf.loc[self.current_id,'XRefMed']
+		self.XRefCanData = self.jobsdf.loc[self.current_id,'XRefCan']
+		self.DegreeNameData = self.jobsdf.loc[self.current_id,'DegreeName']
+		self.CPCSalData = self.jobsdf.loc[self.current_id,'CPCSalary']
+		self.AdderData = self.jobsdf.loc[self.current_id,'Adder']
 
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
@@ -608,6 +638,21 @@ class Application(Frame):
 		self.SocPredLabel.config(text= "    ")
 		self.SurveyMeanLabel.config(text= "    ")
 		self.SurveyIncumbentsLabel.config(text= "    ")
+		self.QCCheckCanLabel.config(text="    ")
+		self.CanPoly1Label.config(text="    ")
+		self.CanPoly2Label.config(text="    ")
+		self.CanPoly3Label.config(text="    ")
+		self.CanPolyMeanLabel.config(text="    ")
+		self.CanPolyMeanQCLabel.config(text="    ")
+		self.ReptoLabel.config(text="    ")
+		self.ReptoSalLabel.config(text="    ")
+		self.ReptoYr3Label.config(text="    ")
+		self.XRefLabel.config(text="    ")
+		self.XrefUSLabel.config(text="    ")
+		self.XRefCanLabel.config(text="    ")
+		self.DegreeNameLabel.config(text="    ")
+		self.CPCSalLabel.config(text="    ")
+		self.AdderLabel.config(text="    ")
 
 	def labels_reload(self, *event):
 		if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
@@ -632,6 +677,21 @@ class Application(Frame):
 		self.SocPredLabel.config(text= self.data.SocPredData)
 		self.SurveyMeanLabel.config(text= self.data.SurveyMeanData)
 		self.SurveyIncumbentsLabel.config(text= self.data.SurveyIncumbentsData)
+		self.QCCheckCanLabel.config(text= self.data.QCCheckCanData)
+		self.CanPoly1Label.config(text= self.data.CanPoly1Data)
+		self.CanPoly2Label.config(text= self.data.CanPoly2Data)
+		self.CanPoly3Label.config(text= self.data.CanPoly3Data)
+		self.CanPolyMeanLabel.config(text= self.data.CanPolyMeanData)
+		self.CanPolyMeanQCLabel.config(text= self.data.CanPolyMeanQCData)
+		self.ReptoLabel.config(text= self.data.ReptoData)
+		self.ReptoSalLabel.config(text= self.data.ReptoSalData)
+		self.ReptoYr3Label.config(text= self.data.ReptoYr3Data)
+		self.XRefLabel.config(text= self.data.XRefData)
+		self.XrefUSLabel.config(text= self.data.XrefUSData)
+		self.XRefCanLabel.config(text= self.data.XRefCanData)
+		self.DegreeNameLabel.config(text= self.data.DegreeNameData)
+		self.CPCSalLabel.config(text= self.data.CPCSalData)
+		self.AdderLabel.config(text= self.data.AdderData)
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
