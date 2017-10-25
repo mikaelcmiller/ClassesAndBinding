@@ -212,7 +212,6 @@ class Application(Frame):
 		self.WriteSQLBtn.grid(row=0, column=7)
 		self.JobIdSearchEntry = Entry(self, width=15)
 		self.JobIdSearchEntry.grid(row=0, column=2)
-		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.B100PctEntry = Entry(self, width=15)
 		self.B100PctEntry.grid(row=10, column=3)
 		self.HighPctEntry = Entry(self, width=15)
@@ -513,8 +512,9 @@ class Application(Frame):
 		self.AdderLabel.grid(row=31, column=6)
 		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.JobDescriptionLabel.grid(row=33, column=0)
-####
-###########################
+		####
+		###########################
+		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 
 ## Navigation
 	def nextpage(self, event):
@@ -566,6 +566,7 @@ class Application(Frame):
 			self.invalidsearchwarning.grid(row=1, column=1)
 			self.clear_Entries()
 
+### Text Editing
 	def jobentryreplace(self):
 		self.JobIdSearchEntry.delete(0, END)
 		self.JobIdSearchEntry.insert(0, str(self.data.current_id))
