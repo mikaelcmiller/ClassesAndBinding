@@ -22,7 +22,7 @@ class Dataverse:
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		self.sql = """SELECT pct.*, round((cast(LowPred as float)/MedPred), 2) as LowPredCalc, round(cast(HighPred as float)/MedPred, 2) as HighPredCalc
+		self.sql = """SELECT pct.*, cast(LowPred as float)/MedPred as LowPredCalc, cast(HighPred as float)/MedPred as HighPredCalc
 			, bench.USBenchMed
 			, bench.CanBenchMed
 			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob 
@@ -94,6 +94,11 @@ class Dataverse:
 		self.JobDotData = self.jobsdf.loc[self.current_index,'jobdot']
 		self.HighPredPctData = self.jobsdf.loc[self.current_index,'HighPredCalc']
 		self.LowPredPctData = self.jobsdf.loc[self.current_index,'LowPredCalc']
+		self.B100TotalCompData = self.jobsdf.loc[self.current_index,'TotalComp100Bil']
+		self.HighTotalCompData = self.jobsdf.loc[self.current_index,'HighTotalComp']
+		self.MedTotalCompData = self.jobsdf.loc[self.current_index,'MedTotalComp']
+		self.LowTotalCompData = self.jobsdf.loc[self.current_index,'LowTotalComp']
+		self.Mil1TotalCompData = self.jobsdf.loc[self.current_index,'TotalComp1Mil']
 		print(  str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData)+" | "+str(self.HighPredPctData)  )
 
 	def set_datavariables_id(self, *event):
@@ -102,6 +107,11 @@ class Dataverse:
 		self.JobDotData = self.jobsdf.loc[self.current_id,'jobdot']
 		self.HighPredPctData = self.jobsdf.loc[self.current_id,'HighPredCalc']
 		self.LowPredPctData = self.jobsdf.loc[self.current_id,'LowPredCalc']
+		self.B100TotalCompData = self.jobsdf.loc[self.current_id,'TotalComp100Bil']
+		self.HighTotalCompData = self.jobsdf.loc[self.current_id,'HighTotalComp']
+		self.MedTotalCompData = self.jobsdf.loc[self.current_id,'MedTotalComp']
+		self.LowTotalCompData = self.jobsdf.loc[self.current_id,'LowTotalComp']
+		self.Mil1TotalCompData = self.jobsdf.loc[self.current_id,'TotalComp1Mil']
 		print(  str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData)+" | "+str(self.HighPredPctData)  )
 
 	def write_to_outputdf(self, *event):
@@ -375,7 +385,7 @@ class Application(Frame):
 
 
 
-					Text]""", relief="groove", width=50)
+					Text]""", relief="groove", width=45)
 		self.RawDataLabel.grid(row=5, column=0, rowspan=21, sticky="N")
 		self.Pct10HighB1Label = Label(self, text="[Initial Text]", relief="groove")
 		self.Pct10HighB1Label.grid(row=5, column=2)
@@ -561,14 +571,24 @@ class Application(Frame):
 		self.ExecJobLabel.config(text="    ")
 		self.HighPredPctLabel.config(text="    ")
 		self.LowPredPctLabel.config(text="    ")
+		self.B100TotalCompLabel.config(text="    ")
+		self.HighTotalCompLabel.config(text="    ")
+		self.MedTotalCompLabel.config(text="    ")
+		self.LowTotalCompLabel.config(text="    ")
+		self.Mil1TotalCompLabel.config(text="    ")
 
 	def labels_reload(self, *event):
 		if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
-		else: self.ExecJobLabel.config(text="Non-Exec")
+		else : self.ExecJobLabel.config(text="Non-Exec")
 		self.JobTitleLabel.config(text= self.data.jobname)
 		self.JobDotLabel.config(text= self.data.JobDotData)
-		self.HighPredPctLabel.config(text= self.data.HighPredPctData)
-		self.LowPredPctLabel.config(text= self.data.LowPredPctData)
+		self.HighPredPctLabel.config(text= str(round(self.data.HighPredPctData, 2)))
+		self.LowPredPctLabel.config(text= str(round(self.data.LowPredPctData, 2)))
+		self.B100TotalCompLabel.config(text= self.data.B100TotalCompData)
+		self.HighTotalCompLabel.config(text= self.data.HighTotalCompData)
+		self.MedTotalCompLabel.config(text= self.data.MedTotalCompData)
+		self.LowTotalCompLabel.config(text= self.data.LowTotalCompData)
+		self.Mil1TotalCompLabel.config(text= self.data.Mil1TotalCompData)
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
