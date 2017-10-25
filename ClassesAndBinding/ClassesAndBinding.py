@@ -34,6 +34,7 @@ class Dataverse:
 		self.last_index = self.jobsdf.last_valid_index()
 		self.outputdf = pd.DataFrame(columns=self.jobsdf.columns)
 		self.outputdf['timestamp']=""
+		#print(sorted(list(self.jobsdf.columns.values)))
 		#print(self.jobsdf)
 		#print(self.outputdf)
 		print("Dataframe loaded from SQL")
@@ -93,6 +94,12 @@ class Dataverse:
 		if self.jobsdf.loc[self.current_index,'LOWSAL']==None: self.LowSal=""
 		else: self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
 		#return jobname
+
+	def set_datavariables(self, *event):
+		self.JobTitleData = self.jobsdf.loc[self.current_index,'Title']
+		self.ERIJobIdData = self.jobsdf.loc[self.current_index,'ERIJobId']
+		self.JobDotData = self.jobsdf.loc[self.current_index,'jobdot']
+		print(self.JobTitleData+" | "+self.ERIJobIdData+" | "+self.JobDotData)
 
 	def set_Sal1Mil(self, entry, *event):
 		# Ensure a row for current_id exists to update Sal1Mil value
@@ -180,7 +187,7 @@ class Application(Frame):
 		self.ReloadBtn = Button(self, text="Reload data",command=self.load_Entries)
 		#self.ReloadBtn.grid(row=0,column=7)
 		#self.ReloadBtn.bind('<Return>', self.load_Entries)
-		self.CommitBtn = Button(self,text="Save Changes",command=self.write_output)
+		self.CommitBtn = Button(self,text="Save Changes", command=self.write_output)
 		#self.CommitBtn.grid(row=0,column=8)
 		self.WriteSQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
 		#self.WriteSQLButton.grid(row=0,column=9)
