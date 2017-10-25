@@ -520,22 +520,24 @@ class Application(Frame):
 	def nextpage(self, event):
 		self.clear_Entries()
 		self.data.index_next()
-		jobtext = self.data.jobname
-		#print(jobtext)
-		self.foundit(jobtext)
-		self.exec_job()
+		self.labels_reload()
 		self.jobentryreplace()
-		self.load_Entries()
+		#jobtext = self.data.jobname
+		#print(jobtext)
+		#self.foundit(jobtext)
+		#self.exec_job()
+		#self.load_Entries()
 
 	def priorpage(self, event):
 		self.clear_Entries()
 		self.data.index_prior()
-		jobtext = self.data.jobname
-		#print(jobtext)
-		self.foundit(jobtext)
-		self.exec_job()
+		self.labels_reload()
 		self.jobentryreplace()
-		self.load_Entries()
+		#jobtext = self.data.jobname
+		#print(jobtext)
+		#self.foundit(jobtext)
+		#self.exec_job()
+		#self.load_Entries()
 
 	def jobidsearch(self, event):
 		self.clear_Entries()
@@ -547,7 +549,8 @@ class Application(Frame):
 			self.exec_job()
 			self.invalidsearchwarning.grid_forget()
 			#print(jobtext)
-			self.JobTitleLabel.config(text=jobtext)
+			#self.JobTitleLabel.config(text=jobtext)
+			self.labels_reload()
 			if jobtext=="No job found": 
 				self.JobTitleLabel.config(foreground="Red")
 				self.execjoblabel.grid_forget()
@@ -587,6 +590,13 @@ class Application(Frame):
 		self.clear_Entries()
 		self.Sal1MilEntry.insert(0, str(self.data.Sal1Mil))
 		self.LowSalEntry.insert(0, str(self.data.LowSal))
+		
+	def labels_clear(self, *event):
+		self.JobDotLabel.config(text="")
+
+	def labels_reload(self, *event):
+		self.JobTitleLabel.config(text= self.data.JobTitleData)
+		self.JobDotLabel.config(text= self.data.JobDotData)
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
