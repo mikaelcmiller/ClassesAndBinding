@@ -498,7 +498,8 @@ class Application(Frame):
 		#self.load_Entries()
 
 	def jobidsearch(self, event):
-		self.clear_Entries()
+		self.labels_clear()
+		#self.clear_Entries()
 		try:
 			self.intJobIdSearchEntry = int(self.JobIdSearchEntry.get())
 			print(str(self.JobIdSearchEntry.get()))
@@ -507,19 +508,21 @@ class Application(Frame):
 			#self.exec_job()
 			self.invalidsearchwarning.grid_forget()
 			self.labels_reload()
-			if self.data.jobname=="No job found": 
+			if self.data.jobname=="No job found":
 				self.JobTitleLabel.config(foreground="Red")
-				self.clear_Entries()
+				self.labels_clear()
 			else:
 				self.JobTitleLabel.config(foreground="Black")
-				self.load_Entries()
-			self.JobTitleLabel.grid(row=2, column=0)
+				#self.load_Entries()
+			#self.JobTitleLabel.grid(row=2, column=0)
 		except ValueError:
-			self.JobTitleLabel.grid_forget()
+			#self.JobTitleLabel.grid_forget()
 			#self.execjoblabel.grid_forget()
-			print("Not a valid search entry.")
-			self.invalidsearchwarning.grid(row=1, column=1)
-			self.clear_Entries()
+			#print("Not a valid search entry.")
+			#self.invalidsearchwarning.grid(row=2, column=0)
+			#self.clear_Entries()
+			self.JobTitleLabel.config(text="Not a valid search entry.")
+			self.labels_clear()
 
 ### Text Editing
 	def jobentryreplace(self):
