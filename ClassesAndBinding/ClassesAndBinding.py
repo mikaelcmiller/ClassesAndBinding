@@ -54,10 +54,6 @@ class Dataverse:
 			self.current_index = self.jobsdf.loc[self.current_id,'index1'] #self.jobsdf.index.get_loc(idsearch)
 			self.set_datavariables_id()
 			#Need to check if exists in outputdf, if so: pull from output df instead of jobsdf
-			if self.jobsdf.loc[self.current_id,'Sal1Mil']==None: self.Sal1Mil=""
-			else: self.Sal1Mil = self.jobsdf.loc[self.current_id,'Sal1Mil']
-			if self.jobsdf.loc[self.current_id,'LOWSAL']==None: self.LowSal=""
-			else: self.LowSal = self.jobsdf.loc[self.current_id,'LOWSAL']
 			#return self.jobname
 		except KeyError:
 			self.jobname = "No job found"
@@ -74,10 +70,6 @@ class Dataverse:
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 		self.set_datavariables_index()
-		if self.jobsdf.loc[self.current_index,'Sal1Mil']==None: self.Sal1Mil=""
-		else: self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
-		if self.jobsdf.loc[self.current_index,'LOWSAL']==None: self.LowSal=""
-		else: self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
 		#return jobname
 
 	def index_prior(self, *event):
@@ -92,10 +84,6 @@ class Dataverse:
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 		self.set_datavariables_index()
-		if self.jobsdf.loc[self.current_index,'Sal1Mil']==None: self.Sal1Mil=""
-		else: self.Sal1Mil = self.jobsdf.loc[self.current_index,'Sal1Mil']
-		if self.jobsdf.loc[self.current_index,'LOWSAL']==None: self.LowSal=""
-		else: self.LowSal = self.jobsdf.loc[self.current_index,'LOWSAL']
 		#return jobname
 
 	def set_datavariables_index(self, *event):
@@ -166,29 +154,9 @@ class Application(Frame):
 		#self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.JobTitleLabel = Label(self)
 		#self.blank = Label(self,text=" ")
-		self.execjoblabel = Label(self)
+		#self.execjoblabel = Label(self)
 		#self.execjoblabel.grid(row=2, column=1)
 		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
-		self.LowSalLabel = Label(self, text="LowSal")
-		#self.LowSalLabel.grid(row=6,column=1)
-		self.LowSalEntry = Entry(self, width=15)
-		#self.LowSalEntry.grid(row=6,column=2)
-		#self.LowSalEntry.bind('<Return>',self.write_output)
-		self.AutoUpdateLabel = Label(self, text="Auto-update label", relief="groove")
-		#self.AutoUpdateLabel.grid(row=6, column=3)
-		self.Sal1MilLabel = Label(self,text="Sal1Mil")
-		#self.Sal1MilLabel.grid(row=7,column=1)
-		self.Sal1MilEntry = Entry(self, width=15)
-		#self.Sal1MilEntry.grid(row=7,column=2)
-		#self.Sal1MilEntry.bind('<Return>',self.write_output)
-		self.ReloadBtn = Button(self, text="Reload data",command=self.load_Entries)
-		#self.ReloadBtn.grid(row=0,column=7)
-		#self.ReloadBtn.bind('<Return>', self.load_Entries)
-		self.CommitBtn = Button(self,text="Save Changes", command=self.write_output)
-		#self.CommitBtn.grid(row=0,column=8)
-		self.WriteSQLButton = Button(self, text="Send Changes to SQL",command=self.write_sql)
-		#self.WriteSQLButton.grid(row=0,column=9)
-		self.columnconfigure(0, minsize=50)
 		
 ###########################
 #### Created from Google Sheet 
@@ -240,7 +208,7 @@ class Application(Frame):
 		self.CPCEntry.grid(row=31, column=2)
 		self.ERISearch = Label(self,text="ERI # Search")
 		self.ERISearch.grid(row=0, column=1)
-		self.TitleEri = Label(self,text="Title           ERI")
+		self.TitleEri = Label(self,text="Title           Exec")
 		self.TitleEri.grid(row=2, column=1)
 		self.eDOT = Label(self,text="eDOT")
 		self.eDOT.grid(row=2, column=3)
@@ -380,8 +348,8 @@ class Application(Frame):
 		self.Description.grid(row=32, column=0)
 		self.JobTitleLabel = Label(self, text="[Initial Text]", relief="groove", width=45)
 		self.JobTitleLabel.grid(row=2, column=0)
-		self.ERIJobIdLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.ERIJobIdLabel.grid(row=2, column=2)
+		self.ExecJobLabel = Label(self, text="[Initial Text]", relief="groove")
+		self.ExecJobLabel.grid(row=2, column=2)
 		self.JobDotLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.JobDotLabel.grid(row=2, column=4)
 		self.JobSocLabel = Label(self, text="[Initial Text]", relief="groove")
@@ -506,6 +474,7 @@ class Application(Frame):
 
 ## Navigation
 	def nextpage(self, event):
+		self.JobTitleLabel.config(foreground="Black")
 		self.clear_Entries()
 		self.data.index_next()
 		self.labels_reload()
@@ -517,6 +486,7 @@ class Application(Frame):
 		#self.load_Entries()
 
 	def priorpage(self, event):
+		self.JobTitleLabel.config(foreground="Black")
 		self.clear_Entries()
 		self.data.index_prior()
 		self.labels_reload()
@@ -533,15 +503,12 @@ class Application(Frame):
 			self.intJobIdSearchEntry = int(self.JobIdSearchEntry.get())
 			print(str(self.JobIdSearchEntry.get()))
 			self.data.find_by_erijobid(self.intJobIdSearchEntry)
-			jobtext = self.data.jobname
-			self.exec_job()
+			#jobtext = self.data.jobname
+			#self.exec_job()
 			self.invalidsearchwarning.grid_forget()
-			#print(jobtext)
-			#self.JobTitleLabel.config(text=jobtext)
 			self.labels_reload()
-			if jobtext=="No job found": 
+			if self.data.jobname=="No job found": 
 				self.JobTitleLabel.config(foreground="Red")
-				self.execjoblabel.grid_forget()
 				self.clear_Entries()
 			else:
 				self.JobTitleLabel.config(foreground="Black")
@@ -549,7 +516,7 @@ class Application(Frame):
 			self.JobTitleLabel.grid(row=2, column=0)
 		except ValueError:
 			self.JobTitleLabel.grid_forget()
-			self.execjoblabel.grid_forget()
+			#self.execjoblabel.grid_forget()
 			print("Not a valid search entry.")
 			self.invalidsearchwarning.grid(row=1, column=1)
 			self.clear_Entries()
@@ -564,28 +531,27 @@ class Application(Frame):
 		self.JobTitleLabel.grid(row=2, column=0)
 		self.invalidsearchwarning.grid_forget()
 
-	def exec_job(self):
-		self.execjoblabel.grid(row=2, column=1)
-		if self.data.jobexec == 1:
-			self.execjoblabel.config(text="Executive Job")
-		else: 
-			self.execjoblabel.config(text="Non-Executive Job")
+	#def exec_job(self):
+		#self.ExecJobLabel.grid(row=2, column=1)
+		#if self.data.jobexec == 1:
+			#self.ExecJobLabel.config(text="Executive Job")
+		#else: 
+			#self.ExecJobLabel.config(text="Non-Executive Job")
 
 	def clear_Entries(self, *event):
-		self.Sal1MilEntry.delete(0, END)
-		self.LowSalEntry.delete(0, END)
-	
+		pass
+
 	def load_Entries(self, *event):
-		self.clear_Entries()
-		self.Sal1MilEntry.insert(0, str(self.data.Sal1Mil))
-		self.LowSalEntry.insert(0, str(self.data.LowSal))
-		
+		pass
+
 	def labels_clear(self, *event):
 		self.JobDotLabel.config(text="")
 
 	def labels_reload(self, *event):
-		self.JobTitleLabel.config(text= self.data.JobTitleData)
+		self.JobTitleLabel.config(text= self.data.jobname)
 		self.JobDotLabel.config(text= self.data.JobDotData)
+		if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
+		else: self.ExecJobLabel.config(text="Non-Exec")
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
