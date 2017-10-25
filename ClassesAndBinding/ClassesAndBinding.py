@@ -22,7 +22,7 @@ class Dataverse:
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		self.sql = """SELECT pct.*, round((LowPred/MedPred), 2) as LowPredCalc, round(cast(HighPred as float)/MedPred, 2) as HighPredCalc
+		self.sql = """SELECT pct.*, round((cast(LowPred as float)/MedPred), 2) as LowPredCalc, round(cast(HighPred as float)/MedPred, 2) as HighPredCalc
 			, bench.USBenchMed
 			, bench.CanBenchMed
 			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob 
@@ -93,6 +93,7 @@ class Dataverse:
 		self.ERIJobIdData = self.jobsdf.loc[self.current_index,'erijobid']
 		self.JobDotData = self.jobsdf.loc[self.current_index,'jobdot']
 		self.HighPredPctData = self.jobsdf.loc[self.current_index,'HighPredCalc']
+		self.LowPredPctData = self.jobsdf.loc[self.current_index,'LowPredCalc']
 		print(  str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData)+" | "+str(self.HighPredPctData)  )
 
 	def set_datavariables_id(self, *event):
@@ -100,6 +101,7 @@ class Dataverse:
 		self.ERIJobIdData = self.jobsdf.loc[self.current_id,'erijobid']
 		self.JobDotData = self.jobsdf.loc[self.current_id,'jobdot']
 		self.HighPredPctData = self.jobsdf.loc[self.current_id,'HighPredCalc']
+		self.LowPredPctData = self.jobsdf.loc[self.current_id,'LowPredCalc']
 		print(  str(self.JobTitleData)+" | "+str(self.ERIJobIdData)+" | "+str(self.JobDotData)+" | "+str(self.HighPredPctData)  )
 
 	def write_to_outputdf(self, *event):
@@ -558,6 +560,7 @@ class Application(Frame):
 		self.JobDotLabel.config(text="    ")
 		self.ExecJobLabel.config(text="    ")
 		self.HighPredPctLabel.config(text="    ")
+		self.LowPredPctLabel.config(text="    ")
 
 	def labels_reload(self, *event):
 		if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
@@ -565,6 +568,7 @@ class Application(Frame):
 		self.JobTitleLabel.config(text= self.data.jobname)
 		self.JobDotLabel.config(text= self.data.JobDotData)
 		self.HighPredPctLabel.config(text= self.data.HighPredPctData)
+		self.LowPredPctLabel.config(text= self.data.LowPredPctData)
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
@@ -580,56 +584,6 @@ app = Application(root)
 root.mainloop()
 
 
-########################################################
-#### STACK OVERFLOW QUESTION EXAMPLE
-## https://stackoverflow.com/questions/45945883/python-3-pandas-set-index-in-tkinter-application
-
-#import pandas as pd
-#from tkinter import *
 
 
-#class CustomerData:
-#	def __init__(self):
-#		self.initializedataframe()
 
-#	def initializedataframe(self):
-#		col = ['CustomerId','CustomerName']
-#		self.data = pd.DataFrame([[1,'Pat'],[2,'Kris'],[4,'Sam'],[5,'Ryan'],[6,'Alex']], columns=col) # Placeholder data
-#		print(self.data)
-#		print('-------------\n')
-
-#	def findcustomerbyid(self, input):
-#		cxid = int(input)
-#		try:
-#			self.data.set_index('CustomerId', inplace=True) # Trouble spot, can't set_index more than one time with same column
-#		except KeyError:
-#			pass
-#		cx_out = self.data.loc[input,'CustomerName']
-#		print(cx_out)
-#		return(cx_out)
-
-
-#class App(Frame):
-#	def __init__(self, master):
-#		"""Initialize the Frame"""
-#		Frame.__init__(self, master)
-#		self.master = master
-#		self.create_widgets()
-
-#	def create_widgets(self):
-#		self.pack(fill=BOTH, expand=1)
-#		self.data = CustomerData()
-		
-#		self.cxsearch = Entry(self, width=15)
-#		self.cxsearch.place(x=5,y=5)
-#		self.cxsearch.bind('<Return>',self.findcx)
-
-#	def findcx(self, event):
-#		intcxsearch = int(self.cxsearch.get())
-#		self.data.findcustomerbyid(intcxsearch)
-
-
-#root = Tk()
-#root.geometry("400x300")
-#app = App(root)
-#root.mainloop()
