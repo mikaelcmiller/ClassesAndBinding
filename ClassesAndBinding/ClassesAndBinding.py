@@ -459,7 +459,7 @@ class Application(Frame):
 		self.Adder.grid(row=31, column=7)
 		self.Description = Label(self,text="Job Description")
 		self.Description.grid(row=32, column=0)
-		self.JobTitleLabel = Label(self, text="[Initial Text]", relief="groove", width=45)
+		self.JobTitleLabel = Label(self, text="[Initial Text]", relief="groove", width=45, anchor=E)
 		self.JobTitleLabel.grid(row=2, column=0)
 		self.ExecJobLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.ExecJobLabel.grid(row=2, column=2)
@@ -567,8 +567,8 @@ class Application(Frame):
 		self.ReptoSalLabel.grid(row=29, column=4)
 		self.ReptoYr3Label = Label(self, text="[Initial Text]", relief="groove")
 		self.ReptoYr3Label.grid(row=29, column=6)
-		self.XRefLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.XRefLabel.grid(row=30, column=0)
+		self.XRefTitleLabel = Label(self, text="[Initial Text]", relief="groove")
+		self.XRefTitleLabel.grid(row=30, column=0)
 		self.XrefUSLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.XrefUSLabel.grid(row=30, column=4)
 		self.XRefCanLabel = Label(self, text="[Initial Text]", relief="groove")
@@ -586,11 +586,12 @@ class Application(Frame):
 		## Special notes:
 			#self.JobTitleLabel ... width=45
 			#self.RawDataLabel ... width=45
+		self.JobTitleLabel.grid_configure(sticky=E)
 		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.JobIdSearchEntry.insert(0, "1")
 		self.RawDataLabel.grid_configure(rowspan=21, sticky=N)
 		self.ReptoTitleLabel.grid_configure(sticky=E)
-		self.XRefLabel.grid_configure(sticky=E)
+		self.XRefTitleLabel.grid_configure(sticky=E)
 		self.DegreeNameLabel.grid_configure(sticky=E)
 
 ## Navigation
@@ -699,7 +700,7 @@ class Application(Frame):
 		self.ReptoTitleLabel.config(text="    ")
 		self.ReptoSalLabel.config(text="    ")
 		self.ReptoYr3Label.config(text="    ")
-		self.XRefLabel.config(text="    ")
+		self.XRefTitleLabel.config(text="    ")
 		self.XrefUSLabel.config(text="    ")
 		self.XRefCanLabel.config(text="    ")
 		self.DegreeNameLabel.config(text="    ")
@@ -727,7 +728,6 @@ class Application(Frame):
 		self.ReptoEntry.delete(0, END)
 		self.XRefEntry.delete(0, END)
 		self.CPCEntry.delete(0, END)
-
 
 	def label_entry_reload(self, *event):
 		self.label_entry_clear()
@@ -764,7 +764,7 @@ class Application(Frame):
 		self.ReptoTitleLabel.config(text= self.data.ReptoTitleData)
 		self.ReptoSalLabel.config(text= self.data.ReptoSalData)
 		self.ReptoYr3Label.config(text= self.data.ReptoYr3Data)
-		self.XRefLabel.config(text= self.data.XRefData)
+		self.XRefTitleLabel.config(text= self.data.XRefTitleData)
 		self.XrefUSLabel.config(text= self.data.XrefUSData)
 		self.XRefCanLabel.config(text= self.data.XRefCanData)
 		self.DegreeNameLabel.config(text= self.data.DegreeNameData)
@@ -792,8 +792,6 @@ class Application(Frame):
 		self.ReptoEntry.insert(0, str(self.data.ReptoData))
 		self.XRefEntry.insert(0, str(self.data.XRefData))
 		self.CPCEntry.insert(0, str(self.data.CPCData))
-
-
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
