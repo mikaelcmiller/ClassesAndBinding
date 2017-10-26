@@ -118,10 +118,10 @@ class Dataverse:
 		self.CanPoly3Data = self.jobsdf.loc[self.current_index,'CanPoly3']
 		self.CanPolyMeanData = self.jobsdf.loc[self.current_index,'AvgCanPoly']
 		self.CanPolyMeanQCData = self.jobsdf.loc[self.current_index,'AvgCanModels']
-		self.ReptoData = self.jobsdf.loc[self.current_index,'ReptoTitle']
+		self.ReptoTitleData = self.jobsdf.loc[self.current_index,'ReptoTitle']
 		self.ReptoSalData = self.jobsdf.loc[self.current_index,'ReptoSal']
 		self.ReptoYr3Data = self.jobsdf.loc[self.current_index,'ReptoYr3']
-		self.XRefData = self.jobsdf.loc[self.current_index,'XRefTitle']
+		self.XRefTitleData = self.jobsdf.loc[self.current_index,'XRefTitle']
 		self.XrefUSData = self.jobsdf.loc[self.current_index,'XRefMed']
 		self.XRefCanData = self.jobsdf.loc[self.current_index,'XRefCan']
 		self.DegreeNameData = self.jobsdf.loc[self.current_index,'DegreeName']
@@ -144,7 +144,8 @@ class Dataverse:
 		self.CanOverrideData = self.jobsdf.loc[self.current_index,'CANPK_C']
 		self.CanPercentData = self.jobsdf.loc[self.current_index,'CAN_PCT']
 		self.CanBonusPctData = self.jobsdf.loc[self.current_index,'CanBonusPct']
-		self.ReptoData = self.jobsdf.loc[self.current_index,'Repto']
+		if pd.isnull(self.jobsdf.loc[self.current_index,'Repto']): self.ReptoData = int(self.current_id)
+		else: self.ReptoData = int(self.jobsdf.loc[self.current_index,'Repto'])
 		self.XRefData = self.jobsdf.loc[self.current_index,'JobXRef']
 		self.CPCData = self.jobsdf.loc[self.current_index,'CPCNO']
 
@@ -178,10 +179,10 @@ class Dataverse:
 		self.CanPoly3Data = self.jobsdf.loc[self.current_id,'CanPoly3']
 		self.CanPolyMeanData = self.jobsdf.loc[self.current_id,'AvgCanPoly']
 		self.CanPolyMeanQCData = self.jobsdf.loc[self.current_id,'AvgCanModels']
-		self.ReptoData = self.jobsdf.loc[self.current_id,'ReptoTitle']
+		self.ReptoTitleData = self.jobsdf.loc[self.current_id,'ReptoTitle']
 		self.ReptoSalData = self.jobsdf.loc[self.current_id,'ReptoSal']
 		self.ReptoYr3Data = self.jobsdf.loc[self.current_id,'ReptoYr3']
-		self.XRefData = self.jobsdf.loc[self.current_id,'XRefTitle']
+		self.XRefTitleData = self.jobsdf.loc[self.current_id,'XRefTitle']
 		self.XrefUSData = self.jobsdf.loc[self.current_id,'XRefMed']
 		self.XRefCanData = self.jobsdf.loc[self.current_id,'XRefCan']
 		self.DegreeNameData = self.jobsdf.loc[self.current_id,'DegreeName']
@@ -204,7 +205,8 @@ class Dataverse:
 		self.CanOverrideData = self.jobsdf.loc[self.current_id,'CANPK_C']
 		self.CanPercentData = self.jobsdf.loc[self.current_id,'CAN_PCT']
 		self.CanBonusPctData = self.jobsdf.loc[self.current_id,'CanBonusPct']
-		self.ReptoData = self.jobsdf.loc[self.current_id,'Repto']
+		if pd.isnull(self.jobsdf.loc[self.current_id,'Repto']): self.ReptoData = int(self.current_id)
+		else: self.ReptoData = int(self.jobsdf.loc[self.current_id,'Repto'])
 		self.XRefData = self.jobsdf.loc[self.current_id,'JobXRef']
 		self.CPCData = self.jobsdf.loc[self.current_id,'CPCNO']
 
@@ -241,7 +243,7 @@ class Application(Frame):
 		self.master.title("Data Audit Window")
 		self.pack(fill=BOTH, expand=0)
 		self.create_widgets()
-		self.labels_reload()
+		self.label_entry_reload()
 		self.bind_all('<Next>', self.nextpage)
 		self.bind_all('<Prior>', self.priorpage)
 		self.bind_all('<Insert>', self.write_output)
@@ -559,8 +561,8 @@ class Application(Frame):
 		self.CanTotalLabel.grid(row=27, column=4)
 		self.CanPolyMeanQCLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.CanPolyMeanQCLabel.grid(row=27, column=6)
-		self.ReptoLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.ReptoLabel.grid(row=29, column=0)
+		self.ReptoTitleLabel = Label(self, text="[Initial Text]", relief="groove")
+		self.ReptoTitleLabel.grid(row=29, column=0)
 		self.ReptoSalLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.ReptoSalLabel.grid(row=29, column=4)
 		self.ReptoYr3Label = Label(self, text="[Initial Text]", relief="groove")
@@ -587,7 +589,7 @@ class Application(Frame):
 		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.JobIdSearchEntry.insert(0, "1")
 		self.RawDataLabel.grid_configure(rowspan=21, sticky=N)
-		self.ReptoLabel.grid_configure(sticky=E)
+		self.ReptoTitleLabel.grid_configure(sticky=E)
 		self.XRefLabel.grid_configure(sticky=E)
 		self.DegreeNameLabel.grid_configure(sticky=E)
 
@@ -596,7 +598,7 @@ class Application(Frame):
 		self.JobTitleLabel.config(foreground="Black")
 		self.clear_Entries()
 		self.data.index_next()
-		self.labels_reload()
+		self.label_entry_reload()
 		self.jobentryreplace()
 		#jobtext = self.data.jobname
 		#print(jobtext)
@@ -608,7 +610,7 @@ class Application(Frame):
 		self.JobTitleLabel.config(foreground="Black")
 		self.clear_Entries()
 		self.data.index_prior()
-		self.labels_reload()
+		self.label_entry_reload()
 		self.jobentryreplace()
 		#jobtext = self.data.jobname
 		#print(jobtext)
@@ -617,7 +619,7 @@ class Application(Frame):
 		#self.load_Entries()
 
 	def jobidsearch(self, event):
-		self.labels_clear()
+		self.label_entry_clear()
 		#self.clear_Entries()
 		try:
 			self.intJobIdSearchEntry = int(self.JobIdSearchEntry.get())
@@ -625,10 +627,10 @@ class Application(Frame):
 			#jobtext = self.data.jobname
 			#self.exec_job()
 			self.invalidsearchwarning.grid_forget()
-			self.labels_reload()
+			self.label_entry_reload()
 			if self.data.jobname=="No job found":
 				self.JobTitleLabel.config(foreground="Red")
-				self.labels_clear()
+				self.label_entry_clear()
 			else:
 				self.JobTitleLabel.config(foreground="Black")
 				#self.load_Entries()
@@ -641,7 +643,7 @@ class Application(Frame):
 			#self.clear_Entries()
 			self.JobTitleLabel.config(foreground="Red")
 			self.JobTitleLabel.config(text="Not a valid search entry")
-			self.labels_clear()
+			self.label_entry_clear()
 
 ### Text Editing
 	def jobentryreplace(self):
@@ -666,7 +668,8 @@ class Application(Frame):
 	def load_Entries(self, *event):
 		pass
 
-	def labels_clear(self, *event):
+	def label_entry_clear(self, *event):
+		## Labels
 		self.JobDotLabel.config(text="    ")
 		self.ExecJobLabel.config(text="    ")
 		self.JobSocLabel.config(text="    ")
@@ -693,7 +696,7 @@ class Application(Frame):
 		self.CanPoly3Label.config(text="    ")
 		self.CanPolyMeanLabel.config(text="    ")
 		self.CanPolyMeanQCLabel.config(text="    ")
-		self.ReptoLabel.config(text="    ")
+		self.ReptoTitleLabel.config(text="    ")
 		self.ReptoSalLabel.config(text="    ")
 		self.ReptoYr3Label.config(text="    ")
 		self.XRefLabel.config(text="    ")
@@ -702,8 +705,31 @@ class Application(Frame):
 		self.DegreeNameLabel.config(text="    ")
 		self.CPCSalLabel.config(text="    ")
 		self.AdderLabel.config(text="    ")
+		## Entries
+		self.B100PctEntry.delete(0, END)
+		self.HighPctEntry.delete(0, END)
+		self.MedPctEntry.delete(0, END)
+		self.LowPctEntry.delete(0, END)
+		self.Mil1PctEntry.delete(0, END)
+		self.B100BonusPctEntry.delete(0, END)
+		self.HighBonusPctEntry.delete(0, END)
+		self.MedBonusPctEntry.delete(0, END)
+		self.LowBonusPctEntry.delete(0, END)
+		self.Mil1BonusPctEntry.delete(0, END)
+		self.StdErrEntry.delete(0, END)
+		self.MedYrsEntry.delete(0, END)
+		self.USOverrideEntry.delete(0, END)
+		self.CanOverrideEntry.delete(0, END)
+		self.CanPercentEntry.delete(0, END)
+		self.CanBonusPctEntry.delete(0, END)
+		self.ReptoEntry.delete(0, END)
+		self.XRefEntry.delete(0, END)
+		self.CPCEntry.delete(0, END)
 
-	def labels_reload(self, *event):
+
+	def label_entry_reload(self, *event):
+		self.label_entry_clear()
+		## Labels
 		if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
 		else : self.ExecJobLabel.config(text="Non-Exec")
 		self.JobTitleLabel.config(text= self.data.jobname)
@@ -732,7 +758,7 @@ class Application(Frame):
 		self.CanPoly3Label.config(text= self.data.CanPoly3Data)
 		self.CanPolyMeanLabel.config(text= self.data.CanPolyMeanData)
 		self.CanPolyMeanQCLabel.config(text= self.data.CanPolyMeanQCData)
-		self.ReptoLabel.config(text= self.data.ReptoData)
+		self.ReptoTitleLabel.config(text= self.data.ReptoTitleData)
 		self.ReptoSalLabel.config(text= self.data.ReptoSalData)
 		self.ReptoYr3Label.config(text= self.data.ReptoYr3Data)
 		self.XRefLabel.config(text= self.data.XRefData)
@@ -741,6 +767,28 @@ class Application(Frame):
 		self.DegreeNameLabel.config(text= self.data.DegreeNameData)
 		self.CPCSalLabel.config(text= self.data.CPCSalData)
 		self.AdderLabel.config(text= self.data.AdderData)
+		## Entries
+		self.B100PctEntry.insert(0, str(self.data.B100PctData))
+		self.HighPctEntry.insert(0, str(self.data.HighPctData))
+		self.MedPctEntry.insert(0, str(self.data.MedPctData))
+		self.LowPctEntry.insert(0, str(self.data.LowPctData))
+		self.Mil1PctEntry.insert(0, str(self.data.Mil1PctData))
+		self.B100BonusPctEntry.insert(0, str(self.data.B100BonusPctData))
+		self.HighBonusPctEntry.insert(0, str(self.data.HighBonusPctData))
+		self.MedBonusPctEntry.insert(0, str(self.data.MedBonusPctData))
+		self.LowBonusPctEntry.insert(0, str(self.data.LowBonusPctData))
+		self.Mil1BonusPctEntry.insert(0, str(self.data.Mil1BonusPctData))
+		self.StdErrEntry.insert(0, str(self.data.StdErrData))
+		self.MedYrsEntry.insert(0, str(self.data.MedYrsData))
+		self.USOverrideEntry.insert(0, str(self.data.USOverrideData))
+		self.CanOverrideEntry.insert(0, str(self.data.CanOverrideData))
+		self.CanPercentEntry.insert(0, str(self.data.CanPercentData))
+		self.CanBonusPctEntry.insert(0, str(self.data.CanBonusPctData))
+		self.ReptoEntry.insert(0, str(self.data.ReptoData))
+		self.XRefEntry.insert(0, str(self.data.XRefData))
+		self.CPCEntry.insert(0, str(self.data.CPCData))
+
+
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
