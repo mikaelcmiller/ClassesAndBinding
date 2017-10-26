@@ -273,7 +273,7 @@ class Application(Frame):
 		
 ###########################
 #### Created from Google Sheet 
-		self.ReloadBtn = Button(self, text="Reload Data Btn")
+		self.ReloadBtn = Button(self, text="Reload Data Btn", command=self.label_entry_reload)
 		self.ReloadBtn.grid(row=0, column=5)
 		self.CommitBtn = Button(self, text="Commit Changes Btn")
 		self.CommitBtn.grid(row=0, column=6)
@@ -705,6 +705,8 @@ class Application(Frame):
 		self.DegreeNameLabel.config(text="    ")
 		self.CPCSalLabel.config(text="    ")
 		self.AdderLabel.config(text="    ")
+		self.RawDataLabel.config(text="    ")
+		self.JobDescriptionLabel.config(text="    ")
 		## Entries
 		self.B100PctEntry.delete(0, END)
 		self.HighPctEntry.delete(0, END)
@@ -729,6 +731,7 @@ class Application(Frame):
 
 	def label_entry_reload(self, *event):
 		self.label_entry_clear()
+		self.jobentryreplace()
 		## Labels
 		if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
 		else : self.ExecJobLabel.config(text="Non-Exec")
@@ -767,6 +770,8 @@ class Application(Frame):
 		self.DegreeNameLabel.config(text= self.data.DegreeNameData)
 		self.CPCSalLabel.config(text= self.data.CPCSalData)
 		self.AdderLabel.config(text= self.data.AdderData)
+		self.RawDataLabel.config(text="Raw data text")
+		self.JobDescriptionLabel.config(text="Job Description text")
 		## Entries
 		self.B100PctEntry.insert(0, str(self.data.B100PctData))
 		self.HighPctEntry.insert(0, str(self.data.HighPctData))
