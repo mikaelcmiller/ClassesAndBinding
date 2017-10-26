@@ -438,7 +438,7 @@ class Application(Frame):
 
 
 					Text]""", relief="groove", width=45)
-		self.RawDataLabel.grid(row=5, column=0, rowspan=21, sticky="N")
+		self.RawDataLabel.grid(row=5, column=0)
 		self.Pct10HighB1Label = Label(self, text="[Initial Text]", relief="groove")
 		self.Pct10HighB1Label.grid(row=5, column=2)
 		self.MeanHigh1BLabel = Label(self, text="[Initial Text]", relief="groove")
@@ -518,7 +518,7 @@ class Application(Frame):
 		self.CanPolyMeanQCLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.CanPolyMeanQCLabel.grid(row=27, column=6)
 		self.ReptoLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.ReptoLabel.grid(row=29, column=0, sticky="E")
+		self.ReptoLabel.grid(row=29, column=0)
 		self.ReptoSalLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.ReptoSalLabel.grid(row=29, column=4)
 		self.ReptoYr3Label = Label(self, text="[Initial Text]", relief="groove")
@@ -539,8 +539,15 @@ class Application(Frame):
 		self.JobDescriptionLabel.grid(row=33, column=0)
 		####
 		###########################
+		## Special notes:
+			#self.JobTitleLabel ... width=45
+			#self.RawDataLabel ... width=45
 		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.JobIdSearchEntry.insert(0, "1")
+		self.RawDataLabel.grid_configure(rowspan=21, sticky=N)
+		self.ReptoLabel.grid_configure(sticky=E)
+		self.XRefLabel.grid_configure(sticky=E)
+		self.DegreeNameLabel.grid_configure(sticky=E)
 
 ## Navigation
 	def nextpage(self, event):
