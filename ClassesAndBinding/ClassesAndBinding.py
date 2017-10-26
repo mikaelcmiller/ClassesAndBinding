@@ -89,6 +89,7 @@ class Dataverse:
 		#return jobname
 
 	def set_datavariables_index(self, *event):
+		## Labels
 		self.JobTitleData = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.ERIJobIdData = self.jobsdf.loc[self.current_index,'erijobid']
 		self.JobDotData = self.jobsdf.loc[self.current_index,'jobdot']
@@ -126,8 +127,29 @@ class Dataverse:
 		self.DegreeNameData = self.jobsdf.loc[self.current_index,'DegreeName']
 		self.CPCSalData = self.jobsdf.loc[self.current_index,'CPCSalary']
 		self.AdderData = self.jobsdf.loc[self.current_index,'Adder']
+		## Entries
+		self.B100PctData = self.jobsdf.loc[self.current_index,'Pct_100Bil']
+		self.HighPctData = self.jobsdf.loc[self.current_index,'HIGH_F']
+		self.MedPctData = self.jobsdf.loc[self.current_index,'US_PCT']
+		self.LowPctData = self.jobsdf.loc[self.current_index,'LOW_F']
+		self.Mil1PctData = self.jobsdf.loc[self.current_index,'Pct_1Mil']
+		self.B100BonusPctData = self.jobsdf.loc[self.current_index,'BonusPct100Bil']
+		self.HighBonusPctData = self.jobsdf.loc[self.current_index,'HighBonusPct']
+		self.MedBonusPctData = self.jobsdf.loc[self.current_index,'MedBonusPct']
+		self.LowBonusPctData = self.jobsdf.loc[self.current_index,'LowBonusPct']
+		self.Mil1BonusPctData = self.jobsdf.loc[self.current_index,'BonusPct1Mil']
+		self.StdErrData = self.jobsdf.loc[self.current_index,'StdErr']
+		self.MedYrsData = self.jobsdf.loc[self.current_index,'Medyrs']
+		self.USOverrideData = self.jobsdf.loc[self.current_index,'USPK_C']
+		self.CanOverrideData = self.jobsdf.loc[self.current_index,'CANPK_C']
+		self.CanPercentData = self.jobsdf.loc[self.current_index,'CAN_PCT']
+		self.CanBonusPctData = self.jobsdf.loc[self.current_index,'CanBonusPct']
+		self.ReptoData = self.jobsdf.loc[self.current_index,'Repto']
+		self.XRefData = self.jobsdf.loc[self.current_index,'JobXRef']
+		self.CPCData = self.jobsdf.loc[self.current_index,'CPCNO']
 
 	def set_datavariables_id(self, *event):
+		## Labels
 		self.JobTitleData = self.jobsdf.loc[self.current_id,'jobdottitle']
 		self.ERIJobIdData = self.jobsdf.loc[self.current_id,'erijobid']
 		self.JobDotData = self.jobsdf.loc[self.current_id,'jobdot']
@@ -165,6 +187,26 @@ class Dataverse:
 		self.DegreeNameData = self.jobsdf.loc[self.current_id,'DegreeName']
 		self.CPCSalData = self.jobsdf.loc[self.current_id,'CPCSalary']
 		self.AdderData = self.jobsdf.loc[self.current_id,'Adder']
+		## Entries
+		self.B100PctData = self.jobsdf.loc[self.current_id,'Pct_100Bil']
+		self.HighPctData = self.jobsdf.loc[self.current_id,'HIGH_F']
+		self.MedPctData = self.jobsdf.loc[self.current_id,'US_PCT']
+		self.LowPctData = self.jobsdf.loc[self.current_id,'LOW_F']
+		self.Mil1PctData = self.jobsdf.loc[self.current_id,'Pct_1Mil']
+		self.B100BonusPctData = self.jobsdf.loc[self.current_id,'BonusPct100Bil']
+		self.HighBonusPctData = self.jobsdf.loc[self.current_id,'HighBonusPct']
+		self.MedBonusPctData = self.jobsdf.loc[self.current_id,'MedBonusPct']
+		self.LowBonusPctData = self.jobsdf.loc[self.current_id,'LowBonusPct']
+		self.Mil1BonusPctData = self.jobsdf.loc[self.current_id,'BonusPct1Mil']
+		self.StdErrData = self.jobsdf.loc[self.current_id,'StdErr']
+		self.MedYrsData = self.jobsdf.loc[self.current_id,'Medyrs']
+		self.USOverrideData = self.jobsdf.loc[self.current_id,'USPK_C']
+		self.CanOverrideData = self.jobsdf.loc[self.current_id,'CANPK_C']
+		self.CanPercentData = self.jobsdf.loc[self.current_id,'CAN_PCT']
+		self.CanBonusPctData = self.jobsdf.loc[self.current_id,'CanBonusPct']
+		self.ReptoData = self.jobsdf.loc[self.current_id,'Repto']
+		self.XRefData = self.jobsdf.loc[self.current_id,'JobXRef']
+		self.CPCData = self.jobsdf.loc[self.current_id,'CPCNO']
 
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
