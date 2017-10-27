@@ -128,11 +128,13 @@ class Dataverse:
 		self.CPCSalData = self.jobsdf.loc[self.current_index,'CPCSalary']
 		self.AdderData = self.jobsdf.loc[self.current_index,'Adder']
 		## Entries
-		self.B100PctData = self.jobsdf.loc[self.current_index,'Pct_100Bil']
+		if pd.isnull(self.jobsdf.loc[self.current_index,'Pct_100Bil']): self.B100PctData = 1.1
+		else: self.B100PctData = self.jobsdf.loc[self.current_index,'Pct_100Bil']
 		self.HighPctData = self.jobsdf.loc[self.current_index,'HIGH_F']
 		self.MedPctData = self.jobsdf.loc[self.current_index,'US_PCT']
 		self.LowPctData = self.jobsdf.loc[self.current_index,'LOW_F']
-		self.Mil1PctData = self.jobsdf.loc[self.current_index,'Pct_1Mil']
+		if pd.isnull(self.jobsdf.loc[self.current_index,'Pct_1Mil']): self.Mil1PctData = 0.1
+		else: self.Mil1PctData = self.jobsdf.loc[self.current_index,'Pct_1Mil']
 		self.B100BonusPctData = self.jobsdf.loc[self.current_index,'BonusPct100Bil']
 		self.HighBonusPctData = self.jobsdf.loc[self.current_index,'HighBonusPct']
 		self.MedBonusPctData = self.jobsdf.loc[self.current_index,'MedBonusPct']
@@ -150,6 +152,7 @@ class Dataverse:
 		self.CPCData = self.jobsdf.loc[self.current_index,'CPCNO']
 		## Calculations
 		self.MedSalData = self.MedPctData*self.XrefUSData
+		self.set_CalcData()
 
 	def set_datavariables_id(self, *event):
 		## Labels
@@ -191,11 +194,13 @@ class Dataverse:
 		self.CPCSalData = self.jobsdf.loc[self.current_id,'CPCSalary']
 		self.AdderData = self.jobsdf.loc[self.current_id,'Adder']
 		## Entries
-		self.B100PctData = self.jobsdf.loc[self.current_id,'Pct_100Bil']
+		if pd.isnull(self.jobsdf.loc[self.current_id,'Pct_100Bil']): self.B100PctData = 1.1
+		else: self.B100PctData = self.jobsdf.loc[self.current_id,'Pct_100Bil']
 		self.HighPctData = self.jobsdf.loc[self.current_id,'HIGH_F']
 		self.MedPctData = self.jobsdf.loc[self.current_id,'US_PCT']
 		self.LowPctData = self.jobsdf.loc[self.current_id,'LOW_F']
-		self.Mil1PctData = self.jobsdf.loc[self.current_id,'Pct_1Mil']
+		if pd.isnull(self.jobsdf.loc[self.current_id,'Pct_1Mil']): self.Mil1PctData = 0.1
+		else: self.Mil1PctData = self.jobsdf.loc[self.current_id,'Pct_1Mil']
 		self.B100BonusPctData = self.jobsdf.loc[self.current_id,'BonusPct100Bil']
 		self.HighBonusPctData = self.jobsdf.loc[self.current_id,'HighBonusPct']
 		self.MedBonusPctData = self.jobsdf.loc[self.current_id,'MedBonusPct']
@@ -213,6 +218,18 @@ class Dataverse:
 		self.CPCData = self.jobsdf.loc[self.current_id,'CPCNO']
 		## Calculations
 		self.MedSalData = self.MedPctData*self.XrefUSData
+		self.set_CalcData()
+
+	def update_MedSalCalcData(self, entry, *event):
+		self.MedSalData = int(entry*(self.CPCSalData+self.AdderData))
+		## Push medsal + calcs into output df
+		self.set_CalcData()
+
+	def set_CalcData(self, *event):
+		self.Sall100BilData = self.MedSalData * self.B100PctData
+		self.HighSalData = self.MedSalData * self.HighPctData
+		self.LowSalData = self.MedSalData * self.LowPctData
+		self.Sal1MilData = self.MedSalData * self.Mil1PctData
 
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
@@ -475,8 +492,8 @@ class Application(Frame):
 		self.SocOutputLabel.grid(row=2, column=7)
 		self.High10thPercentile_100BilLabel = Label(self, text="Initial Text", relief="groove")
 		self.High10thPercentile_100BilLabel.grid(row=4, column=2)
-		self.Sal100BLabel = Label(self, text="Initial Text", relief="groove")
-		self.Sal100BLabel.grid(row=4, column=3)
+		self.Sal100BilLabel = Label(self, text="Initial Text", relief="groove")
+		self.Sal100BilLabel.grid(row=4, column=3)
 		self.High90thPercentile_100BilLabel = Label(self, text="Initial Text", relief="groove")
 		self.High90thPercentile_100BilLabel.grid(row=4, column=4)
 		self.B100Q1Label = Label(self, text="[Initial Text]", relief="groove")
@@ -598,6 +615,8 @@ class Application(Frame):
 		self.XRefTitleLabel.grid_configure(sticky=E)
 		self.DegreeNameLabel.grid_configure(sticky=E)
 		## Additional Labels (Calculated)
+		## Real-time updates
+		self.USOverrideEntry.bind('<Return>', self.update_CalcSal)
 
 ## Navigation
 	def nextpage(self, event):
@@ -700,6 +719,9 @@ class Application(Frame):
 		self.CPCEntry.delete(0, END)
 		## Calc Labels
 		self.MedSalLabel.config(text="    ")
+		self.HighSalLabel.config(text="    ")
+		self.LowSalLabel.config(text="    ")
+		self.Sal1MilLabel.config(text="    ")
 
 	def label_entry_reload(self, *event):
 		self.label_entry_clear()
@@ -765,7 +787,19 @@ class Application(Frame):
 		self.XRefEntry.insert(0, str(self.data.XRefData))
 		self.CPCEntry.insert(0, str(self.data.CPCData))
 		## Calc Labels
+		#self.MedSalLabel.config(text= int(self.data.MedSalData))
+		self.update_CalcSal()
+	
+	def update_CalcSal(self, *event):
+		try:
+			self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
+		except ValueError:
+			self.data.MedSalData = int(self.data.MedPctData*self.data.XrefUSData)
 		self.MedSalLabel.config(text= int(self.data.MedSalData))
+		self.Sal100BilLabel.config(text= int(self.data.Sall100BilData))
+		self.HighSalLabel.config(text= int(self.data.HighSalData))
+		self.LowSalLabel.config(text= int(self.data.LowSalData))
+		self.Sal1MilLabel.config(text= int(self.data.Sal1MilData))
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
