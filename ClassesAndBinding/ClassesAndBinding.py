@@ -602,36 +602,21 @@ class Application(Frame):
 ## Navigation
 	def nextpage(self, event):
 		self.JobTitleLabel.config(foreground="Black")
-		self.clear_Entries()
 		self.data.index_next()
 		self.label_entry_reload()
 		self.jobentryreplace()
-		#jobtext = self.data.jobname
-		#print(jobtext)
-		#self.foundit(jobtext)
-		#self.exec_job()
-		#self.load_Entries()
 
 	def priorpage(self, event):
 		self.JobTitleLabel.config(foreground="Black")
-		self.clear_Entries()
 		self.data.index_prior()
 		self.label_entry_reload()
 		self.jobentryreplace()
-		#jobtext = self.data.jobname
-		#print(jobtext)
-		#self.foundit(jobtext)
-		#self.exec_job()
-		#self.load_Entries()
 
 	def jobidsearch(self, event):
 		self.label_entry_clear()
-		#self.clear_Entries()
 		try:
 			self.intJobIdSearchEntry = int(self.JobIdSearchEntry.get())
 			self.data.find_by_erijobid(self.intJobIdSearchEntry)
-			#jobtext = self.data.jobname
-			#self.exec_job()
 			self.invalidsearchwarning.grid_forget()
 			self.label_entry_reload()
 			if self.data.jobname=="No job found":
@@ -639,14 +624,12 @@ class Application(Frame):
 				self.label_entry_clear()
 			else:
 				self.JobTitleLabel.config(foreground="Black")
-				#self.load_Entries()
 			#self.JobTitleLabel.grid(row=2, column=0)
 		except ValueError:
 			#self.JobTitleLabel.grid_forget()
 			#self.execjoblabel.grid_forget()
 			#print("Not a valid search entry.")
 			#self.invalidsearchwarning.grid(row=2, column=0)
-			#self.clear_Entries()
 			self.JobTitleLabel.config(foreground="Red")
 			self.JobTitleLabel.config(text="Not a valid search entry")
 			self.label_entry_clear()
@@ -655,24 +638,6 @@ class Application(Frame):
 	def jobentryreplace(self):
 		self.JobIdSearchEntry.delete(0, END)
 		self.JobIdSearchEntry.insert(0, str(self.data.current_id))
-
-	def foundit(self, entry):
-		self.JobTitleLabel.config(text=entry, foreground="Black")
-		self.JobTitleLabel.grid(row=2, column=0)
-		self.invalidsearchwarning.grid_forget()
-
-	#def exec_job(self):
-		#self.ExecJobLabel.grid(row=2, column=1)
-		#if self.data.jobexec == 1:
-			#self.ExecJobLabel.config(text="Executive Job")
-		#else: 
-			#self.ExecJobLabel.config(text="Non-Executive Job")
-
-	def clear_Entries(self, *event):
-		pass
-
-	def load_Entries(self, *event):
-		pass
 
 	def label_entry_clear(self, *event):
 		## Labels
