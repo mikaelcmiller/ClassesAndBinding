@@ -148,6 +148,8 @@ class Dataverse:
 		else: self.ReptoData = int(self.jobsdf.loc[self.current_index,'Repto'])
 		self.XRefData = self.jobsdf.loc[self.current_index,'JobXRef']
 		self.CPCData = self.jobsdf.loc[self.current_index,'CPCNO']
+		## Calculations
+		self.MedSalData = self.MedPctData*self.XrefUSData
 
 	def set_datavariables_id(self, *event):
 		## Labels
@@ -209,6 +211,8 @@ class Dataverse:
 		else: self.ReptoData = int(self.jobsdf.loc[self.current_id,'Repto'])
 		self.XRefData = self.jobsdf.loc[self.current_id,'JobXRef']
 		self.CPCData = self.jobsdf.loc[self.current_id,'CPCNO']
+		## Calculations
+		self.MedSalData = self.MedPctData*self.XrefUSData
 
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
@@ -469,12 +473,12 @@ class Application(Frame):
 		self.JobSocLabel.grid(row=2, column=6)
 		self.SocOutputLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.SocOutputLabel.grid(row=2, column=7)
-		self.Pct10B100Label = Label(self, text="[Initial Text]", relief="groove")
-		self.Pct10B100Label.grid(row=4, column=2)
-		self.MeanB100Label = Label(self, text="[Initial Text]", relief="groove")
-		self.MeanB100Label.grid(row=4, column=3)
-		self.Pct90B100Label = Label(self, text="[Initial Text]", relief="groove")
-		self.Pct90B100Label.grid(row=4, column=4)
+		self.High10thPercentile_100BilLabel = Label(self, text="Initial Text", relief="groove")
+		self.High10thPercentile_100BilLabel.grid(row=4, column=2)
+		self.Sal100BLabel = Label(self, text="Initial Text", relief="groove")
+		self.Sal100BLabel.grid(row=4, column=3)
+		self.High90thPercentile_100BilLabel = Label(self, text="Initial Text", relief="groove")
+		self.High90thPercentile_100BilLabel.grid(row=4, column=4)
 		self.B100Q1Label = Label(self, text="[Initial Text]", relief="groove")
 		self.B100Q1Label.grid(row=4, column=6)
 		self.RawDataLabel = Label(self, text="""[Initial 
@@ -483,36 +487,36 @@ class Application(Frame):
 
 					Text]""", relief="groove", width=45)
 		self.RawDataLabel.grid(row=5, column=0)
-		self.Pct10HighB1Label = Label(self, text="[Initial Text]", relief="groove")
-		self.Pct10HighB1Label.grid(row=5, column=2)
-		self.MeanHigh1BLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.MeanHigh1BLabel.grid(row=5, column=3)
-		self.Pct90High1BLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.Pct90High1BLabel.grid(row=5, column=4)
+		self.High10thPercentileLabel = Label(self, text="Initial Text", relief="groove")
+		self.High10thPercentileLabel.grid(row=5, column=2)
+		self.HighSalLabel = Label(self, text="Initial Text", relief="groove")
+		self.HighSalLabel.grid(row=5, column=3)
+		self.High90thPercentileLabel = Label(self, text="Initial Text", relief="groove")
+		self.High90thPercentileLabel.grid(row=5, column=4)
 		self.HighQ1Label = Label(self, text="[Initial Text]", relief="groove")
 		self.HighQ1Label.grid(row=5, column=6)
-		self.PctMil10edMil100Label = Label(self, text="[Initial Text]", relief="groove")
-		self.PctMil10edMil100Label.grid(row=6, column=2)
-		self.MeanMedMil100Label = Label(self, text="[Initial Text]", relief="groove")
-		self.MeanMedMil100Label.grid(row=6, column=3)
-		self.Pct90MedMil100Label = Label(self, text="[Initial Text]", relief="groove")
-		self.Pct90MedMil100Label.grid(row=6, column=4)
+		self.Med10thPercentileLabel = Label(self, text="Initial Text", relief="groove")
+		self.Med10thPercentileLabel.grid(row=6, column=2)
+		self.MedSalLabel = Label(self, text="Initial Text", relief="groove")
+		self.MedSalLabel.grid(row=6, column=3)
+		self.Med90thPercentileLabel = Label(self, text="Initial Text", relief="groove")
+		self.Med90thPercentileLabel.grid(row=6, column=4)
 		self.MedQ1Label = Label(self, text="[Initial Text]", relief="groove")
 		self.MedQ1Label.grid(row=6, column=6)
-		self.Pct10LowMil10Label = Label(self, text="[Initial Text]", relief="groove")
-		self.Pct10LowMil10Label.grid(row=7, column=2)
-		self.MeanLowMil10Label = Label(self, text="[Initial Text]", relief="groove")
-		self.MeanLowMil10Label.grid(row=7, column=3)
-		self.Pct90LowMil10Label = Label(self, text="[Initial Text]", relief="groove")
-		self.Pct90LowMil10Label.grid(row=7, column=4)
+		self.Low10thPercentileLabel = Label(self, text="Initial Text", relief="groove")
+		self.Low10thPercentileLabel.grid(row=7, column=2)
+		self.LowSalLabel = Label(self, text="Initial Text", relief="groove")
+		self.LowSalLabel.grid(row=7, column=3)
+		self.Low90thPercentileLabel = Label(self, text="Initial Text", relief="groove")
+		self.Low90thPercentileLabel.grid(row=7, column=4)
 		self.LowQ1Label = Label(self, text="[Initial Text]", relief="groove")
 		self.LowQ1Label.grid(row=7, column=6)
-		self.PctMil10il1Label = Label(self, text="[Initial Text]", relief="groove")
-		self.PctMil10il1Label.grid(row=8, column=2)
-		self.MeanMil1Label = Label(self, text="[Initial Text]", relief="groove")
-		self.MeanMil1Label.grid(row=8, column=3)
-		self.Pct90Mil1Label = Label(self, text="[Initial Text]", relief="groove")
-		self.Pct90Mil1Label.grid(row=8, column=4)
+		self.Low10thPercentile_1milLabel = Label(self, text="Initial Text", relief="groove")
+		self.Low10thPercentile_1milLabel.grid(row=8, column=2)
+		self.Sal1MilLabel = Label(self, text="Initial Text", relief="groove")
+		self.Sal1MilLabel.grid(row=8, column=3)
+		self.Low90thPercentile_1milLabel = Label(self, text="Initial Text", relief="groove")
+		self.Low90thPercentile_1milLabel.grid(row=8, column=4)
 		self.Mil1Q1Label = Label(self, text="[Initial Text]", relief="groove")
 		self.Mil1Q1Label.grid(row=8, column=6)
 		self.HighPredPctLabel = Label(self, text="[Initial Text]", relief="groove")
@@ -593,6 +597,7 @@ class Application(Frame):
 		self.ReptoTitleLabel.grid_configure(sticky=E)
 		self.XRefTitleLabel.grid_configure(sticky=E)
 		self.DegreeNameLabel.grid_configure(sticky=E)
+		## Additional Labels (Calculated)
 
 ## Navigation
 	def nextpage(self, event):
@@ -728,6 +733,8 @@ class Application(Frame):
 		self.ReptoEntry.delete(0, END)
 		self.XRefEntry.delete(0, END)
 		self.CPCEntry.delete(0, END)
+		## Calc Labels
+		self.MedSalLabel.config(text="    ")
 
 	def label_entry_reload(self, *event):
 		self.label_entry_clear()
@@ -792,6 +799,8 @@ class Application(Frame):
 		self.ReptoEntry.insert(0, str(self.data.ReptoData))
 		self.XRefEntry.insert(0, str(self.data.XRefData))
 		self.CPCEntry.insert(0, str(self.data.CPCData))
+		## Calc Labels
+		self.MedSalLabel.config(text= int(self.data.MedSalData))
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
