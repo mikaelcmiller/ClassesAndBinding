@@ -616,7 +616,7 @@ class Application(Frame):
 		self.DegreeNameLabel.grid_configure(sticky=E)
 		## Additional Labels (Calculated)
 		## Real-time updates
-		self.USOverrideEntry.bind('<Return>', self.update_MedSal)
+		self.USOverrideEntry.bind('<Return>', self.update_CalcSal)
 
 ## Navigation
 	def nextpage(self, event):
@@ -719,6 +719,9 @@ class Application(Frame):
 		self.CPCEntry.delete(0, END)
 		## Calc Labels
 		self.MedSalLabel.config(text="    ")
+		self.HighSalLabel.config(text="    ")
+		self.LowSalLabel.config(text="    ")
+		self.Sal1MilLabel.config(text="    ")
 
 	def label_entry_reload(self, *event):
 		self.label_entry_clear()
@@ -784,15 +787,19 @@ class Application(Frame):
 		self.XRefEntry.insert(0, str(self.data.XRefData))
 		self.CPCEntry.insert(0, str(self.data.CPCData))
 		## Calc Labels
-		self.MedSalLabel.config(text= int(self.data.MedSalData))
+		#self.MedSalLabel.config(text= int(self.data.MedSalData))
+		self.update_CalcSal()
 	
-	def update_MedSal(self, *event):
+	def update_CalcSal(self, *event):
 		try:
 			self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
 		except ValueError:
 			self.data.MedSalData = int(self.data.MedPctData*self.data.XrefUSData)
-		self.MedSalLabel.config(text= "    ")
-		self.MedSalLabel.config(text= self.data.MedSalData)
+		self.MedSalLabel.config(text= int(self.data.MedSalData))
+		self.Sal100BilLabel.config(text= int(self.data.Sall100BilData))
+		self.HighSalLabel.config(text= int(self.data.HighSalData))
+		self.LowSalLabel.config(text= int(self.data.LowSalData))
+		self.Sal1MilLabel.config(text= int(self.data.Sal1MilData))
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
