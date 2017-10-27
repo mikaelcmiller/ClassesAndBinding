@@ -230,6 +230,11 @@ class Dataverse:
 		self.HighSalData = self.MedSalData * self.HighPctData
 		self.LowSalData = self.MedSalData * self.LowPctData
 		self.Sal1MilData = self.MedSalData * self.Mil1PctData
+		self.High90thPercentile_100BilData = ((self.StdErrData/(100*1.6))+1) * self.Sall100BilData
+		self.High90thPercentileData = ((self.StdErrData/(100*1.6))+1) * self.HighSalData
+		self.Med90thPercentileData = ((self.StdErrData/(100*1.6))+1) * self.MedSalData
+		self.Low90thPercentileData = ((self.StdErrData/(100*1.6))+1) * self.LowSalData
+		self.Low90thPercentile_1MilData = ((self.StdErrData/(100*1.6))+1) * self.Sal1MilData
 
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
@@ -528,12 +533,12 @@ class Application(Frame):
 		self.Low90thPercentileLabel.grid(row=7, column=4)
 		self.LowQ1Label = Label(self, text="[Initial Text]", relief="groove")
 		self.LowQ1Label.grid(row=7, column=6)
-		self.Low10thPercentile_1milLabel = Label(self, text="Initial Text", relief="groove")
-		self.Low10thPercentile_1milLabel.grid(row=8, column=2)
+		self.Low10thPercentile_1MilLabel = Label(self, text="Initial Text", relief="groove")
+		self.Low10thPercentile_1MilLabel.grid(row=8, column=2)
 		self.Sal1MilLabel = Label(self, text="Initial Text", relief="groove")
 		self.Sal1MilLabel.grid(row=8, column=3)
-		self.Low90thPercentile_1milLabel = Label(self, text="Initial Text", relief="groove")
-		self.Low90thPercentile_1milLabel.grid(row=8, column=4)
+		self.Low90thPercentile_1MilLabel = Label(self, text="Initial Text", relief="groove")
+		self.Low90thPercentile_1MilLabel.grid(row=8, column=4)
 		self.Mil1Q1Label = Label(self, text="[Initial Text]", relief="groove")
 		self.Mil1Q1Label.grid(row=8, column=6)
 		self.HighPredPctLabel = Label(self, text="[Initial Text]", relief="groove")
@@ -718,10 +723,16 @@ class Application(Frame):
 		self.XRefEntry.delete(0, END)
 		self.CPCEntry.delete(0, END)
 		## Calc Labels
+		self.Sal100BilLabel.config(text="    ")
 		self.MedSalLabel.config(text="    ")
 		self.HighSalLabel.config(text="    ")
 		self.LowSalLabel.config(text="    ")
 		self.Sal1MilLabel.config(text="    ")
+		self.High90thPercentile_100BilLabel.config(text="    ")
+		self.High90thPercentileLabel.config(text="    ")
+		self.Med90thPercentileLabel.config(text="    ")
+		self.Low90thPercentileLabel.config(text="    ")
+		self.Low90thPercentile_1MilLabel.config(text="    ")
 
 	def label_entry_reload(self, *event):
 		self.label_entry_clear()
@@ -800,6 +811,12 @@ class Application(Frame):
 		self.HighSalLabel.config(text= int(self.data.HighSalData))
 		self.LowSalLabel.config(text= int(self.data.LowSalData))
 		self.Sal1MilLabel.config(text= int(self.data.Sal1MilData))
+		self.High90thPercentile_100BilLabel.config(text= int(self.data.High90thPercentile_100BilData))
+		self.High90thPercentileLabel.config(text= int(self.data.High90thPercentileData))
+		self.Med90thPercentileLabel.config(text= int(self.data.Med90thPercentileData))
+		self.Low90thPercentileLabel.config(text= int(self.data.Low90thPercentileData))
+		self.Low90thPercentile_1MilLabel.config(text= int(self.data.Low90thPercentile_1MilData))
+
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
