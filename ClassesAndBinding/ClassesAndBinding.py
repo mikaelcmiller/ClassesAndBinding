@@ -235,6 +235,11 @@ class Dataverse:
 		self.Med90thPercentileData = ((self.StdErrData/(100*1.6))+1) * self.MedSalData
 		self.Low90thPercentileData = ((self.StdErrData/(100*1.6))+1) * self.LowSalData
 		self.Low90thPercentile_1MilData = ((self.StdErrData/(100*1.6))+1) * self.Sal1MilData
+		self.High10thPercentile_100BilData = ((1 - self.StdErrData/100) * self.Sall100BilData)
+		self.High10thPercentileData = ((1 - self.StdErrData/100) * self.HighSalData)
+		self.Med10thPercentileData = ((1 - self.StdErrData/100) * self.MedSalData)
+		self.Low10thPercentileData = ((1 - self.StdErrData/100) * self.LowSalData)
+		self.Low10thPercentile_1MilData = ((1 - self.StdErrData/100) * self.Sal1MilData)
 
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
@@ -621,7 +626,7 @@ class Application(Frame):
 		self.DegreeNameLabel.grid_configure(sticky=E)
 		## Additional Labels (Calculated)
 		## Real-time updates
-		self.USOverrideEntry.bind('<Return>', self.update_CalcSal)
+		self.USOverrideEntry.bind('<Return>', self.update_MedSal)
 
 ## Navigation
 	def nextpage(self, event):
@@ -733,6 +738,11 @@ class Application(Frame):
 		self.Med90thPercentileLabel.config(text="    ")
 		self.Low90thPercentileLabel.config(text="    ")
 		self.Low90thPercentile_1MilLabel.config(text="    ")
+		self.High10thPercentile_100BilLabel.config(text="    ")
+		self.High10thPercentileLabel.config(text="    ")
+		self.Med10thPercentileLabel.config(text="    ")
+		self.Low10thPercentileLabel.config(text="    ")
+		self.Low10thPercentile_1MilLabel.config(text="    ")
 
 	def label_entry_reload(self, *event):
 		self.label_entry_clear()
@@ -799,13 +809,17 @@ class Application(Frame):
 		self.CPCEntry.insert(0, str(self.data.CPCData))
 		## Calc Labels
 		#self.MedSalLabel.config(text= int(self.data.MedSalData))
-		self.update_CalcSal()
+		self.update_MedSal()
 	
-	def update_CalcSal(self, *event):
+	def update_MedSal(self, *event):
 		try:
 			self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
 		except ValueError:
 			self.data.MedSalData = int(self.data.MedPctData*self.data.XrefUSData)
+		self.data.set_CalcData()
+		self.update_CalcLabels()
+	
+	def update_CalcLabels(self, *event):
 		self.MedSalLabel.config(text= int(self.data.MedSalData))
 		self.Sal100BilLabel.config(text= int(self.data.Sall100BilData))
 		self.HighSalLabel.config(text= int(self.data.HighSalData))
@@ -816,7 +830,11 @@ class Application(Frame):
 		self.Med90thPercentileLabel.config(text= int(self.data.Med90thPercentileData))
 		self.Low90thPercentileLabel.config(text= int(self.data.Low90thPercentileData))
 		self.Low90thPercentile_1MilLabel.config(text= int(self.data.Low90thPercentile_1MilData))
-
+		self.High10thPercentile_100BilLabel.config(text= int(self.data.High10thPercentile_100BilData))
+		self.High10thPercentileLabel.config(text= int(self.data.High10thPercentileData))
+		self.Med10thPercentileLabel.config(text= int(self.data.Med10thPercentileData))
+		self.Low10thPercentileLabel.config(text= int(self.data.Low10thPercentileData))
+		self.Low10thPercentile_1MilLabel.config(text= int(self.data.Low10thPercentile_1MilData))
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
