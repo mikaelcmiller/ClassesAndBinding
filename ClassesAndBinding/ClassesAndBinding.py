@@ -80,7 +80,6 @@ class Dataverse:
 		else: self.current_index = self.last_index
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
-		#self.set_datavariables_index()
 		self.set_vars(input="index")
 
 	def set_vars(self, input="index"):
