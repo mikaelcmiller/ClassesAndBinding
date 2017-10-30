@@ -625,6 +625,11 @@ class Application(Frame):
 		## Additional Labels (Calculated)
 		## Real-time updates
 		self.USOverrideEntry.bind('<Return>', self.update_MedSal)
+		self.BlankSpace = Label(self, text="    ")
+		self.BlankSpace.grid(row=28, column=2)
+		self.BlankSpace2 = Label(self, text="    ")
+		self.BlankSpace2.grid(row=9, column=2)
+
 
 ## Navigation
 	def nextpage(self, event):
@@ -842,7 +847,6 @@ class Application(Frame):
 		self.Low90thPercentileLabel.config(text= int(self.data.Low90thPercentileData))
 		if self.data.jobexec==0: self.Low90thPercentile_1MilLabel.config(text="    ")
 		else: self.Low90thPercentile_1MilLabel.config(text= int(self.data.Low90thPercentile_1MilData))
-
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
