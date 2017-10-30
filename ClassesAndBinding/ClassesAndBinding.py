@@ -54,7 +54,7 @@ class Dataverse:
 			self.current_id = idsearch
 			self.current_index = self.jobsdf.loc[self.current_id,'index1']
 			self.set_datavariables_id()
-			#Need to check if exists in outputdf, if so: pull from output df instead of jobsdf
+			##Need to check if exists in outputdf, if so: pull from output df instead of jobsdf
 		except KeyError:
 			self.jobname = "No job found"
 
