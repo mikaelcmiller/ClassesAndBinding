@@ -51,7 +51,6 @@ class Dataverse:
 			except:
 				pass
 			self.jobname = self.jobsdf.loc[idsearch,'jobdottitle']
-			self.jobexec = self.jobsdf.loc[idsearch,'execjob']
 			self.current_id = idsearch
 			self.current_index = self.jobsdf.loc[self.current_id,'index1']
 			self.set_datavariables_id()
@@ -69,7 +68,6 @@ class Dataverse:
 		else: self.current_index = 0
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
-		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 		self.set_datavariables_index()
 		#return jobname
 
@@ -83,7 +81,6 @@ class Dataverse:
 		else: self.current_index = self.last_index
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
-		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 		self.set_datavariables_index()
 		#return jobname
 
@@ -152,6 +149,7 @@ class Dataverse:
 		## Calculations
 		self.MedSalData = self.MedPctData*self.XrefUSData
 		self.set_CalcData()
+		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 
 	def set_datavariables_id(self, *event):
 		## Labels
@@ -218,6 +216,7 @@ class Dataverse:
 		## Calculations
 		self.MedSalData = self.MedPctData*self.XrefUSData
 		self.set_CalcData()
+		self.jobexec = self.jobsdf.loc[self.current_id,'execjob']
 
 	def update_MedSalCalcData(self, entry, *event):
 		self.MedSalData = int(entry*(self.CPCSalData+self.AdderData))
