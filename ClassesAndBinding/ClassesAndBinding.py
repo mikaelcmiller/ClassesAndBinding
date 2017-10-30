@@ -17,7 +17,6 @@ class Dataverse:
 		self.current_id = 1
 		self.jobexec=1
 		self.jobname = "Chief Executive Officer"
-		#self.set_datavariables_index()
 		self.set_vars(input="index")
 		print("DF Initialized")
 
@@ -54,7 +53,6 @@ class Dataverse:
 			self.jobname = self.jobsdf.loc[idsearch,'jobdottitle']
 			self.current_id = idsearch
 			self.current_index = self.jobsdf.loc[self.current_id,'index1']
-			#self.set_datavariables_id()
 			self.set_vars(input="id")
 			##Need to check if exists in outputdf, if so: pull from output df instead of jobsdf
 		except KeyError:
@@ -70,9 +68,7 @@ class Dataverse:
 		else: self.current_index = 0
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
-		#self.set_datavariables_index()
 		self.set_vars(input="index")
-		#return jobname
 
 	def index_prior(self, *event):
 		try:
@@ -86,16 +82,13 @@ class Dataverse:
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		#self.set_datavariables_index()
 		self.set_vars(input="index")
-		#return jobname
 
 	def set_vars(self, input="index"):
 		if(input=="index"):
-			print("index selected: "+str(self.current_index))
 			current_selector = self.current_index
 		else:
-			print("id selected: "+str(self.current_id))
 			current_selector = self.current_id
-				## Labels
+		## Labels
 		self.JobTitleData = self.jobsdf.loc[current_selector,'jobdottitle']
 		self.ERIJobIdData = self.jobsdf.loc[current_selector,'erijobid']
 		self.JobDotData = self.jobsdf.loc[current_selector,'jobdot']
