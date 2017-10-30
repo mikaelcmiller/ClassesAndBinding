@@ -17,7 +17,8 @@ class Dataverse:
 		self.current_id = 1
 		self.jobexec=1
 		self.jobname = "Chief Executive Officer"
-		self.set_datavariables_index()
+		#self.set_datavariables_index()
+		self.set_vars(input="index")
 		print("DF Initialized")
 
 	def inititalizedataframe(self):
@@ -160,142 +161,6 @@ class Dataverse:
 		self.MedSalData = self.MedPctData*self.XrefUSData
 		self.set_CalcData()
 		self.jobexec = self.jobsdf.loc[current_selector,'execjob']
-
-	def set_datavariables_index(self, *event):
-		## Labels
-		self.JobTitleData = self.jobsdf.loc[self.current_index,'jobdottitle']
-		self.ERIJobIdData = self.jobsdf.loc[self.current_index,'erijobid']
-		self.JobDotData = self.jobsdf.loc[self.current_index,'jobdot']
-		self.JobSocData = self.jobsdf.loc[self.current_index,'SOC']
-		self.HighPredPctData = self.jobsdf.loc[self.current_index,'HighPredCalc']
-		self.LowPredPctData = self.jobsdf.loc[self.current_index,'LowPredCalc']
-		self.B100TotalCompData = self.jobsdf.loc[self.current_index,'TotalComp100Bil']
-		self.HighTotalCompData = self.jobsdf.loc[self.current_index,'HighTotalComp']
-		self.MedTotalCompData = self.jobsdf.loc[self.current_index,'MedTotalComp']
-		self.LowTotalCompData = self.jobsdf.loc[self.current_index,'LowTotalComp']
-		self.Mil1TotalCompData = self.jobsdf.loc[self.current_index,'TotalComp1Mil']
-		if pd.isnull(self.jobsdf.loc[self.current_index,'EstimatedYears']) : self.EstimatedYears = "NA"
-		else: self.EstimatedYears = int(self.jobsdf.loc[self.current_index,'EstimatedYears'])
-		self.B100Q1Data = self.jobsdf.loc[self.current_index,'Q1100Bil']
-		self.HighQ1Data = self.jobsdf.loc[self.current_index,'Q1High']
-		self.MedQ1Data = self.jobsdf.loc[self.current_index,'Q1Med']
-		self.LowQ1Data = self.jobsdf.loc[self.current_index,'Q1Low']
-		self.Mil1Q1Data = self.jobsdf.loc[self.current_index,'Q11Mil']
-		self.QCCheckData = self.jobsdf.loc[self.current_index,'MedPred']
-		self.SocPredData = self.jobsdf.loc[self.current_index,'OccAve']
-		self.SurveyMeanData = self.jobsdf.loc[self.current_index,'Y_Base']
-		self.SurveyIncumbentsData = self.jobsdf.loc[self.current_index,'SurveySampleSize']
-		self.QCCheckCanData = self.jobsdf.loc[self.current_index,'CanPred']
-		self.CanPoly1Data = self.jobsdf.loc[self.current_index,'CanPoly1']
-		self.CanPoly2Data = self.jobsdf.loc[self.current_index,'CanPoly2']
-		self.CanPoly3Data = self.jobsdf.loc[self.current_index,'CanPoly3']
-		self.CanPolyMeanData = self.jobsdf.loc[self.current_index,'AvgCanPoly']
-		self.CanPolyMeanQCData = self.jobsdf.loc[self.current_index,'AvgCanModels']
-		self.ReptoTitleData = self.jobsdf.loc[self.current_index,'ReptoTitle']
-		self.ReptoSalData = self.jobsdf.loc[self.current_index,'ReptoSal']
-		self.ReptoYr3Data = self.jobsdf.loc[self.current_index,'ReptoYr3']
-		self.XRefTitleData = self.jobsdf.loc[self.current_index,'XRefTitle']
-		self.XrefUSData = self.jobsdf.loc[self.current_index,'XRefMed']
-		self.XRefCanData = self.jobsdf.loc[self.current_index,'XRefCan']
-		self.DegreeNameData = self.jobsdf.loc[self.current_index,'DegreeName']
-		self.CPCSalData = self.jobsdf.loc[self.current_index,'CPCSalary']
-		self.AdderData = self.jobsdf.loc[self.current_index,'Adder']
-		## Entries
-		if pd.isnull(self.jobsdf.loc[self.current_index,'Pct_100Bil']): self.B100PctData = 1.1
-		else: self.B100PctData = self.jobsdf.loc[self.current_index,'Pct_100Bil']
-		self.HighPctData = self.jobsdf.loc[self.current_index,'HIGH_F']
-		self.MedPctData = self.jobsdf.loc[self.current_index,'US_PCT']
-		self.LowPctData = self.jobsdf.loc[self.current_index,'LOW_F']
-		if pd.isnull(self.jobsdf.loc[self.current_index,'Pct_1Mil']): self.Mil1PctData = 0.1
-		else: self.Mil1PctData = self.jobsdf.loc[self.current_index,'Pct_1Mil']
-		self.B100BonusPctData = self.jobsdf.loc[self.current_index,'BonusPct100Bil']
-		self.HighBonusPctData = self.jobsdf.loc[self.current_index,'HighBonusPct']
-		self.MedBonusPctData = self.jobsdf.loc[self.current_index,'MedBonusPct']
-		self.LowBonusPctData = self.jobsdf.loc[self.current_index,'LowBonusPct']
-		self.Mil1BonusPctData = self.jobsdf.loc[self.current_index,'BonusPct1Mil']
-		self.StdErrData = self.jobsdf.loc[self.current_index,'StdErr']
-		self.MedYrsData = self.jobsdf.loc[self.current_index,'Medyrs']
-		self.USOverrideData = self.jobsdf.loc[self.current_index,'USPK_C']
-		self.CanOverrideData = self.jobsdf.loc[self.current_index,'CANPK_C']
-		self.CanPercentData = self.jobsdf.loc[self.current_index,'CAN_PCT']
-		self.CanBonusPctData = self.jobsdf.loc[self.current_index,'CanBonusPct']
-		if pd.isnull(self.jobsdf.loc[self.current_index,'Repto']): self.ReptoData = int(self.current_id)
-		else: self.ReptoData = int(self.jobsdf.loc[self.current_index,'Repto'])
-		self.XRefData = self.jobsdf.loc[self.current_index,'JobXRef']
-		self.CPCData = self.jobsdf.loc[self.current_index,'CPCNO']
-		## Calculations
-		self.MeanPredData = int((self.QCCheckData+self.SocPredData+self.SurveyMeanData)/3)
-		self.MedSalData = self.MedPctData*self.XrefUSData
-		self.set_CalcData()
-		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
-
-	def set_datavariables_id(self, *event):
-		## Labels
-		self.JobTitleData = self.jobsdf.loc[self.current_id,'jobdottitle']
-		self.ERIJobIdData = self.jobsdf.loc[self.current_id,'erijobid']
-		self.JobDotData = self.jobsdf.loc[self.current_id,'jobdot']
-		self.JobSocData = self.jobsdf.loc[self.current_id,'SOC']
-		self.HighPredPctData = self.jobsdf.loc[self.current_id,'HighPredCalc']
-		self.LowPredPctData = self.jobsdf.loc[self.current_id,'LowPredCalc']
-		self.B100TotalCompData = self.jobsdf.loc[self.current_id,'TotalComp100Bil']
-		self.HighTotalCompData = self.jobsdf.loc[self.current_id,'HighTotalComp']
-		self.MedTotalCompData = self.jobsdf.loc[self.current_id,'MedTotalComp']
-		self.LowTotalCompData = self.jobsdf.loc[self.current_id,'LowTotalComp']
-		self.Mil1TotalCompData = self.jobsdf.loc[self.current_id,'TotalComp1Mil']
-		if pd.isnull(self.jobsdf.loc[self.current_id,'EstimatedYears']) : self.EstimatedYears = "NA"
-		else: self.EstimatedYears = int(self.jobsdf.loc[self.current_id,'EstimatedYears'])
-		self.B100Q1Data = self.jobsdf.loc[self.current_id,'Q1100Bil']
-		self.HighQ1Data = self.jobsdf.loc[self.current_id,'Q1High']
-		self.MedQ1Data = self.jobsdf.loc[self.current_id,'Q1Med']
-		self.LowQ1Data = self.jobsdf.loc[self.current_id,'Q1Low']
-		self.Mil1Q1Data = self.jobsdf.loc[self.current_id,'Q11Mil']
-		self.QCCheckData = self.jobsdf.loc[self.current_id,'MedPred']
-		self.SocPredData = self.jobsdf.loc[self.current_id,'OccAve']
-		self.SurveyMeanData = self.jobsdf.loc[self.current_id,'Y_Base']
-		self.SurveyIncumbentsData = self.jobsdf.loc[self.current_id,'SurveySampleSize']
-		self.QCCheckCanData = self.jobsdf.loc[self.current_id,'CanPred']
-		self.CanPoly1Data = self.jobsdf.loc[self.current_id,'CanPoly1']
-		self.CanPoly2Data = self.jobsdf.loc[self.current_id,'CanPoly2']
-		self.CanPoly3Data = self.jobsdf.loc[self.current_id,'CanPoly3']
-		self.CanPolyMeanData = self.jobsdf.loc[self.current_id,'AvgCanPoly']
-		self.CanPolyMeanQCData = self.jobsdf.loc[self.current_id,'AvgCanModels']
-		self.ReptoTitleData = self.jobsdf.loc[self.current_id,'ReptoTitle']
-		self.ReptoSalData = self.jobsdf.loc[self.current_id,'ReptoSal']
-		self.ReptoYr3Data = self.jobsdf.loc[self.current_id,'ReptoYr3']
-		self.XRefTitleData = self.jobsdf.loc[self.current_id,'XRefTitle']
-		self.XrefUSData = self.jobsdf.loc[self.current_id,'XRefMed']
-		self.XRefCanData = self.jobsdf.loc[self.current_id,'XRefCan']
-		self.DegreeNameData = self.jobsdf.loc[self.current_id,'DegreeName']
-		self.CPCSalData = self.jobsdf.loc[self.current_id,'CPCSalary']
-		self.AdderData = self.jobsdf.loc[self.current_id,'Adder']
-		## Entries
-		if pd.isnull(self.jobsdf.loc[self.current_id,'Pct_100Bil']): self.B100PctData = 1.1
-		else: self.B100PctData = self.jobsdf.loc[self.current_id,'Pct_100Bil']
-		self.HighPctData = self.jobsdf.loc[self.current_id,'HIGH_F']
-		self.MedPctData = self.jobsdf.loc[self.current_id,'US_PCT']
-		self.LowPctData = self.jobsdf.loc[self.current_id,'LOW_F']
-		if pd.isnull(self.jobsdf.loc[self.current_id,'Pct_1Mil']): self.Mil1PctData = 0.1
-		else: self.Mil1PctData = self.jobsdf.loc[self.current_id,'Pct_1Mil']
-		self.B100BonusPctData = self.jobsdf.loc[self.current_id,'BonusPct100Bil']
-		self.HighBonusPctData = self.jobsdf.loc[self.current_id,'HighBonusPct']
-		self.MedBonusPctData = self.jobsdf.loc[self.current_id,'MedBonusPct']
-		self.LowBonusPctData = self.jobsdf.loc[self.current_id,'LowBonusPct']
-		self.Mil1BonusPctData = self.jobsdf.loc[self.current_id,'BonusPct1Mil']
-		self.StdErrData = self.jobsdf.loc[self.current_id,'StdErr']
-		self.MedYrsData = self.jobsdf.loc[self.current_id,'Medyrs']
-		self.USOverrideData = self.jobsdf.loc[self.current_id,'USPK_C']
-		self.CanOverrideData = self.jobsdf.loc[self.current_id,'CANPK_C']
-		self.CanPercentData = self.jobsdf.loc[self.current_id,'CAN_PCT']
-		self.CanBonusPctData = self.jobsdf.loc[self.current_id,'CanBonusPct']
-		if pd.isnull(self.jobsdf.loc[self.current_id,'Repto']): self.ReptoData = int(self.current_id)
-		else: self.ReptoData = int(self.jobsdf.loc[self.current_id,'Repto'])
-		self.XRefData = self.jobsdf.loc[self.current_id,'JobXRef']
-		self.CPCData = self.jobsdf.loc[self.current_id,'CPCNO']
-		## Calculations
-		self.MeanPredData = int((self.QCCheckData+self.SocPredData+self.SurveyMeanData)/3)
-		self.MedSalData = self.MedPctData*self.XrefUSData
-		self.set_CalcData()
-		self.jobexec = self.jobsdf.loc[self.current_id,'execjob']
 
 	def update_MedSalCalcData(self, entry, *event):
 		self.MedSalData = int(entry*(self.CPCSalData+self.AdderData))
