@@ -53,7 +53,8 @@ class Dataverse:
 			self.jobname = self.jobsdf.loc[idsearch,'jobdottitle']
 			self.current_id = idsearch
 			self.current_index = self.jobsdf.loc[self.current_id,'index1']
-			self.set_datavariables_id()
+			#self.set_datavariables_id()
+			self.set_vars(input="id")
 			##Need to check if exists in outputdf, if so: pull from output df instead of jobsdf
 		except KeyError:
 			self.jobname = "No job found"
@@ -68,7 +69,8 @@ class Dataverse:
 		else: self.current_index = 0
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
-		self.set_datavariables_index()
+		#self.set_datavariables_index()
+		self.set_vars(input="index")
 		#return jobname
 
 	def index_prior(self, *event):
@@ -81,8 +83,83 @@ class Dataverse:
 		else: self.current_index = self.last_index
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
-		self.set_datavariables_index()
+		#self.set_datavariables_index()
+		self.set_vars(input="index")
 		#return jobname
+
+	def set_vars(self, input="index"):
+		if(input=="index"):
+			print("index selected: "+str(self.current_index))
+			current_selector = self.current_index
+		else:
+			print("id selected: "+str(self.current_id))
+			current_selector = self.current_id
+				## Labels
+		self.JobTitleData = self.jobsdf.loc[current_selector,'jobdottitle']
+		self.ERIJobIdData = self.jobsdf.loc[current_selector,'erijobid']
+		self.JobDotData = self.jobsdf.loc[current_selector,'jobdot']
+		self.JobSocData = self.jobsdf.loc[current_selector,'SOC']
+		self.HighPredPctData = self.jobsdf.loc[current_selector,'HighPredCalc']
+		self.LowPredPctData = self.jobsdf.loc[current_selector,'LowPredCalc']
+		self.B100TotalCompData = self.jobsdf.loc[current_selector,'TotalComp100Bil']
+		self.HighTotalCompData = self.jobsdf.loc[current_selector,'HighTotalComp']
+		self.MedTotalCompData = self.jobsdf.loc[current_selector,'MedTotalComp']
+		self.LowTotalCompData = self.jobsdf.loc[current_selector,'LowTotalComp']
+		self.Mil1TotalCompData = self.jobsdf.loc[current_selector,'TotalComp1Mil']
+		if pd.isnull(self.jobsdf.loc[current_selector,'EstimatedYears']) : self.EstimatedYears = "NA"
+		else: self.EstimatedYears = int(self.jobsdf.loc[current_selector,'EstimatedYears'])
+		self.B100Q1Data = self.jobsdf.loc[current_selector,'Q1100Bil']
+		self.HighQ1Data = self.jobsdf.loc[current_selector,'Q1High']
+		self.MedQ1Data = self.jobsdf.loc[current_selector,'Q1Med']
+		self.LowQ1Data = self.jobsdf.loc[current_selector,'Q1Low']
+		self.Mil1Q1Data = self.jobsdf.loc[current_selector,'Q11Mil']
+		self.QCCheckData = self.jobsdf.loc[current_selector,'MedPred']
+		self.SocPredData = self.jobsdf.loc[current_selector,'OccAve']
+		self.SurveyMeanData = self.jobsdf.loc[current_selector,'Y_Base']
+		self.SurveyIncumbentsData = self.jobsdf.loc[current_selector,'SurveySampleSize']
+		self.QCCheckCanData = self.jobsdf.loc[current_selector,'CanPred']
+		self.CanPoly1Data = self.jobsdf.loc[current_selector,'CanPoly1']
+		self.CanPoly2Data = self.jobsdf.loc[current_selector,'CanPoly2']
+		self.CanPoly3Data = self.jobsdf.loc[current_selector,'CanPoly3']
+		self.CanPolyMeanData = self.jobsdf.loc[current_selector,'AvgCanPoly']
+		self.CanPolyMeanQCData = self.jobsdf.loc[current_selector,'AvgCanModels']
+		self.ReptoTitleData = self.jobsdf.loc[current_selector,'ReptoTitle']
+		self.ReptoSalData = self.jobsdf.loc[current_selector,'ReptoSal']
+		self.ReptoYr3Data = self.jobsdf.loc[current_selector,'ReptoYr3']
+		self.XRefTitleData = self.jobsdf.loc[current_selector,'XRefTitle']
+		self.XrefUSData = self.jobsdf.loc[current_selector,'XRefMed']
+		self.XRefCanData = self.jobsdf.loc[current_selector,'XRefCan']
+		self.DegreeNameData = self.jobsdf.loc[current_selector,'DegreeName']
+		self.CPCSalData = self.jobsdf.loc[current_selector,'CPCSalary']
+		self.AdderData = self.jobsdf.loc[current_selector,'Adder']
+		## Entries
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.1
+		else: self.B100PctData = self.jobsdf.loc[current_selector,'Pct_100Bil']
+		self.HighPctData = self.jobsdf.loc[current_selector,'HIGH_F']
+		self.MedPctData = self.jobsdf.loc[current_selector,'US_PCT']
+		self.LowPctData = self.jobsdf.loc[current_selector,'LOW_F']
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctData = 0.1
+		else: self.Mil1PctData = self.jobsdf.loc[current_selector,'Pct_1Mil']
+		self.B100BonusPctData = self.jobsdf.loc[current_selector,'BonusPct100Bil']
+		self.HighBonusPctData = self.jobsdf.loc[current_selector,'HighBonusPct']
+		self.MedBonusPctData = self.jobsdf.loc[current_selector,'MedBonusPct']
+		self.LowBonusPctData = self.jobsdf.loc[current_selector,'LowBonusPct']
+		self.Mil1BonusPctData = self.jobsdf.loc[current_selector,'BonusPct1Mil']
+		self.StdErrData = self.jobsdf.loc[current_selector,'StdErr']
+		self.MedYrsData = self.jobsdf.loc[current_selector,'Medyrs']
+		self.USOverrideData = self.jobsdf.loc[current_selector,'USPK_C']
+		self.CanOverrideData = self.jobsdf.loc[current_selector,'CANPK_C']
+		self.CanPercentData = self.jobsdf.loc[current_selector,'CAN_PCT']
+		self.CanBonusPctData = self.jobsdf.loc[current_selector,'CanBonusPct']
+		if pd.isnull(self.jobsdf.loc[current_selector,'Repto']): self.ReptoData = int(self.current_id)
+		else: self.ReptoData = int(self.jobsdf.loc[current_selector,'Repto'])
+		self.XRefData = self.jobsdf.loc[current_selector,'JobXRef']
+		self.CPCData = self.jobsdf.loc[current_selector,'CPCNO']
+		## Calculations
+		self.MeanPredData = int((self.QCCheckData+self.SocPredData+self.SurveyMeanData)/3)
+		self.MedSalData = self.MedPctData*self.XrefUSData
+		self.set_CalcData()
+		self.jobexec = self.jobsdf.loc[current_selector,'execjob']
 
 	def set_datavariables_index(self, *event):
 		## Labels
@@ -147,6 +224,7 @@ class Dataverse:
 		self.XRefData = self.jobsdf.loc[self.current_index,'JobXRef']
 		self.CPCData = self.jobsdf.loc[self.current_index,'CPCNO']
 		## Calculations
+		self.MeanPredData = int((self.QCCheckData+self.SocPredData+self.SurveyMeanData)/3)
 		self.MedSalData = self.MedPctData*self.XrefUSData
 		self.set_CalcData()
 		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
@@ -214,6 +292,7 @@ class Dataverse:
 		self.XRefData = self.jobsdf.loc[self.current_id,'JobXRef']
 		self.CPCData = self.jobsdf.loc[self.current_id,'CPCNO']
 		## Calculations
+		self.MeanPredData = int((self.QCCheckData+self.SocPredData+self.SurveyMeanData)/3)
 		self.MedSalData = self.MedPctData*self.XrefUSData
 		self.set_CalcData()
 		self.jobexec = self.jobsdf.loc[self.current_id,'execjob']
@@ -630,7 +709,6 @@ class Application(Frame):
 		self.BlankSpace2 = Label(self, text="    ")
 		self.BlankSpace2.grid(row=9, column=2)
 
-
 ## Navigation
 	def nextpage(self, event):
 		self.JobTitleLabel.config(foreground="Black")
@@ -656,12 +734,7 @@ class Application(Frame):
 				self.label_entry_clear()
 			else:
 				self.JobTitleLabel.config(foreground="Black")
-			#self.JobTitleLabel.grid(row=2, column=0)
 		except ValueError:
-			#self.JobTitleLabel.grid_forget()
-			#self.execjoblabel.grid_forget()
-			#print("Not a valid search entry.")
-			#self.invalidsearchwarning.grid(row=2, column=0)
 			self.JobTitleLabel.config(foreground="Red")
 			self.JobTitleLabel.config(text="Not a valid search entry")
 			self.label_entry_clear()
