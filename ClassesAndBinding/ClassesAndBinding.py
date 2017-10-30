@@ -51,12 +51,10 @@ class Dataverse:
 			except:
 				pass
 			self.jobname = self.jobsdf.loc[idsearch,'jobdottitle']
-			self.jobexec = self.jobsdf.loc[idsearch,'execjob']
 			self.current_id = idsearch
-			self.current_index = self.jobsdf.loc[self.current_id,'index1'] #self.jobsdf.index.get_loc(idsearch)
+			self.current_index = self.jobsdf.loc[self.current_id,'index1']
 			self.set_datavariables_id()
 			#Need to check if exists in outputdf, if so: pull from output df instead of jobsdf
-			#return self.jobname
 		except KeyError:
 			self.jobname = "No job found"
 
@@ -70,7 +68,6 @@ class Dataverse:
 		else: self.current_index = 0
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
-		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 		self.set_datavariables_index()
 		#return jobname
 
@@ -84,7 +81,6 @@ class Dataverse:
 		else: self.current_index = self.last_index
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
-		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 		self.set_datavariables_index()
 		#return jobname
 
@@ -153,6 +149,7 @@ class Dataverse:
 		## Calculations
 		self.MedSalData = self.MedPctData*self.XrefUSData
 		self.set_CalcData()
+		self.jobexec = self.jobsdf.loc[self.current_index,'execjob']
 
 	def set_datavariables_id(self, *event):
 		## Labels
@@ -219,6 +216,7 @@ class Dataverse:
 		## Calculations
 		self.MedSalData = self.MedPctData*self.XrefUSData
 		self.set_CalcData()
+		self.jobexec = self.jobsdf.loc[self.current_id,'execjob']
 
 	def update_MedSalCalcData(self, entry, *event):
 		self.MedSalData = int(entry*(self.CPCSalData+self.AdderData))
@@ -820,21 +818,31 @@ class Application(Frame):
 		self.update_CalcLabels()
 	
 	def update_CalcLabels(self, *event):
-		self.MedSalLabel.config(text= int(self.data.MedSalData))
-		self.Sal100BilLabel.config(text= int(self.data.Sall100BilData))
-		self.HighSalLabel.config(text= int(self.data.HighSalData))
-		self.LowSalLabel.config(text= int(self.data.LowSalData))
-		self.Sal1MilLabel.config(text= int(self.data.Sal1MilData))
-		self.High90thPercentile_100BilLabel.config(text= int(self.data.High90thPercentile_100BilData))
-		self.High90thPercentileLabel.config(text= int(self.data.High90thPercentileData))
-		self.Med90thPercentileLabel.config(text= int(self.data.Med90thPercentileData))
-		self.Low90thPercentileLabel.config(text= int(self.data.Low90thPercentileData))
-		self.Low90thPercentile_1MilLabel.config(text= int(self.data.Low90thPercentile_1MilData))
-		self.High10thPercentile_100BilLabel.config(text= int(self.data.High10thPercentile_100BilData))
+		## 10th Percentile
+		if self.data.jobexec==0: self.High10thPercentile_100BilLabel.config(text="    ")
+		else: self.High10thPercentile_100BilLabel.config(text= int(self.data.High10thPercentile_100BilData))
 		self.High10thPercentileLabel.config(text= int(self.data.High10thPercentileData))
 		self.Med10thPercentileLabel.config(text= int(self.data.Med10thPercentileData))
 		self.Low10thPercentileLabel.config(text= int(self.data.Low10thPercentileData))
-		self.Low10thPercentile_1MilLabel.config(text= int(self.data.Low10thPercentile_1MilData))
+		if self.data.jobexec==0: self.Low10thPercentile_1MilLabel.config(text="    ")
+		else: self.Low10thPercentile_1MilLabel.config(text= int(self.data.Low10thPercentile_1MilData))
+		## Mean
+		if self.data.jobexec==0: self.Sal100BilLabel.config(text="    ")
+		else: self.Sal100BilLabel.config(text= int(self.data.Sall100BilData))
+		self.HighSalLabel.config(text= int(self.data.HighSalData))
+		self.MedSalLabel.config(text= int(self.data.MedSalData))
+		self.LowSalLabel.config(text= int(self.data.LowSalData))
+		if self.data.jobexec==0: self.Sal1MilLabel.config(text="    ")
+		else: self.Sal1MilLabel.config(text= int(self.data.Sal1MilData))
+		## 90th Percentile
+		if self.data.jobexec==0: self.High90thPercentile_100BilLabel.config(text="    ")
+		else: self.High90thPercentile_100BilLabel.config(text= int(self.data.High90thPercentile_100BilData))
+		self.High90thPercentileLabel.config(text= int(self.data.High90thPercentileData))
+		self.Med90thPercentileLabel.config(text= int(self.data.Med90thPercentileData))
+		self.Low90thPercentileLabel.config(text= int(self.data.Low90thPercentileData))
+		if self.data.jobexec==0: self.Low90thPercentile_1MilLabel.config(text="    ")
+		else: self.Low90thPercentile_1MilLabel.config(text= int(self.data.Low90thPercentile_1MilData))
+
 
 	def write_output(self, *event):
 		#If any changes are made, these will update those; else, these will input what was there before
