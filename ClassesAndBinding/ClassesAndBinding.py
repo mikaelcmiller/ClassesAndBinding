@@ -149,7 +149,8 @@ class Dataverse:
 		self.XRefData = self.jobsdf.loc[current_selector,'JobXRef']
 		self.CPCData = self.jobsdf.loc[current_selector,'CPCNO']
 		## Calculations
-		self.MeanPredData = int((self.QCCheckData+self.SocPredData+self.SurveyMeanData)/3)
+		if pd.isnull(self.SurveyMeanData): self.MeanPredData = int((self.QCCheckData+self.SocPredData)/2)
+		else: self.MeanPredData = int((self.QCCheckData+self.SocPredData+self.SurveyMeanData)/3)
 		self.MedSalData = self.MedPctData*self.XrefUSData
 		self.set_CalcData()
 		self.jobexec = self.jobsdf.loc[current_selector,'execjob']
@@ -676,6 +677,7 @@ class Application(Frame):
 		self.Med10thPercentileLabel.config(text="    ")
 		self.Low10thPercentileLabel.config(text="    ")
 		self.Low10thPercentile_1MilLabel.config(text="    ")
+		self.MeanPredLabel.config(text="    ")
 
 	def label_entry_reload(self, *event):
 		self.label_entry_clear()
@@ -741,6 +743,7 @@ class Application(Frame):
 		self.XRefEntry.insert(0, str(self.data.XRefData))
 		self.CPCEntry.insert(0, str(self.data.CPCData))
 		## Calc Labels
+		self.MeanPredLabel.config(text=str(self.data.MeanPredData))
 		#self.MedSalLabel.config(text= int(self.data.MedSalData))
 		self.update_MedSal()
 	
