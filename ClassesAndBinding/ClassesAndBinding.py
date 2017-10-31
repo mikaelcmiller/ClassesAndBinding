@@ -569,6 +569,7 @@ class Application(Frame):
 		## Real-time updates
 		self.USOverrideEntry.bind('<Return>', self.update_MedSal)
 		self.CanOverrideEntry.bind('<Return>', self.update_CanLabels)
+		self.CanBonusPctEntry.bind('<Return>', self.update_CanBonusPct)
 		self.BlankSpace = Label(self, text="    ")
 		self.BlankSpace.grid(row=28, column=2)
 		self.BlankSpace2 = Label(self, text="    ")
@@ -755,12 +756,17 @@ class Application(Frame):
 		self.update_MedSal()
 		self.update_CanLabels()
 
+	def update_CanBonusPct(self, *event):
+		self.data.CanBonusPctData = float(self.CanBonusPctEntry.get())
+		self.update_CanLabels()
+
 	def update_CanLabels(self, *event):
 		try:
 			self.data.update_canavedata(float(self.CanOverrideEntry.get()))
 		except ValueError:
 			self.data.CanAveData = self.data.CanPercentData * self.data.XRefCanData
 		self.CanMeanLabel.config(text= int(self.data.CanAveData))
+		self.CanTotalLabel.config(text= int(self.data.CanAveData+(self.data.CanAveData * self.data.CanBonusPctData)))
 	
 	def update_MedSal(self, *event):
 		try:
