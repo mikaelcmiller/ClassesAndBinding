@@ -570,6 +570,7 @@ class Application(Frame):
 		self.USOverrideEntry.bind('<Return>', self.update_MedSal)
 		self.CanOverrideEntry.bind('<Return>', self.update_CanLabels)
 		self.CanBonusPctEntry.bind('<Return>', self.update_CanBonusPct)
+		self.CanPercentEntry.bind('<Return>', self.update_CanPercent)
 		self.BlankSpace = Label(self, text="    ")
 		self.BlankSpace.grid(row=28, column=2)
 		self.BlankSpace2 = Label(self, text="    ")
@@ -754,6 +755,13 @@ class Application(Frame):
 		self.MeanPredLabel.config(text=str(int(self.data.MeanPredData)))
 		#self.MedSalLabel.config(text= int(self.data.MedSalData))
 		self.update_MedSal()
+		self.update_CanLabels()
+
+	def update_CanPercent(self, *event):
+		try:
+			self.data.CanPercentData = float(self.CanPercentEntry.get())
+		except ValueError:
+			self.data.CanPercentData = self.data.CanPercentData
 		self.update_CanLabels()
 
 	def update_CanBonusPct(self, *event):
