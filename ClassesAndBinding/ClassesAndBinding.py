@@ -126,7 +126,7 @@ class Dataverse:
 		self.CPCSalData = self.jobsdf.loc[current_selector,'CPCSalary']
 		self.AdderData = self.jobsdf.loc[current_selector,'Adder']
 		## Entries
-		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.1
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.95
 		else: self.B100PctData = self.jobsdf.loc[current_selector,'Pct_100Bil']
 		self.HighPctData = self.jobsdf.loc[current_selector,'HIGH_F']
 		self.MedPctData = self.jobsdf.loc[current_selector,'US_PCT']
@@ -569,8 +569,13 @@ class Application(Frame):
 		## Real-time updates
 		self.USOverrideEntry.bind('<Return>', self.update_MedSal)
 		self.CanOverrideEntry.bind('<Return>', self.update_CanLabels)
-		self.CanBonusPctEntry.bind('<Return>', self.update_CanBonusPct)
-		self.CanPercentEntry.bind('<Return>', self.update_CanPercent)
+		self.CanBonusPctEntry.bind('<Return>', self.update_CanValues)
+		self.CanPercentEntry.bind('<Return>', self.update_CanValues)
+		self.B100PctEntry.bind('<Return>', self.set_SalPercents)
+		self.Mil1PctEntry.bind('<Return>', self.set_SalPercents)
+		self.HighPctEntry.bind('<Return>', self.set_SalPercents)
+		self.MedPctEntry.bind('<Return>', self.set_SalPercents)
+		self.LowPctEntry.bind('<Return>', self.set_SalPercents)
 		self.BlankSpace = Label(self, text="    ")
 		self.BlankSpace.grid(row=28, column=2)
 		self.BlankSpace2 = Label(self, text="    ")
@@ -757,30 +762,39 @@ class Application(Frame):
 		self.update_MedSal()
 		self.update_CanLabels()
 
-	def update_CanPercent(self, *event):
+	def update_CanValues(self, *event):
 		try:
 			self.data.CanPercentData = float(self.CanPercentEntry.get())
 		except ValueError:
 			self.data.CanPercentData = self.data.CanPercentData
-		self.update_CanLabels()
-
-	def update_CanBonusPct(self, *event):
-		self.data.CanBonusPctData = float(self.CanBonusPctEntry.get())
+		try:
+			self.data.CanBonusPctData = float(self.CanBonusPctEntry.get())
+		except ValueError:
+			self.data.CanBonusPctData = self.data.CanBonusPctData
 		self.update_CanLabels()
 
 	def update_CanLabels(self, *event):
-		try:
-			self.data.update_canavedata(float(self.CanOverrideEntry.get()))
-		except ValueError:
-			self.data.CanAveData = self.data.CanPercentData * self.data.XRefCanData
+		try: self.data.update_canavedata(float(self.CanOverrideEntry.get()))
+		except ValueError: self.data.CanAveData = self.data.CanPercentData * self.data.XRefCanData
 		self.CanMeanLabel.config(text= int(self.data.CanAveData))
 		self.CanTotalLabel.config(text= int(self.data.CanAveData+(self.data.CanAveData * self.data.CanBonusPctData)))
+
+	def set_SalPercents(self, *event):
+		try: self.data.B100PctData = float(self.B100PctEntry.get())
+		except ValueError: pass
+		try: self.data.HighPctData = float(self.HighPctEntry.get())
+		except ValueError: pass
+		try: self.data.MedPctData = float(self.MedPctEntry.get())
+		except ValueError: pass
+		try: self.data.LowPctData = float(self.LowPctEntry.get())
+		except ValueError: pass
+		try: self.data.Mil1PctData = float(self.Mil1PctEntry.get())
+		except ValueError: pass
+		self.update_MedSal()
 	
 	def update_MedSal(self, *event):
-		try:
-			self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
-		except ValueError:
-			self.data.MedSalData = int(self.data.MedPctData*self.data.XrefUSData)
+		try: self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
+		except ValueError: self.data.MedSalData = int(self.data.MedPctData*self.data.XrefUSData)
 		self.data.set_CalcData()
 		self.update_CalcLabels()
 	
