@@ -149,7 +149,9 @@ class Dataverse:
 		self.XRefData = self.jobsdf.loc[current_selector,'JobXRef']
 		self.CPCData = self.jobsdf.loc[current_selector,'CPCNO']
 		## Calculations
-		if pd.isnull(self.SurveyMeanData): self.MeanPredData = int((self.QCCheckData+self.SocPredData)/2)
+		if pd.isnull(self.SurveyMeanData) and pd.isnull(self.QCCheckData): self.MeanPredData = int(self.SocPredData)
+		elif pd.isnull(self.SurveyMeanData): self.MeanPredData = int((self.QCCheckData+self.SocPredData)/2)
+		elif pd.isnull(self.QCCheckData): self.MeanPredData = int((self.SocPredData+self.SurveyMeanData)/2)
 		else: self.MeanPredData = int((self.QCCheckData+self.SocPredData+self.SurveyMeanData)/3)
 		self.MedSalData = self.MedPctData*self.XrefUSData
 		self.set_CalcData()
