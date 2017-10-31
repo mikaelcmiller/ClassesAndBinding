@@ -48,8 +48,7 @@ class Dataverse:
 			try:
 				self.jobsdf.set_index('indexsearch', inplace=True)
 				self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
-			except:
-				pass
+			except: pass
 			self.jobname = self.jobsdf.loc[idsearch,'jobdottitle']
 			self.current_id = idsearch
 			self.current_index = self.jobsdf.loc[self.current_id,'index1']
@@ -62,8 +61,7 @@ class Dataverse:
 		try:
 			self.jobsdf.set_index('index1', inplace=True)
 			self.jobsdf['index1'] = self.jobsdf['indexmaster']
-		except:
-			pass
+		except: pass
 		if self.current_index < self.last_index: self.current_index = self.current_index + 1
 		else: self.current_index = 0
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
@@ -74,8 +72,7 @@ class Dataverse:
 		try:
 			self.jobsdf.set_index('index1', inplace=True)
 			self.jobsdf['index1'] = self.jobsdf['indexmaster']
-		except:
-			pass
+		except: pass
 		if self.current_index > 0: self.current_index = self.current_index - 1
 		else: self.current_index = self.last_index
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
@@ -126,7 +123,7 @@ class Dataverse:
 		self.CPCSalData = self.jobsdf.loc[current_selector,'CPCSalary']
 		self.AdderData = self.jobsdf.loc[current_selector,'Adder']
 		## Entries
-		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.95
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.1
 		else: self.B100PctData = self.jobsdf.loc[current_selector,'Pct_100Bil']
 		self.HighPctData = self.jobsdf.loc[current_selector,'HIGH_F']
 		self.MedPctData = self.jobsdf.loc[current_selector,'US_PCT']
@@ -140,14 +137,33 @@ class Dataverse:
 		self.Mil1BonusPctData = self.jobsdf.loc[current_selector,'BonusPct1Mil']
 		self.StdErrData = self.jobsdf.loc[current_selector,'StdErr']
 		self.MedYrsData = self.jobsdf.loc[current_selector,'Medyrs']
-		#self.USOverrideData = self.jobsdf.loc[current_selector,'USPK_C']
-		#self.CanOverrideData = self.jobsdf.loc[current_selector,'CANPK_C']
 		self.CanPercentData = self.jobsdf.loc[current_selector,'CAN_PCT']
 		self.CanBonusPctData = self.jobsdf.loc[current_selector,'CanBonusPct']
 		if pd.isnull(self.jobsdf.loc[current_selector,'Repto']): self.ReptoData = int(self.current_id)
 		else: self.ReptoData = int(self.jobsdf.loc[current_selector,'Repto'])
 		self.XRefData = self.jobsdf.loc[current_selector,'JobXRef']
 		self.CPCData = self.jobsdf.loc[current_selector,'CPCNO']
+		## Entries Init
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.1
+		else: self.B100PctDataInit = self.jobsdf.loc[current_selector,'Pct_100Bil']
+		self.HighPctDataInit = self.jobsdf.loc[current_selector,'HIGH_F']
+		self.MedPctDataInit = self.jobsdf.loc[current_selector,'US_PCT']
+		self.LowPctDataInit = self.jobsdf.loc[current_selector,'LOW_F']
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctDataInit = 0.1
+		else: self.Mil1PctDataInit = self.jobsdf.loc[current_selector,'Pct_1Mil']
+		self.B100BonusPctDataInit = self.jobsdf.loc[current_selector,'BonusPct100Bil']
+		self.HighBonusPctDataInit = self.jobsdf.loc[current_selector,'HighBonusPct']
+		self.MedBonusPctDataInit = self.jobsdf.loc[current_selector,'MedBonusPct']
+		self.LowBonusPctDataInit = self.jobsdf.loc[current_selector,'LowBonusPct']
+		self.Mil1BonusPctDataInit = self.jobsdf.loc[current_selector,'BonusPct1Mil']
+		self.StdErrDataInit = self.jobsdf.loc[current_selector,'StdErr']
+		self.MedYrsDataInit = self.jobsdf.loc[current_selector,'Medyrs']
+		self.CanPercentDataInit = self.jobsdf.loc[current_selector,'CAN_PCT']
+		self.CanBonusPctDataInit = self.jobsdf.loc[current_selector,'CanBonusPct']
+		if pd.isnull(self.jobsdf.loc[current_selector,'Repto']): self.ReptoDataInit = int(self.current_id)
+		else: self.ReptoDataInit = int(self.jobsdf.loc[current_selector,'Repto'])
+		self.XRefDataInit = self.jobsdf.loc[current_selector,'JobXRef']
+		self.CPCDataInit = self.jobsdf.loc[current_selector,'CPCNO']
 		## Calculations
 		self.CanAveData = self.CanPercentData * self.XRefCanData
 		if pd.isnull(self.SurveyMeanData) and pd.isnull(self.QCCheckData): self.MeanPredData = self.SocPredData
@@ -737,25 +753,23 @@ class Application(Frame):
 		self.RawDataLabel.config(text="Raw data text")
 		self.JobDescriptionLabel.config(text="Job Description text")
 		## Entries
-		self.B100PctEntry.insert(0, str(self.data.B100PctData))
-		self.HighPctEntry.insert(0, str(self.data.HighPctData))
-		self.MedPctEntry.insert(0, str(self.data.MedPctData))
-		self.LowPctEntry.insert(0, str(self.data.LowPctData))
-		self.Mil1PctEntry.insert(0, str(self.data.Mil1PctData))
-		self.B100BonusPctEntry.insert(0, str(self.data.B100BonusPctData))
-		self.HighBonusPctEntry.insert(0, str(self.data.HighBonusPctData))
-		self.MedBonusPctEntry.insert(0, str(self.data.MedBonusPctData))
-		self.LowBonusPctEntry.insert(0, str(self.data.LowBonusPctData))
-		self.Mil1BonusPctEntry.insert(0, str(self.data.Mil1BonusPctData))
-		self.StdErrEntry.insert(0, str(self.data.StdErrData))
-		self.MedYrsEntry.insert(0, str(self.data.MedYrsData))
-		#self.USOverrideEntry.insert(0, str(self.data.USOverrideData))
-		#self.CanOverrideEntry.insert(0, str(self.data.CanOverrideData))
-		self.CanPercentEntry.insert(0, str(self.data.CanPercentData))
-		self.CanBonusPctEntry.insert(0, str(self.data.CanBonusPctData))
-		self.ReptoEntry.insert(0, str(self.data.ReptoData))
-		self.XRefEntry.insert(0, str(self.data.XRefData))
-		self.CPCEntry.insert(0, str(self.data.CPCData))
+		self.B100PctEntry.insert(0, str(self.data.B100PctDataInit))
+		self.HighPctEntry.insert(0, str(self.data.HighPctDataInit))
+		self.MedPctEntry.insert(0, str(self.data.MedPctDataInit))
+		self.LowPctEntry.insert(0, str(self.data.LowPctDataInit))
+		self.Mil1PctEntry.insert(0, str(self.data.Mil1PctDataInit))
+		self.B100BonusPctEntry.insert(0, str(self.data.B100BonusPctDataInit))
+		self.HighBonusPctEntry.insert(0, str(self.data.HighBonusPctDataInit))
+		self.MedBonusPctEntry.insert(0, str(self.data.MedBonusPctDataInit))
+		self.LowBonusPctEntry.insert(0, str(self.data.LowBonusPctDataInit))
+		self.Mil1BonusPctEntry.insert(0, str(self.data.Mil1BonusPctDataInit))
+		self.StdErrEntry.insert(0, str(self.data.StdErrDataInit))
+		self.MedYrsEntry.insert(0, str(self.data.MedYrsDataInit))
+		self.CanPercentEntry.insert(0, str(self.data.CanPercentDataInit))
+		self.CanBonusPctEntry.insert(0, str(self.data.CanBonusPctDataInit))
+		self.ReptoEntry.insert(0, str(self.data.ReptoDataInit))
+		self.XRefEntry.insert(0, str(self.data.XRefDataInit))
+		self.CPCEntry.insert(0, str(self.data.CPCDataInit))
 		## Calc Labels
 		self.MeanPredLabel.config(text=str(int(self.data.MeanPredData)))
 		#self.MedSalLabel.config(text= int(self.data.MedSalData))
@@ -763,14 +777,10 @@ class Application(Frame):
 		self.update_CanLabels()
 
 	def update_CanValues(self, *event):
-		try:
-			self.data.CanPercentData = float(self.CanPercentEntry.get())
-		except ValueError:
-			self.data.CanPercentData = self.data.CanPercentData
-		try:
-			self.data.CanBonusPctData = float(self.CanBonusPctEntry.get())
-		except ValueError:
-			self.data.CanBonusPctData = self.data.CanBonusPctData
+		try: self.data.CanPercentData = float(self.CanPercentEntry.get())
+		except ValueError: self.data.CanPercentData = self.data.CanPercentData
+		try: self.data.CanBonusPctData = float(self.CanBonusPctEntry.get())
+		except ValueError: self.data.CanBonusPctData = self.data.CanBonusPctData
 		self.update_CanLabels()
 
 	def update_CanLabels(self, *event):
@@ -781,15 +791,15 @@ class Application(Frame):
 
 	def set_SalPercents(self, *event):
 		try: self.data.B100PctData = float(self.B100PctEntry.get())
-		except ValueError: pass
+		except ValueError: print("B100err")
 		try: self.data.HighPctData = float(self.HighPctEntry.get())
-		except ValueError: pass
+		except ValueError: print("HighPcterr")
 		try: self.data.MedPctData = float(self.MedPctEntry.get())
-		except ValueError: pass
+		except ValueError: print("Med error")
 		try: self.data.LowPctData = float(self.LowPctEntry.get())
-		except ValueError: pass
+		except ValueError: print("LowPcterr")
 		try: self.data.Mil1PctData = float(self.Mil1PctEntry.get())
-		except ValueError: pass
+		except ValueError: print("Mil1err")
 		self.update_MedSal()
 	
 	def update_MedSal(self, *event):
