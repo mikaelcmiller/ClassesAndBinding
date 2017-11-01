@@ -203,8 +203,7 @@ class Dataverse:
 		try:
 			self.jobsdf.set_index('indexsearch', inplace=True)
 			self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
-		except:
-			pass
+		except: pass
 		if (self.outputdf['erijobid']==self.current_id).any():
 			print("Overwriting "+str(self.current_id))
 			self.outputdf.update(self.jobsdf.loc[self.current_id,:])
@@ -560,7 +559,6 @@ class Application(Frame):
 		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.JobDescriptionLabel.grid(row=33, column=0)
 		####
-		###########################
 		## Special notes:
 			#self.JobTitleLabel ... width=45
 			#self.RawDataLabel ... width=45
