@@ -123,7 +123,7 @@ class Dataverse:
 		self.CPCSalData = self.jobsdf.loc[current_selector,'CPCSalary']
 		self.AdderData = self.jobsdf.loc[current_selector,'Adder']
 		## Entries
-		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.1
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.95
 		else: self.B100PctData = self.jobsdf.loc[current_selector,'Pct_100Bil']
 		self.HighPctData = self.jobsdf.loc[current_selector,'HIGH_F']
 		self.MedPctData = self.jobsdf.loc[current_selector,'US_PCT']
@@ -144,7 +144,7 @@ class Dataverse:
 		self.XRefData = self.jobsdf.loc[current_selector,'JobXRef']
 		self.CPCData = self.jobsdf.loc[current_selector,'CPCNO']
 		## Entries Init
-		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.1
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.95
 		else: self.B100PctDataInit = self.jobsdf.loc[current_selector,'Pct_100Bil']
 		self.HighPctDataInit = self.jobsdf.loc[current_selector,'HIGH_F']
 		self.MedPctDataInit = self.jobsdf.loc[current_selector,'US_PCT']
@@ -187,11 +187,11 @@ class Dataverse:
 		self.HighSalData = self.MedSalData * self.HighPctData
 		self.LowSalData = self.MedSalData * self.LowPctData
 		self.Sal1MilData = self.MedSalData * self.Mil1PctData
-		self.High90thPercentile_100BilData = ((self.StdErrData/(100*1.6))+1) * self.Sall100BilData
-		self.High90thPercentileData = ((self.StdErrData/(100*1.6))+1) * self.HighSalData
-		self.Med90thPercentileData = ((self.StdErrData/(100*1.6))+1) * self.MedSalData
-		self.Low90thPercentileData = ((self.StdErrData/(100*1.6))+1) * self.LowSalData
-		self.Low90thPercentile_1MilData = ((self.StdErrData/(100*1.6))+1) * self.Sal1MilData
+		self.High90thPercentile_100BilData = ((self.StdErrData/100*1.6)+1) * self.Sall100BilData
+		self.High90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.HighSalData
+		self.Med90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.MedSalData
+		self.Low90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.LowSalData
+		self.Low90thPercentile_1MilData = ((self.StdErrData/100*1.6)+1) * self.Sal1MilData
 		self.High10thPercentile_100BilData = ((1 - self.StdErrData/100) * self.Sall100BilData)
 		self.High10thPercentileData = ((1 - self.StdErrData/100) * self.HighSalData)
 		self.Med10thPercentileData = ((1 - self.StdErrData/100) * self.MedSalData)
