@@ -248,16 +248,6 @@ class Application(Frame):
 		# # #		self.[LabelVarName].delete(0, END)
 		# # #		self.[LabelVarName].insert(0, [value to pull])
 		# /End widget formats
-		self.JobIdLabel = Label(self,text="JobId")
-		#self.JobIdLabel.grid(row=0,column=0)
-		#self.JobIdSearchEntry = Entry(self, width=15)
-		#self.JobIdSearchEntry.grid(row=0, column=1)
-		#self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
-		self.JobTitleLabel = Label(self)
-		#self.blank = Label(self,text=" ")
-		#self.execjoblabel = Label(self)
-		#self.execjoblabel.grid(row=2, column=1)
-		self.invalidsearchwarning = Label(self,text="Invalid search",foreground="Red")
 		
 ###########################
 #### Created from Google Sheet 
@@ -616,7 +606,6 @@ class Application(Frame):
 		try:
 			self.intJobIdSearchEntry = int(self.JobIdSearchEntry.get())
 			self.data.find_by_erijobid(self.intJobIdSearchEntry)
-			self.invalidsearchwarning.grid_forget()
 			self.label_entry_reload()
 			if self.data.jobname=="No job found":
 				self.JobTitleLabel.config(foreground="Red")
@@ -773,7 +762,6 @@ class Application(Frame):
 		self.CPCEntry.insert(0, str(self.data.CPCDataInit))
 		## Calc Labels
 		self.MeanPredLabel.config(text=str(int(self.data.MeanPredData)))
-		#self.MedSalLabel.config(text= int(self.data.MedSalData))
 		self.set_SalPercents()
 		self.update_MedSal()
 		self.update_CanLabels()
