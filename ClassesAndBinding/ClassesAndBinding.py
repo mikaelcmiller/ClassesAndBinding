@@ -592,6 +592,7 @@ class Application(Frame):
 		self.HighPctEntry.bind('<Return>', self.set_SalPercents)
 		self.MedPctEntry.bind('<Return>', self.set_SalPercents)
 		self.LowPctEntry.bind('<Return>', self.set_SalPercents)
+		self.StdErrEntry.bind('<Return>', self.set_SalPercents)
 		self.BlankSpace = Label(self, text="    ")
 		self.BlankSpace.grid(row=28, column=2)
 		self.BlankSpace2 = Label(self, text="    ")
@@ -773,6 +774,7 @@ class Application(Frame):
 		## Calc Labels
 		self.MeanPredLabel.config(text=str(int(self.data.MeanPredData)))
 		#self.MedSalLabel.config(text= int(self.data.MedSalData))
+		self.set_SalPercents()
 		self.update_MedSal()
 		self.update_CanLabels()
 
@@ -800,6 +802,8 @@ class Application(Frame):
 		except ValueError: print("LowPcterr")
 		try: self.data.Mil1PctData = float(self.Mil1PctEntry.get())
 		except ValueError: print("Mil1err")
+		try: self.data.StdErrData = float(self.StdErrEntry.get())
+		except ValueError: print("Stderr Error")
 		self.update_MedSal()
 	
 	def update_MedSal(self, *event):
