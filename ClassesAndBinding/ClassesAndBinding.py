@@ -93,7 +93,7 @@ class Dataverse:
 		self.LowPredPctData = self.jobsdf.loc[current_selector,'LowPredCalc']
 		self.B100TotalCompData = self.jobsdf.loc[current_selector,'TotalComp100Bil']
 		self.HighTotalCompData = self.jobsdf.loc[current_selector,'HighTotalComp']
-		self.MedTotalCompData = self.jobsdf.loc[current_selector,'MedTotalComp']
+		self.MedTotalCompData = self.jobsdf.loc[current_selector,'MedTotalComp'] 
 		self.LowTotalCompData = self.jobsdf.loc[current_selector,'LowTotalComp']
 		self.Mil1TotalCompData = self.jobsdf.loc[current_selector,'TotalComp1Mil']
 		if pd.isnull(self.jobsdf.loc[current_selector,'EstimatedYears']) : self.EstimatedYears = "NA"
@@ -183,16 +183,16 @@ class Dataverse:
 		self.set_CalcData()
 
 	def set_CalcData(self, *event):
-		self.Sall100BilData = self.MedSalData * self.B100PctData
+		self.Sal100BilData = self.MedSalData * self.B100PctData
 		self.HighSalData = self.MedSalData * self.HighPctData
 		self.LowSalData = self.MedSalData * self.LowPctData
 		self.Sal1MilData = self.MedSalData * self.Mil1PctData
-		self.High90thPercentile_100BilData = ((self.StdErrData/100*1.6)+1) * self.Sall100BilData
+		self.High90thPercentile_100BilData = ((self.StdErrData/100*1.6)+1) * self.Sal100BilData
 		self.High90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.HighSalData
 		self.Med90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.MedSalData
 		self.Low90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.LowSalData
 		self.Low90thPercentile_1MilData = ((self.StdErrData/100*1.6)+1) * self.Sal1MilData
-		self.High10thPercentile_100BilData = ((1 - self.StdErrData/100) * self.Sall100BilData)
+		self.High10thPercentile_100BilData = ((1 - self.StdErrData/100) * self.Sal100BilData)
 		self.High10thPercentileData = ((1 - self.StdErrData/100) * self.HighSalData)
 		self.Med10thPercentileData = ((1 - self.StdErrData/100) * self.MedSalData)
 		self.Low10thPercentileData = ((1 - self.StdErrData/100) * self.LowSalData)
@@ -204,10 +204,13 @@ class Dataverse:
 			self.jobsdf.set_index('indexsearch', inplace=True)
 			self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 		except: pass
+		## Check for current erijobid in output df, add or update as necessary
 		if (self.outputdf['erijobid']==self.current_id).any():
 			print("Overwriting "+str(self.current_id))
 			self.outputdf.update(self.jobsdf.loc[self.current_id,:])
 		else: self.outputdf = self.outputdf.append(self.jobsdf.loc[self.current_id,:])
+		## Update output rows after creating
+		self.outputdf.update(self.jobsdf.loc[self.current_id,:])
 		self.outputdf.set_value(self.current_id,'timestamp',datetime.datetime.now())
 		print(self.outputdf)
 
@@ -250,11 +253,11 @@ class Application(Frame):
 		
 ###########################
 #### Created from Google Sheet 
-		self.ReloadBtn = Button(self, text="Reload Data Btn", command=self.label_entry_reload)
+		self.ReloadBtn = Button(self, text="Reload Data", command=self.label_entry_reload)
 		self.ReloadBtn.grid(row=0, column=5)
-		self.CommitBtn = Button(self, text="Commit Changes Btn")
+		self.CommitBtn = Button(self, text="Commit Changes")
 		self.CommitBtn.grid(row=0, column=6)
-		self.WriteSQLBtn = Button(self, text="Write to SQL Btn")
+		self.WriteSQLBtn = Button(self, text="Write to SQL")
 		self.WriteSQLBtn.grid(row=0, column=7)
 		self.JobIdSearchEntry = Entry(self, width=15)
 		self.JobIdSearchEntry.grid(row=0, column=2)
@@ -809,7 +812,7 @@ class Application(Frame):
 		else: self.Low10thPercentile_1MilLabel.config(text= int(self.data.Low10thPercentile_1MilData))
 		## Mean
 		if self.data.jobexec==0: self.Sal100BilLabel.config(text="    ")
-		else: self.Sal100BilLabel.config(text= int(self.data.Sall100BilData))
+		else: self.Sal100BilLabel.config(text= int(self.data.Sal100BilData))
 		self.HighSalLabel.config(text= int(self.data.HighSalData))
 		self.MedSalLabel.config(text= int(self.data.MedSalData))
 		self.LowSalLabel.config(text= int(self.data.LowSalData))
