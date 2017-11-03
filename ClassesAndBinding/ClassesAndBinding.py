@@ -93,7 +93,7 @@ class Dataverse:
 		self.LowPredPctData = self.jobsdf.loc[current_selector,'LowPredCalc']
 		self.B100TotalCompData = self.jobsdf.loc[current_selector,'TotalComp100Bil']
 		self.HighTotalCompData = self.jobsdf.loc[current_selector,'HighTotalComp']
-		self.MedTotalCompData = self.jobsdf.loc[current_selector,'MedTotalComp']
+		self.MedTotalCompData = self.jobsdf.loc[current_selector,'MedTotalComp'] 
 		self.LowTotalCompData = self.jobsdf.loc[current_selector,'LowTotalComp']
 		self.Mil1TotalCompData = self.jobsdf.loc[current_selector,'TotalComp1Mil']
 		if pd.isnull(self.jobsdf.loc[current_selector,'EstimatedYears']) : self.EstimatedYears = "NA"
@@ -183,16 +183,16 @@ class Dataverse:
 		self.set_CalcData()
 
 	def set_CalcData(self, *event):
-		self.Sall100BilData = self.MedSalData * self.B100PctData
+		self.Sal100BilData = self.MedSalData * self.B100PctData
 		self.HighSalData = self.MedSalData * self.HighPctData
 		self.LowSalData = self.MedSalData * self.LowPctData
 		self.Sal1MilData = self.MedSalData * self.Mil1PctData
-		self.High90thPercentile_100BilData = ((self.StdErrData/100*1.6)+1) * self.Sall100BilData
+		self.High90thPercentile_100BilData = ((self.StdErrData/100*1.6)+1) * self.Sal100BilData
 		self.High90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.HighSalData
 		self.Med90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.MedSalData
 		self.Low90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.LowSalData
 		self.Low90thPercentile_1MilData = ((self.StdErrData/100*1.6)+1) * self.Sal1MilData
-		self.High10thPercentile_100BilData = ((1 - self.StdErrData/100) * self.Sall100BilData)
+		self.High10thPercentile_100BilData = ((1 - self.StdErrData/100) * self.Sal100BilData)
 		self.High10thPercentileData = ((1 - self.StdErrData/100) * self.HighSalData)
 		self.Med10thPercentileData = ((1 - self.StdErrData/100) * self.MedSalData)
 		self.Low10thPercentileData = ((1 - self.StdErrData/100) * self.LowSalData)
@@ -812,7 +812,7 @@ class Application(Frame):
 		else: self.Low10thPercentile_1MilLabel.config(text= int(self.data.Low10thPercentile_1MilData))
 		## Mean
 		if self.data.jobexec==0: self.Sal100BilLabel.config(text="    ")
-		else: self.Sal100BilLabel.config(text= int(self.data.Sall100BilData))
+		else: self.Sal100BilLabel.config(text= int(self.data.Sal100BilData))
 		self.HighSalLabel.config(text= int(self.data.HighSalData))
 		self.MedSalLabel.config(text= int(self.data.MedSalData))
 		self.LowSalLabel.config(text= int(self.data.LowSalData))
