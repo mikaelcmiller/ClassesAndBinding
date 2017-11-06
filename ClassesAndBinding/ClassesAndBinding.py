@@ -585,6 +585,7 @@ class Application(Frame):
 		self.LowPctEntry.bind('<Return>', self.set_SalPercents)
 		self.StdErrEntry.bind('<Return>', self.set_SalPercents)
 		self.ReptoEntry.bind('<Return>', self.update_Repto)
+		self.XRefEntry.bind('<Return>', self.update_XRef)
 		self.BlankSpace = Label(self, text="    ")
 		self.BlankSpace.grid(row=28, column=2)
 		self.BlankSpace2 = Label(self, text="    ")
@@ -767,6 +768,8 @@ class Application(Frame):
 		self.set_SalPercents()
 		self.update_MedSal()
 		self.update_CanLabels()
+		self.update_Repto()
+		self.update_XRef()
 
 	def update_Repto(self, *event):
 		current_selector = int(self.ReptoEntry.get())
@@ -780,6 +783,19 @@ class Application(Frame):
 		self.ReptoTitleLabel.config(text= self.data.ReptoTitleData)
 		self.ReptoSalLabel.config(text= self.data.ReptoSalData)
 		self.ReptoYr3Label.config(text= self.data.ReptoYr3Data)
+
+	def update_XRef(self, *event):
+		current_selector = int(self.XRefEntry.get())
+		try:
+			self.data.jobsdf.set_index('indexsearch', inplace=True)
+			self.data.jobsdf['indexsearch'] = self.data.jobsdf['erijobid']
+		except: pass
+		self.data.XRefTitleData = self.data.jobsdf.loc[current_selector,'jobdottitle']
+		self.data.XRefData = self.data.jobsdf.loc[current_selector,'MEDSAL']
+		self.data.XRefCanData = self.data.jobsdf.loc[current_selector,'CAN_AVE']
+		self.XRefTitleLabel.config(text= self.data.XRefTitleData)
+		self.XrefUSLabel.config(text= self.data.XRefData)
+		self.XRefCanLabel.config(text= self.data.XRefCanData)
 
 	def update_CanValues(self, *event):
 		try: self.data.CanPercentData = float(self.CanPercentEntry.get())
