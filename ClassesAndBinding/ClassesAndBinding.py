@@ -93,7 +93,7 @@ class Dataverse:
 		self.LowPredPctData = self.jobsdf.loc[current_selector,'LowPredCalc']
 		self.B100TotalCompData = self.jobsdf.loc[current_selector,'TotalComp100Bil']
 		self.HighTotalCompData = self.jobsdf.loc[current_selector,'HighTotalComp']
-		self.MedTotalCompData = self.jobsdf.loc[current_selector,'MedTotalComp'] 
+		self.MedTotalCompData = self.jobsdf.loc[current_selector,'MedTotalComp']
 		self.LowTotalCompData = self.jobsdf.loc[current_selector,'LowTotalComp']
 		self.Mil1TotalCompData = self.jobsdf.loc[current_selector,'TotalComp1Mil']
 		if pd.isnull(self.jobsdf.loc[current_selector,'EstimatedYears']) : self.EstimatedYears = "NA"
@@ -584,6 +584,7 @@ class Application(Frame):
 		self.MedPctEntry.bind('<Return>', self.set_SalPercents)
 		self.LowPctEntry.bind('<Return>', self.set_SalPercents)
 		self.StdErrEntry.bind('<Return>', self.set_SalPercents)
+		self.ReptoEntry.bind('<Return>', self.update_Repto)
 		self.BlankSpace = Label(self, text="    ")
 		self.BlankSpace.grid(row=28, column=2)
 		self.BlankSpace2 = Label(self, text="    ")
@@ -766,6 +767,19 @@ class Application(Frame):
 		self.set_SalPercents()
 		self.update_MedSal()
 		self.update_CanLabels()
+
+	def update_Repto(self, *event):
+		current_selector = int(self.ReptoEntry.get())
+		try:
+			self.data.jobsdf.set_index('indexsearch', inplace=True)
+			self.data.jobsdf['indexsearch'] = self.data.jobsdf['erijobid']
+		except: pass
+		self.data.ReptoTitleData = self.data.jobsdf.loc[current_selector,'jobdottitle']
+		self.data.ReptoSalData = self.data.jobsdf.loc[current_selector,'MEDSAL']
+		self.data.ReptoYr3Data = self.data.jobsdf.loc[current_selector,'Yr3Sal']
+		self.ReptoTitleLabel.config(text= self.data.ReptoTitleData)
+		self.ReptoSalLabel.config(text= self.data.ReptoSalData)
+		self.ReptoYr3Label.config(text= self.data.ReptoYr3Data)
 
 	def update_CanValues(self, *event):
 		try: self.data.CanPercentData = float(self.CanPercentEntry.get())
