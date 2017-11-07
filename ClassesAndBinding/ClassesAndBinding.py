@@ -34,7 +34,9 @@ class Dataverse:
 		self.dbdf['index1'] = self.dbdf['indexmaster']
 		self.dbdf['indexsearch'] = self.dbdf['erijobid']
 		#self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
-		self.jobsdf = pd.DataFrame(self.dbdf.iloc[0:10,:])
+		start = 0
+		stop = 237 ## Last exec job (ERI#9558)
+		self.jobsdf = pd.DataFrame(self.dbdf.iloc[start:stop,:])
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
