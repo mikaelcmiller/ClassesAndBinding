@@ -57,6 +57,7 @@ class Dataverse:
 				self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 			except: pass
 			self.jobname = self.jobsdf.loc[idsearch,'jobdottitle']
+			## Check for title before setting id, if error, don't overwrite current_id
 			self.current_id = idsearch
 			self.current_index = self.jobsdf.loc[self.current_id,'index1']
 			self.set_vars(input="id")
