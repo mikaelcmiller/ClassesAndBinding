@@ -577,7 +577,7 @@ class Application(Frame):
 		self.ReptoTitleLabel.grid_configure(sticky=E)
 		self.XRefTitleLabel.grid_configure(sticky=E)
 		self.DegreeNameLabel.grid_configure(sticky=E)
-		## Additional Labels (Calculated)
+		## Additional Labels
 		## Real-time updates
 		self.USOverrideEntry.bind('<Return>', self.update_MedSal)
 		self.CanOverrideEntry.bind('<Return>', self.update_CanLabels)
@@ -658,6 +658,8 @@ class Application(Frame):
 		self.CanPoly3Label.config(text="    ")
 		self.CanPolyMeanLabel.config(text="    ")
 		self.CanPolyMeanQCLabel.config(text="    ")
+		self.CanMeanLabel.config(text="    ")
+		self.CanTotalLabel.config(text="    ")
 		self.ReptoTitleLabel.config(text="    ")
 		self.ReptoSalLabel.config(text="    ")
 		self.ReptoYr3Label.config(text="    ")
@@ -669,6 +671,7 @@ class Application(Frame):
 		self.AdderLabel.config(text="    ")
 		self.RawDataLabel.config(text="    ")
 		self.JobDescriptionLabel.config(text="    ")
+		self.StdErrPredLabel.config(text="    ")
 		## Entries
 		self.B100PctEntry.delete(0, END)
 		self.HighPctEntry.delete(0, END)
@@ -782,9 +785,14 @@ class Application(Frame):
 			self.data.dbdf.set_index('indexsearch', inplace=True)
 			self.data.dbdf['indexsearch'] = self.data.dbdf['erijobid']
 		except: pass
-		self.data.ReptoTitleData = self.data.dbdf.loc[current_selector,'jobdottitle']
-		self.data.ReptoSalData = self.data.dbdf.loc[current_selector,'MEDSAL']
-		self.data.ReptoYr3Data = self.data.dbdf.loc[current_selector,'Yr3Sal']
+		try:
+			self.data.ReptoTitleData = self.data.dbdf.loc[current_selector,'jobdottitle']
+			self.data.ReptoSalData = self.data.dbdf.loc[current_selector,'MEDSAL']
+			self.data.ReptoYr3Data = self.data.dbdf.loc[current_selector,'Yr3Sal']
+		except KeyError:
+			self.data.ReptoTitleData = 'NA'
+			self.data.ReptoSalData = 'NA'
+			self.data.ReptoYr3Data = 'NA'
 		self.ReptoTitleLabel.config(text= self.data.ReptoTitleData)
 		self.ReptoSalLabel.config(text= self.data.ReptoSalData)
 		self.ReptoYr3Label.config(text= self.data.ReptoYr3Data)
@@ -795,9 +803,14 @@ class Application(Frame):
 			self.data.dbdf.set_index('indexsearch', inplace=True)
 			self.data.dbdf['indexsearch'] = self.data.dbdf['erijobid']
 		except: pass
-		self.data.XRefTitleData = self.data.dbdf.loc[current_selector,'jobdottitle']
-		self.data.XRefData = self.data.dbdf.loc[current_selector,'MEDSAL']
-		self.data.XRefCanData = self.data.dbdf.loc[current_selector,'CAN_AVE']
+		try:
+			self.data.XRefTitleData = self.data.dbdf.loc[current_selector,'jobdottitle']
+			self.data.XRefData = self.data.dbdf.loc[current_selector,'MEDSAL']
+			self.data.XRefCanData = self.data.dbdf.loc[current_selector,'CAN_AVE']
+		except KeyError:
+			self.data.XRefTitleData = 'NA'
+			self.data.XRefData = 'NA'
+			self.data.XRefCanData = 'NA'
 		self.XRefTitleLabel.config(text= self.data.XRefTitleData)
 		self.XrefUSLabel.config(text= self.data.XRefData)
 		self.XRefCanLabel.config(text= self.data.XRefCanData)
