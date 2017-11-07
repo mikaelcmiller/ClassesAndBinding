@@ -29,7 +29,12 @@ class Dataverse:
 			FROM assessorwork.sa.pct pct 
 			left join assessorwork.sa.bench bench on bench.erijobid=pct.erijobid and bench.releaseid=pct.releaseid
 			order by execjob desc, pct.erijobid"""
-		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
+		self.dbdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
+		self.dbdf['indexmaster'] = self.dbdf.index
+		self.dbdf['index1'] = self.dbdf['indexmaster']
+		self.dbdf['indexsearch'] = self.dbdf['erijobid']
+		#self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
+		self.jobsdf = pd.DataFrame(self.dbdf.iloc[0:10,:])
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
@@ -774,12 +779,12 @@ class Application(Frame):
 	def update_Repto(self, *event):
 		current_selector = int(self.ReptoEntry.get())
 		try:
-			self.data.jobsdf.set_index('indexsearch', inplace=True)
-			self.data.jobsdf['indexsearch'] = self.data.jobsdf['erijobid']
+			self.data.dbdf.set_index('indexsearch', inplace=True)
+			self.data.dbdf['indexsearch'] = self.data.dbdf['erijobid']
 		except: pass
-		self.data.ReptoTitleData = self.data.jobsdf.loc[current_selector,'jobdottitle']
-		self.data.ReptoSalData = self.data.jobsdf.loc[current_selector,'MEDSAL']
-		self.data.ReptoYr3Data = self.data.jobsdf.loc[current_selector,'Yr3Sal']
+		self.data.ReptoTitleData = self.data.dbdf.loc[current_selector,'jobdottitle']
+		self.data.ReptoSalData = self.data.dbdf.loc[current_selector,'MEDSAL']
+		self.data.ReptoYr3Data = self.data.dbdf.loc[current_selector,'Yr3Sal']
 		self.ReptoTitleLabel.config(text= self.data.ReptoTitleData)
 		self.ReptoSalLabel.config(text= self.data.ReptoSalData)
 		self.ReptoYr3Label.config(text= self.data.ReptoYr3Data)
@@ -787,12 +792,12 @@ class Application(Frame):
 	def update_XRef(self, *event):
 		current_selector = int(self.XRefEntry.get())
 		try:
-			self.data.jobsdf.set_index('indexsearch', inplace=True)
-			self.data.jobsdf['indexsearch'] = self.data.jobsdf['erijobid']
+			self.data.dbdf.set_index('indexsearch', inplace=True)
+			self.data.dbdf['indexsearch'] = self.data.dbdf['erijobid']
 		except: pass
-		self.data.XRefTitleData = self.data.jobsdf.loc[current_selector,'jobdottitle']
-		self.data.XRefData = self.data.jobsdf.loc[current_selector,'MEDSAL']
-		self.data.XRefCanData = self.data.jobsdf.loc[current_selector,'CAN_AVE']
+		self.data.XRefTitleData = self.data.dbdf.loc[current_selector,'jobdottitle']
+		self.data.XRefData = self.data.dbdf.loc[current_selector,'MEDSAL']
+		self.data.XRefCanData = self.data.dbdf.loc[current_selector,'CAN_AVE']
 		self.XRefTitleLabel.config(text= self.data.XRefTitleData)
 		self.XrefUSLabel.config(text= self.data.XRefData)
 		self.XRefCanLabel.config(text= self.data.XRefCanData)
