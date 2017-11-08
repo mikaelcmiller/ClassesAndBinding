@@ -693,7 +693,12 @@ class Application(Frame):
 		self.SurveyMean.grid_configure(sticky=W)
 		self.SurveyIncumbents.grid_configure(sticky=W)
 		self.MeanPred.grid_configure(sticky=W)
-
+		self.QCCheckCan.grid_configure(sticky=W)
+		self.CanPoly1.grid_configure(sticky=W)
+		self.CanPoly2.grid_configure(sticky=W)
+		self.CanPoly3.grid_configure(sticky=W)
+		self.CanPolyMean.grid_configure(sticky=W)
+		self.CanQCPoly.grid_configure(sticky=W)
 
 
 		self.ReptoTitleLabel.grid_configure(sticky=E)
