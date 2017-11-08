@@ -130,11 +130,13 @@ class Dataverse:
 		self.LowPctData = self.jobsdf.loc[current_selector,'LOW_F']
 		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctData = 0.1
 		else: self.Mil1PctData = self.jobsdf.loc[current_selector,'Pct_1Mil']
-		self.B100BonusPctData = self.jobsdf.loc[current_selector,'BonusPct100Bil']
+		if pd.isnull(self.jobsdf.loc[current_selector,'BonusPct100Bil']): self.B100BonusPctData = 0
+		else: self.B100BonusPctData = self.jobsdf.loc[current_selector,'BonusPct100Bil']
 		self.HighBonusPctData = self.jobsdf.loc[current_selector,'HighBonusPct']
 		self.MedBonusPctData = self.jobsdf.loc[current_selector,'MedBonusPct']
 		self.LowBonusPctData = self.jobsdf.loc[current_selector,'LowBonusPct']
-		self.Mil1BonusPctData = self.jobsdf.loc[current_selector,'BonusPct1Mil']
+		if pd.isnull(self.jobsdf.loc[current_selector,'BonusPct1Mil']): self.Mil1BonusPctData = 0
+		else: self.Mil1BonusPctData = self.jobsdf.loc[current_selector,'BonusPct1Mil']
 		self.StdErrData = self.jobsdf.loc[current_selector,'StdErr']
 		self.MedYrsData = self.jobsdf.loc[current_selector,'Medyrs']
 		self.CanPercentData = self.jobsdf.loc[current_selector,'CAN_PCT']
@@ -151,11 +153,13 @@ class Dataverse:
 		self.LowPctDataInit = self.jobsdf.loc[current_selector,'LOW_F']
 		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctDataInit = 0.1
 		else: self.Mil1PctDataInit = self.jobsdf.loc[current_selector,'Pct_1Mil']
-		self.B100BonusPctDataInit = self.jobsdf.loc[current_selector,'BonusPct100Bil']
+		if pd.isnull(self.jobsdf.loc[current_selector,'BonusPct100Bil']): self.B100BonusPctDataInit = 0
+		else: self.B100BonusPctDataInit = self.jobsdf.loc[current_selector,'BonusPct100Bil']
 		self.HighBonusPctDataInit = self.jobsdf.loc[current_selector,'HighBonusPct']
 		self.MedBonusPctDataInit = self.jobsdf.loc[current_selector,'MedBonusPct']
 		self.LowBonusPctDataInit = self.jobsdf.loc[current_selector,'LowBonusPct']
-		self.Mil1BonusPctDataInit = self.jobsdf.loc[current_selector,'BonusPct1Mil']
+		if pd.isnull(self.jobsdf.loc[current_selector,'BonusPct1Mil']): self.Mil1BonusPctDataInit = 0
+		else: self.Mil1BonusPctDataInit = self.jobsdf.loc[current_selector,'BonusPct1Mil']
 		self.StdErrDataInit = self.jobsdf.loc[current_selector,'StdErr']
 		self.MedYrsDataInit = self.jobsdf.loc[current_selector,'Medyrs']
 		self.CanPercentDataInit = self.jobsdf.loc[current_selector,'CAN_PCT']
@@ -164,6 +168,9 @@ class Dataverse:
 		else: self.ReptoDataInit = int(self.jobsdf.loc[current_selector,'Repto'])
 		self.XRefDataInit = self.jobsdf.loc[current_selector,'JobXRef']
 		self.CPCDataInit = self.jobsdf.loc[current_selector,'CPCNO']
+		self.jobexec = self.jobsdf.loc[current_selector,'execjob']
+		## Check Output before calculating
+		self.check_output()
 		## Calculations
 		self.CanAveData = self.CanPercentData * self.XRefCanData
 		if pd.isnull(self.SurveyMeanData) and pd.isnull(self.QCCheckData): self.MeanPredData = self.SocPredData
@@ -172,7 +179,6 @@ class Dataverse:
 		else: self.MeanPredData = (self.QCCheckData+self.SocPredData+self.SurveyMeanData)/3
 		self.MedSalData = self.MedPctData*self.XrefUSData
 		self.set_CalcData()
-		self.jobexec = self.jobsdf.loc[current_selector,'execjob']
 
 	def update_canavedata(self, entry):
 		self.CanAveData = entry*(self.CPCSalData+self.AdderData)
@@ -198,6 +204,96 @@ class Dataverse:
 		self.Low10thPercentileData = ((1 - self.StdErrData/100) * self.LowSalData)
 		self.Low10thPercentile_1MilData = ((1 - self.StdErrData/100) * self.Sal1MilData)
 
+	def check_output(self, *event):
+		try:
+			self.jobsdf.set_index('indexsearch', inplace=True)
+			self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
+		except: pass
+		## Check for current erijobid in output df, add or update as necessary
+		if (self.outputdf['erijobid']==self.current_id).any():
+			current_selector = self.current_id
+			print("Found this one in outputDF "+str(self.current_id))
+			self.JobTitleData = self.outputdf.loc[current_selector,'jobdottitle']
+			self.ERIJobIdData = self.outputdf.loc[current_selector,'erijobid']
+			self.JobDotData = self.outputdf.loc[current_selector,'jobdot']
+			self.JobSocData = self.outputdf.loc[current_selector,'SOC']
+			self.HighPredPctData = self.outputdf.loc[current_selector,'HighPredCalc']
+			self.LowPredPctData = self.outputdf.loc[current_selector,'LowPredCalc']
+			self.B100TotalCompData = self.outputdf.loc[current_selector,'TotalComp100Bil']
+			self.HighTotalCompData = self.outputdf.loc[current_selector,'HighTotalComp']
+			self.MedTotalCompData = self.outputdf.loc[current_selector,'MedTotalComp']
+			self.LowTotalCompData = self.outputdf.loc[current_selector,'LowTotalComp']
+			self.Mil1TotalCompData = self.outputdf.loc[current_selector,'TotalComp1Mil']
+			if pd.isnull(self.outputdf.loc[current_selector,'EstimatedYears']) : self.EstimatedYears = "NA"
+			else: self.EstimatedYears = int(self.outputdf.loc[current_selector,'EstimatedYears'])
+			self.B100Q1Data = self.outputdf.loc[current_selector,'Q1100Bil']
+			self.HighQ1Data = self.outputdf.loc[current_selector,'Q1High']
+			self.MedQ1Data = self.outputdf.loc[current_selector,'Q1Med']
+			self.LowQ1Data = self.outputdf.loc[current_selector,'Q1Low']
+			self.Mil1Q1Data = self.outputdf.loc[current_selector,'Q11Mil']
+			self.QCCheckData = self.outputdf.loc[current_selector,'MedPred']
+			self.SocPredData = self.outputdf.loc[current_selector,'OccAve']
+			self.SurveyMeanData = self.outputdf.loc[current_selector,'Y_Base']
+			self.SurveyIncumbentsData = self.outputdf.loc[current_selector,'SurveySampleSize']
+			self.QCCheckCanData = self.outputdf.loc[current_selector,'CanPred']
+			self.CanPoly1Data = self.outputdf.loc[current_selector,'CanPoly1']
+			self.CanPoly2Data = self.outputdf.loc[current_selector,'CanPoly2']
+			self.CanPoly3Data = self.outputdf.loc[current_selector,'CanPoly3']
+			self.CanPolyMeanData = self.outputdf.loc[current_selector,'AvgCanPoly']
+			self.CanPolyMeanQCData = self.outputdf.loc[current_selector,'AvgCanModels']
+			self.ReptoTitleData = self.outputdf.loc[current_selector,'ReptoTitle']
+			self.ReptoSalData = self.outputdf.loc[current_selector,'ReptoSal']
+			self.ReptoYr3Data = self.outputdf.loc[current_selector,'ReptoYr3']
+			self.XRefTitleData = self.outputdf.loc[current_selector,'XRefTitle']
+			self.XrefUSData = self.outputdf.loc[current_selector,'XRefMed']
+			self.XRefCanData = self.outputdf.loc[current_selector,'XRefCan']
+			self.DegreeNameData = self.outputdf.loc[current_selector,'DegreeName']
+			self.CPCSalData = self.outputdf.loc[current_selector,'CPCSalary']
+			self.AdderData = self.outputdf.loc[current_selector,'Adder']
+			## Entries
+			if pd.isnull(self.outputdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.95
+			else: self.B100PctData = self.outputdf.loc[current_selector,'Pct_100Bil']
+			self.HighPctData = self.outputdf.loc[current_selector,'HIGH_F']
+			self.MedPctData = self.outputdf.loc[current_selector,'US_PCT']
+			self.LowPctData = self.outputdf.loc[current_selector,'LOW_F']
+			if pd.isnull(self.outputdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctData = 0.1
+			else: self.Mil1PctData = self.outputdf.loc[current_selector,'Pct_1Mil']
+			self.B100BonusPctData = self.outputdf.loc[current_selector,'BonusPct100Bil']
+			self.HighBonusPctData = self.outputdf.loc[current_selector,'HighBonusPct']
+			self.MedBonusPctData = self.outputdf.loc[current_selector,'MedBonusPct']
+			self.LowBonusPctData = self.outputdf.loc[current_selector,'LowBonusPct']
+			self.Mil1BonusPctData = self.outputdf.loc[current_selector,'BonusPct1Mil']
+			self.StdErrData = self.outputdf.loc[current_selector,'StdErr']
+			self.MedYrsData = self.outputdf.loc[current_selector,'Medyrs']
+			self.CanPercentData = self.outputdf.loc[current_selector,'CAN_PCT']
+			self.CanBonusPctData = self.outputdf.loc[current_selector,'CanBonusPct']
+			if pd.isnull(self.outputdf.loc[current_selector,'Repto']): self.ReptoData = int(self.current_id)
+			else: self.ReptoData = int(self.outputdf.loc[current_selector,'Repto'])
+			self.XRefData = self.outputdf.loc[current_selector,'JobXRef']
+			self.CPCData = self.outputdf.loc[current_selector,'CPCNO']
+			## Entries Init
+			if pd.isnull(self.outputdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.95
+			else: self.B100PctDataInit = self.outputdf.loc[current_selector,'Pct_100Bil']
+			self.HighPctDataInit = self.outputdf.loc[current_selector,'HIGH_F']
+			self.MedPctDataInit = self.outputdf.loc[current_selector,'US_PCT']
+			self.LowPctDataInit = self.outputdf.loc[current_selector,'LOW_F']
+			if pd.isnull(self.outputdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctDataInit = 0.1
+			else: self.Mil1PctDataInit = self.outputdf.loc[current_selector,'Pct_1Mil']
+			self.B100BonusPctDataInit = self.outputdf.loc[current_selector,'BonusPct100Bil']
+			self.HighBonusPctDataInit = self.outputdf.loc[current_selector,'HighBonusPct']
+			self.MedBonusPctDataInit = self.outputdf.loc[current_selector,'MedBonusPct']
+			self.LowBonusPctDataInit = self.outputdf.loc[current_selector,'LowBonusPct']
+			self.Mil1BonusPctDataInit = self.outputdf.loc[current_selector,'BonusPct1Mil']
+			self.StdErrDataInit = self.outputdf.loc[current_selector,'StdErr']
+			self.MedYrsDataInit = self.outputdf.loc[current_selector,'Medyrs']
+			self.CanPercentDataInit = self.outputdf.loc[current_selector,'CAN_PCT']
+			self.CanBonusPctDataInit = self.outputdf.loc[current_selector,'CanBonusPct']
+			if pd.isnull(self.outputdf.loc[current_selector,'Repto']): self.ReptoDataInit = int(self.current_id)
+			else: self.ReptoDataInit = int(self.outputdf.loc[current_selector,'Repto'])
+			self.XRefDataInit = self.outputdf.loc[current_selector,'JobXRef']
+			self.CPCDataInit = self.outputdf.loc[current_selector,'CPCNO']
+			self.jobexec = self.outputdf.loc[current_selector,'execjob']
+
 	def write_to_outputdf(self, *event):
 		print("writing data to OutputDF")
 		try:
@@ -212,7 +308,18 @@ class Dataverse:
 		## Update output rows after creating
 		self.outputdf.update(self.jobsdf.loc[self.current_id,:])
 		self.outputdf.set_value(self.current_id,'timestamp',datetime.datetime.now())
-		print(self.outputdf)
+		self.outputdf.set_value(self.current_id,'Pct_100Bil', self.B100PctData)
+		self.outputdf.set_value(self.current_id,'HIGH_F', self.HighPctData)
+		self.outputdf.set_value(self.current_id,'US_PCT', self.MedPctData)
+		self.outputdf.set_value(self.current_id,'LOW_F', self.LowPctData)
+		self.outputdf.set_value(self.current_id,'Pct_1Mil', self.Mil1PctData)
+		self.outputdf.set_value(self.current_id,'BonusPct100Bil', self.B100BonusPctData)
+		self.outputdf.set_value(self.current_id,'HighBonusPct', self.HighBonusPctData)
+		self.outputdf.set_value(self.current_id,'MedBonusPct', self.MedBonusPctData)
+		self.outputdf.set_value(self.current_id,'LowBonusPct', self.LowBonusPctData)
+		self.outputdf.set_value(self.current_id,'BonusPct1Mil', self.Mil1BonusPctData)
+
+		print(self.outputdf.loc[self.current_id,['erijobid', 'jobdottitle', 'Pct_100Bil', 'HIGH_F', 'US_PCT', 'LOW_F', 'Pct_1Mil', 'timestamp']])
 
 	def write_to_sql(self, *event):
 		# Copy output DataFrame to SQL DataFrame before printing
@@ -255,7 +362,7 @@ class Application(Frame):
 #### Created from Google Sheet 
 		self.ReloadBtn = Button(self, text="Reload Data", command=self.label_entry_reload)
 		self.ReloadBtn.grid(row=0, column=5)
-		self.CommitBtn = Button(self, text="Commit Changes")
+		self.CommitBtn = Button(self, text="Commit Changes", command=self.write_output)
 		self.CommitBtn.grid(row=0, column=6)
 		self.WriteSQLBtn = Button(self, text="Write to SQL")
 		self.WriteSQLBtn.grid(row=0, column=7)
@@ -767,12 +874,24 @@ class Application(Frame):
 		self.XRefEntry.insert(0, str(self.data.XRefDataInit))
 		self.CPCEntry.insert(0, str(self.data.CPCDataInit))
 		## Calc Labels
-		self.MeanPredLabel.config(text=str(int(self.data.MeanPredData)))
+		self.MeanPredLabel.config(text=int(self.data.MeanPredData))
 		self.set_SalPercents()
 		self.update_MedSal()
 		self.update_CanLabels()
 		self.update_Repto()
 		self.update_XRef()
+
+	def send_entry(self):
+		self.data.B100PctData = float(self.B100PctEntry.get())
+		self.data.HighPctData = float(self.HighPctEntry.get())
+		self.data.MedPctData = float(self.MedPctEntry.get())
+		self.data.LowPctData = float(self.LowPctEntry.get())
+		self.data.Mil1PctData = float(self.Mil1PctEntry.get())
+		self.data.B100BonusPctData = float(self.B100BonusPctEntry.get())
+		self.data.HighBonusPctData = float(self.HighBonusPctEntry.get())
+		self.data.MedBonusPctData = float(self.MedBonusPctEntry.get())
+		self.data.LowBonusPctData = float(self.LowBonusPctEntry.get())
+		self.data.Mil1BonusPctData = float(self.Mil1BonusPctEntry.get())
 
 	def update_Repto(self, *event):
 		current_selector = int(self.ReptoEntry.get())
@@ -871,6 +990,7 @@ class Application(Frame):
 		else: self.Low90thPercentile_1MilLabel.config(text= int(self.data.Low90thPercentile_1MilData))
 
 	def write_output(self, *event):
+		self.send_entry()
 		#If any changes are made, these will update those; else, these will input what was there before
 		self.data.write_to_outputdf()
 
