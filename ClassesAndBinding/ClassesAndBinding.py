@@ -684,6 +684,9 @@ class Application(Frame):
 		self.SocOutputLabel.grid_configure(rowspan=2, sticky=NW)
 		self.WriteSQLBtn.grid_configure(sticky=W)
 		self.B100Q1.grid_configure(sticky=W)
+		self.HighQ1.grid_configure(sticky=W)
+
+
 		self.ReptoTitleLabel.grid_configure(sticky=E)
 		self.XRefTitleLabel.grid_configure(sticky=E)
 		self.DegreeNameLabel.grid_configure(sticky=E)
