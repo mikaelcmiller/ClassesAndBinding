@@ -688,6 +688,13 @@ class Application(Frame):
 		self.MedQ1.grid_configure(sticky=W)
 		self.LowQ1.grid_configure(sticky=W)
 		self.Mil1Q1.grid_configure(sticky=W)
+		self.QCCheck.grid_configure(sticky=W)
+		self.SOCPred.grid_configure(sticky=W)
+		self.SurveyMean.grid_configure(sticky=W)
+		self.SurveyIncumbents.grid_configure(sticky=W)
+		self.MeanPred.grid_configure(sticky=W)
+
+
 
 		self.ReptoTitleLabel.grid_configure(sticky=E)
 		self.XRefTitleLabel.grid_configure(sticky=E)
