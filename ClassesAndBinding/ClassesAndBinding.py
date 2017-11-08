@@ -29,14 +29,7 @@ class Dataverse:
 			FROM assessorwork.sa.pct pct 
 			left join assessorwork.sa.bench bench on bench.erijobid=pct.erijobid and bench.releaseid=pct.releaseid
 			order by execjob desc, pct.erijobid"""
-		self.dbdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
-		self.dbdf['indexmaster'] = self.dbdf.index
-		self.dbdf['index1'] = self.dbdf['indexmaster']
-		self.dbdf['indexsearch'] = self.dbdf['erijobid']
-		#self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
-		start = 0
-		stop = 237 ## Last exec job (ERI#9558)
-		self.jobsdf = pd.DataFrame(self.dbdf.iloc[start:stop,:])
+		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
@@ -57,7 +50,6 @@ class Dataverse:
 				self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 			except: pass
 			self.jobname = self.jobsdf.loc[idsearch,'jobdottitle']
-			## Check for title before setting id, if error, don't overwrite current_id
 			self.current_id = idsearch
 			self.current_index = self.jobsdf.loc[self.current_id,'index1']
 			self.set_vars(input="id")
@@ -785,13 +777,13 @@ class Application(Frame):
 	def update_Repto(self, *event):
 		current_selector = int(self.ReptoEntry.get())
 		try:
-			self.data.dbdf.set_index('indexsearch', inplace=True)
-			self.data.dbdf['indexsearch'] = self.data.dbdf['erijobid']
+			self.data.jobsdf.set_index('indexsearch', inplace=True)
+			self.data.jobsdf['indexsearch'] = self.data.jobsdf['erijobid']
 		except: pass
 		try:
-			self.data.ReptoTitleData = self.data.dbdf.loc[current_selector,'jobdottitle']
-			self.data.ReptoSalData = self.data.dbdf.loc[current_selector,'MEDSAL']
-			self.data.ReptoYr3Data = self.data.dbdf.loc[current_selector,'Yr3Sal']
+			self.data.ReptoTitleData = self.data.jobsdf.loc[current_selector,'jobdottitle']
+			self.data.ReptoSalData = self.data.jobsdf.loc[current_selector,'MEDSAL']
+			self.data.ReptoYr3Data = self.data.jobsdf.loc[current_selector,'Yr3Sal']
 		except KeyError:
 			self.data.ReptoTitleData = 'NA'
 			self.data.ReptoSalData = 'NA'
@@ -803,13 +795,13 @@ class Application(Frame):
 	def update_XRef(self, *event):
 		current_selector = int(self.XRefEntry.get())
 		try:
-			self.data.dbdf.set_index('indexsearch', inplace=True)
-			self.data.dbdf['indexsearch'] = self.data.dbdf['erijobid']
+			self.data.jobsdf.set_index('indexsearch', inplace=True)
+			self.data.jobsdf['indexsearch'] = self.data.jobsdf['erijobid']
 		except: pass
 		try:
-			self.data.XRefTitleData = self.data.dbdf.loc[current_selector,'jobdottitle']
-			self.data.XRefData = self.data.dbdf.loc[current_selector,'MEDSAL']
-			self.data.XRefCanData = self.data.dbdf.loc[current_selector,'CAN_AVE']
+			self.data.XRefTitleData = self.data.jobsdf.loc[current_selector,'jobdottitle']
+			self.data.XRefData = self.data.jobsdf.loc[current_selector,'MEDSAL']
+			self.data.XRefCanData = self.data.jobsdf.loc[current_selector,'CAN_AVE']
 		except KeyError:
 			self.data.XRefTitleData = 'NA'
 			self.data.XRefData = 'NA'
