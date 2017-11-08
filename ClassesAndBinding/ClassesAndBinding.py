@@ -699,8 +699,9 @@ class Application(Frame):
 		self.CanPoly3.grid_configure(sticky=W)
 		self.CanPolyMean.grid_configure(sticky=W)
 		self.CanQCPoly.grid_configure(sticky=W)
-
-
+		self.ReptoYr3.grid_configure(sticky=W)
+		self.XrefCanSal.grid_configure(sticky=W)
+		self.Adder.grid_configure(sticky=W)
 		self.ReptoTitleLabel.grid_configure(sticky=E)
 		self.XRefTitleLabel.grid_configure(sticky=E)
 		self.DegreeNameLabel.grid_configure(sticky=E)
