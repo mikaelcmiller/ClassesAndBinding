@@ -320,25 +320,6 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'BonusPct1Mil', self.Mil1BonusPctData)
 
 		print(self.outputdf.loc[self.current_id,['erijobid', 'jobdottitle', 'Pct_100Bil', 'HIGH_F', 'US_PCT', 'LOW_F', 'Pct_1Mil', 'timestamp']])
-			#if pd.isnull(self.outputdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.95
-			#else: self.B100PctData = self.outputdf.loc[current_selector,'Pct_100Bil']
-			#self.HighPctData = self.outputdf.loc[current_selector,'HIGH_F']
-			#self.MedPctData = self.outputdf.loc[current_selector,'US_PCT']
-			#self.LowPctData = self.outputdf.loc[current_selector,'LOW_F']
-			#if pd.isnull(self.outputdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctData = 0.1
-			#else: self.Mil1PctData = self.outputdf.loc[current_selector,'Pct_1Mil']
-			#self.data.B100BonusPctData = float(self.B100BonusPctEntry.get())
-			#self.data.HighBonusPctData = float(self.HighBonusPctEntry.get())
-			#self.data.MedBonusPctData = float(self.MedBonusPctEntry.get())
-			#self.data.LowBonusPctData = float(self.LowBonusPctEntry.get())
-			#self.data.Mil1BonusPctData = float(self.Mil1BonusPctEntry.get())
-			#self.B100BonusPctData = self.outputdf.loc[current_selector,'BonusPct100Bil']
-			#self.HighBonusPctData = self.outputdf.loc[current_selector,'HighBonusPct']
-			#self.MedBonusPctData = self.outputdf.loc[current_selector,'MedBonusPct']
-			#self.LowBonusPctData = self.outputdf.loc[current_selector,'LowBonusPct']
-			#self.Mil1BonusPctData = self.outputdf.loc[current_selector,'BonusPct1Mil']
-
-		#print(self.outputdf)
 
 	def write_to_sql(self, *event):
 		# Copy output DataFrame to SQL DataFrame before printing
