@@ -22,12 +22,16 @@ class Dataverse:
 
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		self.sql = """SELECT pct.*, cast(LowPred as float)/MedPred as LowPredCalc, cast(HighPred as float)/MedPred as HighPredCalc
+		self.sql = """SELECT pct.*
+			, left(socdesc.soctitle, 60) as SocTitle
+			, cast(LowPred as float)/MedPred as LowPredCalc
+			, cast(HighPred as float)/MedPred as HighPredCalc
 			, bench.USBenchMed
 			, bench.CanBenchMed
 			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob 
 			FROM assessorwork.sa.pct pct 
 			left join assessorwork.sa.bench bench on bench.erijobid=pct.erijobid and bench.releaseid=pct.releaseid
+			join (select soccode, soctitle from [AssessorWork].[dbo].[SocDescription]) socdesc on pct.SOC = socdesc.SocCode
 			order by execjob desc, pct.erijobid"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		self.jobsdf['indexmaster'] = self.jobsdf.index
@@ -122,6 +126,7 @@ class Dataverse:
 		self.DegreeNameData = self.jobsdf.loc[current_selector,'DegreeName']
 		self.CPCSalData = self.jobsdf.loc[current_selector,'CPCSalary']
 		self.AdderData = self.jobsdf.loc[current_selector,'Adder']
+		self.SocTitleData = self.jobsdf.loc[current_selector,'SocTitle']
 		## Entries
 		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.95
 		else: self.B100PctData = self.jobsdf.loc[current_selector,'Pct_100Bil']
@@ -318,7 +323,7 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'MedBonusPct', self.MedBonusPctData)
 		self.outputdf.set_value(self.current_id,'LowBonusPct', self.LowBonusPctData)
 		self.outputdf.set_value(self.current_id,'BonusPct1Mil', self.Mil1BonusPctData)
-
+		
 		print(self.outputdf.loc[self.current_id,['erijobid', 'jobdottitle', 'Pct_100Bil', 'HIGH_F', 'US_PCT', 'LOW_F', 'Pct_1Mil', 'timestamp']])
 
 	def write_to_sql(self, *event):
@@ -554,7 +559,7 @@ class Application(Frame):
 		self.JobDotLabel.grid(row=2, column=4)
 		self.JobSocLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.JobSocLabel.grid(row=2, column=6)
-		self.SocOutputLabel = Label(self, text="[Initial Text]", relief="groove")
+		self.SocOutputLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=200)
 		self.SocOutputLabel.grid(row=2, column=7)
 		self.High10thPercentile_100BilLabel = Label(self, text="Initial Text", relief="groove")
 		self.High10thPercentile_100BilLabel.grid(row=4, column=2)
@@ -676,6 +681,27 @@ class Application(Frame):
 		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.JobIdSearchEntry.insert(0, "1")
 		self.RawDataLabel.grid_configure(rowspan=21, sticky=N)
+		self.SocOutputLabel.grid_configure(rowspan=2, sticky=NW)
+		self.WriteSQLBtn.grid_configure(sticky=W)
+		self.B100Q1.grid_configure(sticky=W)
+		self.HighQ1.grid_configure(sticky=W)
+		self.MedQ1.grid_configure(sticky=W)
+		self.LowQ1.grid_configure(sticky=W)
+		self.Mil1Q1.grid_configure(sticky=W)
+		self.QCCheck.grid_configure(sticky=W)
+		self.SOCPred.grid_configure(sticky=W)
+		self.SurveyMean.grid_configure(sticky=W)
+		self.SurveyIncumbents.grid_configure(sticky=W)
+		self.MeanPred.grid_configure(sticky=W)
+		self.QCCheckCan.grid_configure(sticky=W)
+		self.CanPoly1.grid_configure(sticky=W)
+		self.CanPoly2.grid_configure(sticky=W)
+		self.CanPoly3.grid_configure(sticky=W)
+		self.CanPolyMean.grid_configure(sticky=W)
+		self.CanQCPoly.grid_configure(sticky=W)
+		self.ReptoYr3.grid_configure(sticky=W)
+		self.XrefCanSal.grid_configure(sticky=W)
+		self.Adder.grid_configure(sticky=W)
 		self.ReptoTitleLabel.grid_configure(sticky=E)
 		self.XRefTitleLabel.grid_configure(sticky=E)
 		self.DegreeNameLabel.grid_configure(sticky=E)
@@ -774,6 +800,7 @@ class Application(Frame):
 		self.RawDataLabel.config(text="    ")
 		self.JobDescriptionLabel.config(text="    ")
 		self.StdErrPredLabel.config(text="    ")
+		self.SocOutputLabel.config(text="    ")
 		## Entries
 		self.B100PctEntry.delete(0, END)
 		self.HighPctEntry.delete(0, END)
@@ -855,6 +882,7 @@ class Application(Frame):
 		self.AdderLabel.config(text= self.data.AdderData)
 		self.RawDataLabel.config(text="Raw data text")
 		self.JobDescriptionLabel.config(text="Job Description text")
+		self.SocOutputLabel.config(text=self.data.SocTitleData)
 		## Entries
 		self.B100PctEntry.insert(0, str(self.data.B100PctDataInit))
 		self.HighPctEntry.insert(0, str(self.data.HighPctDataInit))
