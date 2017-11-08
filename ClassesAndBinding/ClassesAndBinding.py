@@ -779,6 +779,7 @@ class Application(Frame):
 		self.RawDataLabel.config(text="    ")
 		self.JobDescriptionLabel.config(text="    ")
 		self.StdErrPredLabel.config(text="    ")
+		self.SocOutputLabel.config(text="    ")
 		## Entries
 		self.B100PctEntry.delete(0, END)
 		self.HighPctEntry.delete(0, END)
