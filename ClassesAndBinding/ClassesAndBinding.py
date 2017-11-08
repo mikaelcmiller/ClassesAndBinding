@@ -23,7 +23,7 @@ class Dataverse:
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		self.sql = """SELECT pct.*
-			, left(socdesc.soctitle, 15) as SocTitle
+			, left(socdesc.soctitle, 60) as SocTitle
 			, cast(LowPred as float)/MedPred as LowPredCalc
 			, cast(HighPred as float)/MedPred as HighPredCalc
 			, bench.USBenchMed
@@ -559,7 +559,7 @@ class Application(Frame):
 		self.JobDotLabel.grid(row=2, column=4)
 		self.JobSocLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.JobSocLabel.grid(row=2, column=6)
-		self.SocOutputLabel = Label(self, text="[Initial Text]", relief="groove")
+		self.SocOutputLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=200)
 		self.SocOutputLabel.grid(row=2, column=7)
 		self.High10thPercentile_100BilLabel = Label(self, text="Initial Text", relief="groove")
 		self.High10thPercentile_100BilLabel.grid(row=4, column=2)
@@ -681,6 +681,7 @@ class Application(Frame):
 		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.JobIdSearchEntry.insert(0, "1")
 		self.RawDataLabel.grid_configure(rowspan=21, sticky=N)
+		self.SocOutputLabel.grid_configure(rowspan=2, sticky=NW)
 		self.ReptoTitleLabel.grid_configure(sticky=E)
 		self.XRefTitleLabel.grid_configure(sticky=E)
 		self.DegreeNameLabel.grid_configure(sticky=E)
