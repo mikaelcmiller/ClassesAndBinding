@@ -217,7 +217,6 @@ class Dataverse:
 		## Check for current erijobid in output df, add or update as necessary
 		if (self.outputdf['erijobid']==self.current_id).any():
 			current_selector = self.current_id
-			print("Found this one in outputDF "+str(self.current_id))
 			self.JobTitleData = self.outputdf.loc[current_selector,'jobdottitle']
 			self.ERIJobIdData = self.outputdf.loc[current_selector,'erijobid']
 			self.JobDotData = self.outputdf.loc[current_selector,'jobdot']
@@ -300,14 +299,13 @@ class Dataverse:
 			self.jobexec = self.outputdf.loc[current_selector,'execjob']
 
 	def write_to_outputdf(self, *event):
-		print("writing data to OutputDF")
 		try:
 			self.jobsdf.set_index('indexsearch', inplace=True)
 			self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 		except: pass
 		## Check for current erijobid in output df, add or update as necessary
 		if (self.outputdf['erijobid']==self.current_id).any():
-			print("Overwriting "+str(self.current_id))
+			#print("Overwriting "+str(self.current_id))
 			self.outputdf.update(self.jobsdf.loc[self.current_id,:])
 		else: self.outputdf = self.outputdf.append(self.jobsdf.loc[self.current_id,:])
 		## Update output rows after creating
@@ -323,8 +321,8 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'MedBonusPct', self.MedBonusPctData)
 		self.outputdf.set_value(self.current_id,'LowBonusPct', self.LowBonusPctData)
 		self.outputdf.set_value(self.current_id,'BonusPct1Mil', self.Mil1BonusPctData)
-		
-		print(self.outputdf.loc[self.current_id,['erijobid', 'jobdottitle', 'Pct_100Bil', 'HIGH_F', 'US_PCT', 'LOW_F', 'Pct_1Mil', 'timestamp']])
+		#print(self.outputdf.loc[self.current_id,['erijobid', 'jobdottitle', 'Pct_100Bil', 'HIGH_F', 'US_PCT', 'LOW_F', 'Pct_1Mil', 'timestamp']])
+		print("Data written to OutputDF")
 
 	def write_to_sql(self, *event):
 		# Copy output DataFrame to SQL DataFrame before printing
