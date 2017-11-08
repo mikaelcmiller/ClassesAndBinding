@@ -685,7 +685,9 @@ class Application(Frame):
 		self.WriteSQLBtn.grid_configure(sticky=W)
 		self.B100Q1.grid_configure(sticky=W)
 		self.HighQ1.grid_configure(sticky=W)
-
+		self.MedQ1.grid_configure(sticky=W)
+		self.LowQ1.grid_configure(sticky=W)
+		self.Mil1Q1.grid_configure(sticky=W)
 
 		self.ReptoTitleLabel.grid_configure(sticky=E)
 		self.XRefTitleLabel.grid_configure(sticky=E)
