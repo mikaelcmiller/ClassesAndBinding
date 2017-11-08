@@ -23,7 +23,7 @@ class Dataverse:
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		self.sql = """SELECT pct.*
-			, socdesc.soctitle as SocTitle
+			, left(socdesc.soctitle, 15) as SocTitle
 			, cast(LowPred as float)/MedPred as LowPredCalc
 			, cast(HighPred as float)/MedPred as HighPredCalc
 			, bench.USBenchMed
@@ -861,6 +861,7 @@ class Application(Frame):
 		self.AdderLabel.config(text= self.data.AdderData)
 		self.RawDataLabel.config(text="Raw data text")
 		self.JobDescriptionLabel.config(text="Job Description text")
+		self.SocOutputLabel.config(text=self.data.SocTitleData)
 		## Entries
 		self.B100PctEntry.insert(0, str(self.data.B100PctDataInit))
 		self.HighPctEntry.insert(0, str(self.data.HighPctDataInit))
