@@ -150,7 +150,8 @@ class Dataverse:
 		else: self.ReptoData = int(self.jobsdf.loc[current_selector,'Repto'])
 		self.XRefData = self.jobsdf.loc[current_selector,'JobXRef']
 		self.CPCData = self.jobsdf.loc[current_selector,'CPCNO']
-		self.USOverrideData = self.jobsdf.loc[current_selector,'USPK_C']
+		if pd.isnull(self.jobsdf.loc[current_selector,'USPK_C']): self.USOverrideData = 0
+		else: self.USOverrideData = float(self.jobsdf.loc[current_selector,'USPK_C'])
 		## Entries Init
 		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.95
 		else: self.B100PctDataInit = self.jobsdf.loc[current_selector,'Pct_100Bil']
@@ -174,7 +175,8 @@ class Dataverse:
 		else: self.ReptoDataInit = int(self.jobsdf.loc[current_selector,'Repto'])
 		self.XRefDataInit = self.jobsdf.loc[current_selector,'JobXRef']
 		self.CPCDataInit = self.jobsdf.loc[current_selector,'CPCNO']
-		self.USOverrideDataInit = float(self.jobsdf.loc[current_selector,'USPK_C'])
+		if pd.isnull(self.jobsdf.loc[current_selector,'USPK_C']): self.USOverrideDataInit = 0
+		else: self.USOverrideDataInit = float(self.jobsdf.loc[current_selector,'USPK_C'])
 		
 		## Other
 		self.jobexec = self.jobsdf.loc[current_selector,'execjob']
@@ -902,6 +904,7 @@ class Application(Frame):
 		self.ReptoEntry.insert(0, str(self.data.ReptoDataInit))
 		self.XRefEntry.insert(0, str(self.data.XRefDataInit))
 		self.CPCEntry.insert(0, str(self.data.CPCDataInit))
+		self.USOverrideEntry.insert(0, str(self.data.USOverrideDataInit))
 		## Calc Labels
 		self.MeanPredLabel.config(text=int(self.data.MeanPredData))
 		self.set_SalPercents()
@@ -987,8 +990,11 @@ class Application(Frame):
 		self.update_MedSal()
 	
 	def update_MedSal(self, *event):
-		try: self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
-		except ValueError: self.data.MedSalData = int(self.data.MedPctData*self.data.XrefUSData)
+		try:
+			if float(self.USOverrideEntry.get())!=0: 
+				self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
+			else: self.data.MedSalData = int(self.data.MedPctData*self.data.XrefUSData)
+		except ValueError: pass
 		self.data.set_CalcData()
 		self.update_CalcLabels()
 	
