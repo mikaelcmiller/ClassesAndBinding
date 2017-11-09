@@ -150,6 +150,7 @@ class Dataverse:
 		else: self.ReptoData = int(self.jobsdf.loc[current_selector,'Repto'])
 		self.XRefData = self.jobsdf.loc[current_selector,'JobXRef']
 		self.CPCData = self.jobsdf.loc[current_selector,'CPCNO']
+		self.USOverrideData = self.jobsdf.loc[current_selector,'USPK_C']
 		## Entries Init
 		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.95
 		else: self.B100PctDataInit = self.jobsdf.loc[current_selector,'Pct_100Bil']
@@ -173,6 +174,9 @@ class Dataverse:
 		else: self.ReptoDataInit = int(self.jobsdf.loc[current_selector,'Repto'])
 		self.XRefDataInit = self.jobsdf.loc[current_selector,'JobXRef']
 		self.CPCDataInit = self.jobsdf.loc[current_selector,'CPCNO']
+		self.USOverrideDataInit = float(self.jobsdf.loc[current_selector,'USPK_C'])
+		
+		## Other
 		self.jobexec = self.jobsdf.loc[current_selector,'execjob']
 		## Check Output before calculating
 		self.check_output()
@@ -190,7 +194,6 @@ class Dataverse:
 
 	def update_MedSalCalcData(self, entry, *event):
 		self.MedSalData = int(entry*(self.CPCSalData+self.AdderData))
-		## Push medsal + calcs into output df
 		self.set_CalcData()
 
 	def set_CalcData(self, *event):
