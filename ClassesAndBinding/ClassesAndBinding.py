@@ -281,26 +281,26 @@ class Dataverse:
 			self.XRefData = self.outputdf.loc[current_selector,'JobXRef']
 			self.CPCData = self.outputdf.loc[current_selector,'CPCNO']
 			## Entries Init
-			if pd.isnull(self.outputdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.95
-			else: self.B100PctDataInit = self.outputdf.loc[current_selector,'Pct_100Bil']
-			self.HighPctDataInit = self.outputdf.loc[current_selector,'HIGH_F']
-			self.MedPctDataInit = self.outputdf.loc[current_selector,'US_PCT']
-			self.LowPctDataInit = self.outputdf.loc[current_selector,'LOW_F']
-			if pd.isnull(self.outputdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctDataInit = 0.1
-			else: self.Mil1PctDataInit = self.outputdf.loc[current_selector,'Pct_1Mil']
-			self.B100BonusPctDataInit = self.outputdf.loc[current_selector,'BonusPct100Bil']
-			self.HighBonusPctDataInit = self.outputdf.loc[current_selector,'HighBonusPct']
-			self.MedBonusPctDataInit = self.outputdf.loc[current_selector,'MedBonusPct']
-			self.LowBonusPctDataInit = self.outputdf.loc[current_selector,'LowBonusPct']
-			self.Mil1BonusPctDataInit = self.outputdf.loc[current_selector,'BonusPct1Mil']
-			self.StdErrDataInit = self.outputdf.loc[current_selector,'StdErr']
-			self.MedYrsDataInit = self.outputdf.loc[current_selector,'Medyrs']
-			self.CanPercentDataInit = self.outputdf.loc[current_selector,'CAN_PCT']
-			self.CanBonusPctDataInit = self.outputdf.loc[current_selector,'CanBonusPct']
-			if pd.isnull(self.outputdf.loc[current_selector,'Repto']): self.ReptoDataInit = int(self.current_id)
-			else: self.ReptoDataInit = int(self.outputdf.loc[current_selector,'Repto'])
-			self.XRefDataInit = self.outputdf.loc[current_selector,'JobXRef']
-			self.CPCDataInit = self.outputdf.loc[current_selector,'CPCNO']
+			#if pd.isnull(self.outputdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.95
+			#else: self.B100PctDataInit = self.outputdf.loc[current_selector,'Pct_100Bil']
+			#self.HighPctDataInit = self.outputdf.loc[current_selector,'HIGH_F']
+			#self.MedPctDataInit = self.outputdf.loc[current_selector,'US_PCT']
+			#self.LowPctDataInit = self.outputdf.loc[current_selector,'LOW_F']
+			#if pd.isnull(self.outputdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctDataInit = 0.1
+			#else: self.Mil1PctDataInit = self.outputdf.loc[current_selector,'Pct_1Mil']
+			#self.B100BonusPctDataInit = self.outputdf.loc[current_selector,'BonusPct100Bil']
+			#self.HighBonusPctDataInit = self.outputdf.loc[current_selector,'HighBonusPct']
+			#self.MedBonusPctDataInit = self.outputdf.loc[current_selector,'MedBonusPct']
+			#self.LowBonusPctDataInit = self.outputdf.loc[current_selector,'LowBonusPct']
+			#self.Mil1BonusPctDataInit = self.outputdf.loc[current_selector,'BonusPct1Mil']
+			#self.StdErrDataInit = self.outputdf.loc[current_selector,'StdErr']
+			#self.MedYrsDataInit = self.outputdf.loc[current_selector,'Medyrs']
+			#self.CanPercentDataInit = self.outputdf.loc[current_selector,'CAN_PCT']
+			#self.CanBonusPctDataInit = self.outputdf.loc[current_selector,'CanBonusPct']
+			#if pd.isnull(self.outputdf.loc[current_selector,'Repto']): self.ReptoDataInit = int(self.current_id)
+			#else: self.ReptoDataInit = int(self.outputdf.loc[current_selector,'Repto'])
+			#self.XRefDataInit = self.outputdf.loc[current_selector,'JobXRef']
+			#self.CPCDataInit = self.outputdf.loc[current_selector,'CPCNO']
 			self.jobexec = self.outputdf.loc[current_selector,'execjob']
 
 	def write_to_outputdf(self, *event):
@@ -348,7 +348,7 @@ class Application(Frame):
 		self.master.title("Data Audit Window")
 		self.pack(fill=BOTH, expand=0)
 		self.create_widgets()
-		self.label_entry_reload()
+		self.label_entry_initload()
 		self.bind_all('<Next>', self.nextpage)
 		self.bind_all('<Prior>', self.priorpage)
 		self.bind_all('<Insert>', self.write_output)
@@ -731,13 +731,13 @@ class Application(Frame):
 	def nextpage(self, event):
 		self.JobTitleLabel.config(foreground="Black")
 		self.data.index_next()
-		self.label_entry_reload()
+		self.label_entry_initload()
 		self.jobentryreplace()
 
 	def priorpage(self, event):
 		self.JobTitleLabel.config(foreground="Black")
 		self.data.index_prior()
-		self.label_entry_reload()
+		self.label_entry_initload()
 		self.jobentryreplace()
 
 	def jobidsearch(self, event):
@@ -745,7 +745,7 @@ class Application(Frame):
 		try:
 			self.intJobIdSearchEntry = int(self.JobIdSearchEntry.get())
 			self.data.find_by_erijobid(self.intJobIdSearchEntry)
-			self.label_entry_reload()
+			self.label_entry_initload()
 			if self.data.jobname=="No job found":
 				self.JobTitleLabel.config(foreground="Red")
 				self.label_entry_clear()
@@ -843,6 +843,51 @@ class Application(Frame):
 		self.MeanPredLabel.config(text="    ")
 
 	def label_entry_reload(self, *event):
+		self.B100PctEntry.delete(0, END)
+		self.HighPctEntry.delete(0, END)
+		self.MedPctEntry.delete(0, END)
+		self.LowPctEntry.delete(0, END)
+		self.Mil1PctEntry.delete(0, END)
+		self.B100BonusPctEntry.delete(0, END)
+		self.HighBonusPctEntry.delete(0, END)
+		self.MedBonusPctEntry.delete(0, END)
+		self.LowBonusPctEntry.delete(0, END)
+		self.Mil1BonusPctEntry.delete(0, END)
+		self.StdErrEntry.delete(0, END)
+		self.MedYrsEntry.delete(0, END)
+		self.USOverrideEntry.delete(0, END)
+		self.CanOverrideEntry.delete(0, END)
+		self.CanPercentEntry.delete(0, END)
+		self.CanBonusPctEntry.delete(0, END)
+		self.ReptoEntry.delete(0, END)
+		self.XRefEntry.delete(0, END)
+		self.CPCEntry.delete(0, END)
+		self.B100PctEntry.insert(0, str(self.data.B100PctDataInit))
+		self.HighPctEntry.insert(0, str(self.data.HighPctDataInit))
+		self.MedPctEntry.insert(0, str(self.data.MedPctDataInit))
+		self.LowPctEntry.insert(0, str(self.data.LowPctDataInit))
+		self.Mil1PctEntry.insert(0, str(self.data.Mil1PctDataInit))
+		self.B100BonusPctEntry.insert(0, str(self.data.B100BonusPctDataInit))
+		self.HighBonusPctEntry.insert(0, str(self.data.HighBonusPctDataInit))
+		self.MedBonusPctEntry.insert(0, str(self.data.MedBonusPctDataInit))
+		self.LowBonusPctEntry.insert(0, str(self.data.LowBonusPctDataInit))
+		self.Mil1BonusPctEntry.insert(0, str(self.data.Mil1BonusPctDataInit))
+		self.StdErrEntry.insert(0, str(self.data.StdErrDataInit))
+		self.MedYrsEntry.insert(0, str(self.data.MedYrsDataInit))
+		self.CanPercentEntry.insert(0, str(self.data.CanPercentDataInit))
+		self.CanBonusPctEntry.insert(0, str(self.data.CanBonusPctDataInit))
+		self.ReptoEntry.insert(0, str(self.data.ReptoDataInit))
+		self.XRefEntry.insert(0, str(self.data.XRefDataInit))
+		self.CPCEntry.insert(0, str(self.data.CPCDataInit))
+		self.USOverrideEntry.insert(0, str(self.data.USOverrideDataInit))
+		self.MeanPredLabel.config(text=int(self.data.MeanPredData))
+		self.set_SalPercents()
+		self.update_MedSal()
+		self.update_CanLabels()
+		self.update_Repto()
+		self.update_XRef()
+
+	def label_entry_initload(self, *event):
 		self.label_entry_clear()
 		self.jobentryreplace()
 		## Labels
@@ -887,24 +932,24 @@ class Application(Frame):
 		self.JobDescriptionLabel.config(text="Job Description text")
 		self.SocOutputLabel.config(text=self.data.SocTitleData)
 		## Entries
-		self.B100PctEntry.insert(0, str(self.data.B100PctDataInit))
-		self.HighPctEntry.insert(0, str(self.data.HighPctDataInit))
-		self.MedPctEntry.insert(0, str(self.data.MedPctDataInit))
-		self.LowPctEntry.insert(0, str(self.data.LowPctDataInit))
-		self.Mil1PctEntry.insert(0, str(self.data.Mil1PctDataInit))
-		self.B100BonusPctEntry.insert(0, str(self.data.B100BonusPctDataInit))
-		self.HighBonusPctEntry.insert(0, str(self.data.HighBonusPctDataInit))
-		self.MedBonusPctEntry.insert(0, str(self.data.MedBonusPctDataInit))
-		self.LowBonusPctEntry.insert(0, str(self.data.LowBonusPctDataInit))
-		self.Mil1BonusPctEntry.insert(0, str(self.data.Mil1BonusPctDataInit))
-		self.StdErrEntry.insert(0, str(self.data.StdErrDataInit))
-		self.MedYrsEntry.insert(0, str(self.data.MedYrsDataInit))
-		self.CanPercentEntry.insert(0, str(self.data.CanPercentDataInit))
-		self.CanBonusPctEntry.insert(0, str(self.data.CanBonusPctDataInit))
-		self.ReptoEntry.insert(0, str(self.data.ReptoDataInit))
-		self.XRefEntry.insert(0, str(self.data.XRefDataInit))
-		self.CPCEntry.insert(0, str(self.data.CPCDataInit))
-		self.USOverrideEntry.insert(0, str(self.data.USOverrideDataInit))
+		self.B100PctEntry.insert(0, str(self.data.B100PctData))
+		self.HighPctEntry.insert(0, str(self.data.HighPctData))
+		self.MedPctEntry.insert(0, str(self.data.MedPctData))
+		self.LowPctEntry.insert(0, str(self.data.LowPctData))
+		self.Mil1PctEntry.insert(0, str(self.data.Mil1PctData))
+		self.B100BonusPctEntry.insert(0, str(self.data.B100BonusPctData))
+		self.HighBonusPctEntry.insert(0, str(self.data.HighBonusPctData))
+		self.MedBonusPctEntry.insert(0, str(self.data.MedBonusPctData))
+		self.LowBonusPctEntry.insert(0, str(self.data.LowBonusPctData))
+		self.Mil1BonusPctEntry.insert(0, str(self.data.Mil1BonusPctData))
+		self.StdErrEntry.insert(0, str(self.data.StdErrData))
+		self.MedYrsEntry.insert(0, str(self.data.MedYrsData))
+		self.CanPercentEntry.insert(0, str(self.data.CanPercentData))
+		self.CanBonusPctEntry.insert(0, str(self.data.CanBonusPctData))
+		self.ReptoEntry.insert(0, str(self.data.ReptoData))
+		self.XRefEntry.insert(0, str(self.data.XRefData))
+		self.CPCEntry.insert(0, str(self.data.CPCData))
+		self.USOverrideEntry.insert(0, str(self.data.USOverrideData))
 		## Calc Labels
 		self.MeanPredLabel.config(text=int(self.data.MeanPredData))
 		self.set_SalPercents()
@@ -991,7 +1036,7 @@ class Application(Frame):
 	
 	def update_MedSal(self, *event):
 		try:
-			if float(self.USOverrideEntry.get())!=0: 
+			if float(self.USOverrideEntry.get())!=0:
 				self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
 			else: self.data.MedSalData = int(self.data.MedPctData*self.data.XrefUSData)
 		except ValueError: pass
