@@ -121,7 +121,7 @@ class Dataverse:
 		self.ReptoSalData = self.jobsdf.loc[current_selector,'ReptoSal']
 		self.ReptoYr3Data = self.jobsdf.loc[current_selector,'ReptoYr3']
 		self.XRefTitleData = self.jobsdf.loc[current_selector,'XRefTitle']
-		self.XrefUSData = self.jobsdf.loc[current_selector,'XRefMed']
+		self.XRefUSData = self.jobsdf.loc[current_selector,'XRefMed']
 		self.XRefCanData = self.jobsdf.loc[current_selector,'XRefCan']
 		self.DegreeNameData = self.jobsdf.loc[current_selector,'DegreeName']
 		self.CPCSalData = self.jobsdf.loc[current_selector,'CPCSalary']
@@ -188,7 +188,7 @@ class Dataverse:
 		elif pd.isnull(self.SurveyMeanData): self.MeanPredData = float((self.QCCheckData+self.SocPredData)/2)
 		elif pd.isnull(self.QCCheckData): self.MeanPredData = float((self.SocPredData+self.SurveyMeanData)/2)
 		else: self.MeanPredData = (self.QCCheckData+self.SocPredData+self.SurveyMeanData)/3
-		self.MedSalData = self.MedPctData*self.XrefUSData
+		self.MedSalData = self.MedPctData*self.XRefUSData
 		self.set_CalcData()
 
 	def update_canavedata(self, entry):
@@ -254,7 +254,7 @@ class Dataverse:
 			self.ReptoSalData = self.outputdf.loc[current_selector,'ReptoSal']
 			self.ReptoYr3Data = self.outputdf.loc[current_selector,'ReptoYr3']
 			self.XRefTitleData = self.outputdf.loc[current_selector,'XRefTitle']
-			self.XrefUSData = self.outputdf.loc[current_selector,'XRefMed']
+			self.XRefUSData = self.outputdf.loc[current_selector,'XRefMed']
 			self.XRefCanData = self.outputdf.loc[current_selector,'XRefCan']
 			self.DegreeNameData = self.outputdf.loc[current_selector,'DegreeName']
 			self.CPCSalData = self.outputdf.loc[current_selector,'CPCSalary']
@@ -540,12 +540,12 @@ class Application(Frame):
 		self.ReptoSal.grid(row=29, column=3)
 		self.ReptoYr3 = Label(self,text="Repto Yr 3")
 		self.ReptoYr3.grid(row=29, column=7)
-		self.Xref = Label(self,text="Title    XRef    ERI")
-		self.Xref.grid(row=30, column=1)
-		self.XrefUSSal = Label(self,text="Xref US Salary")
-		self.XrefUSSal.grid(row=30, column=3)
-		self.XrefCanSal = Label(self,text="Xref Can Salary")
-		self.XrefCanSal.grid(row=30, column=7)
+		self.XRef = Label(self,text="Title    XRef    ERI")
+		self.XRef.grid(row=30, column=1)
+		self.XRefUSSal = Label(self,text="XRef US Salary")
+		self.XRefUSSal.grid(row=30, column=3)
+		self.XRefCanSal = Label(self,text="XRef Can Salary")
+		self.XRefCanSal.grid(row=30, column=7)
 		self.CPC = Label(self,text="Deg    CPC     CPC")
 		self.CPC.grid(row=31, column=1)
 		self.CPCSal = Label(self,text="CPC Salary")
@@ -664,8 +664,8 @@ class Application(Frame):
 		self.ReptoYr3Label.grid(row=29, column=6)
 		self.XRefTitleLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.XRefTitleLabel.grid(row=30, column=0)
-		self.XrefUSLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.XrefUSLabel.grid(row=30, column=4)
+		self.XRefUSLabel = Label(self, text="[Initial Text]", relief="groove")
+		self.XRefUSLabel.grid(row=30, column=4)
 		self.XRefCanLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.XRefCanLabel.grid(row=30, column=6)
 		self.DegreeNameLabel = Label(self, text="[Initial Text]", relief="groove")
@@ -703,7 +703,7 @@ class Application(Frame):
 		self.CanPolyMean.grid_configure(sticky=W)
 		self.CanQCPoly.grid_configure(sticky=W)
 		self.ReptoYr3.grid_configure(sticky=W)
-		self.XrefCanSal.grid_configure(sticky=W)
+		self.XRefCanSal.grid_configure(sticky=W)
 		self.Adder.grid_configure(sticky=W)
 		self.ReptoTitleLabel.grid_configure(sticky=E)
 		self.XRefTitleLabel.grid_configure(sticky=E)
@@ -795,7 +795,7 @@ class Application(Frame):
 		self.ReptoSalLabel.config(text="    ")
 		self.ReptoYr3Label.config(text="    ")
 		self.XRefTitleLabel.config(text="    ")
-		self.XrefUSLabel.config(text="    ")
+		self.XRefUSLabel.config(text="    ")
 		self.XRefCanLabel.config(text="    ")
 		self.DegreeNameLabel.config(text="    ")
 		self.CPCSalLabel.config(text="    ")
@@ -923,7 +923,7 @@ class Application(Frame):
 		self.ReptoSalLabel.config(text= self.data.ReptoSalData)
 		self.ReptoYr3Label.config(text= self.data.ReptoYr3Data)
 		self.XRefTitleLabel.config(text= self.data.XRefTitleData)
-		self.XrefUSLabel.config(text= self.data.XrefUSData)
+		self.XRefUSLabel.config(text= self.data.XRefUSData)
 		self.XRefCanLabel.config(text= self.data.XRefCanData)
 		self.DegreeNameLabel.config(text= self.data.DegreeNameData)
 		self.CPCSalLabel.config(text= self.data.CPCSalData)
@@ -996,28 +996,16 @@ class Application(Frame):
 		except: pass
 		try:
 			self.data.XRefTitleData = self.data.jobsdf.loc[current_selector,'jobdottitle']
-			self.data.XRefData = self.data.jobsdf.loc[current_selector,'MEDSAL']
+			self.data.XRefUSData = self.data.jobsdf.loc[current_selector,'MEDSAL']
 			self.data.XRefCanData = self.data.jobsdf.loc[current_selector,'CAN_AVE']
 		except KeyError:
 			self.data.XRefTitleData = 'NA'
 			self.data.XRefData = 'NA'
 			self.data.XRefCanData = 'NA'
 		self.XRefTitleLabel.config(text= self.data.XRefTitleData)
-		self.XrefUSLabel.config(text= self.data.XRefData)
+		self.XRefUSLabel.config(text= self.data.XRefUSData)
 		self.XRefCanLabel.config(text= self.data.XRefCanData)
-
-	def update_CanValues(self, *event):
-		try: self.data.CanPercentData = float(self.CanPercentEntry.get())
-		except ValueError: self.data.CanPercentData = self.data.CanPercentData
-		try: self.data.CanBonusPctData = float(self.CanBonusPctEntry.get())
-		except ValueError: self.data.CanBonusPctData = self.data.CanBonusPctData
-		self.update_CanLabels()
-
-	def update_CanLabels(self, *event):
-		try: self.data.update_canavedata(float(self.CanOverrideEntry.get()))
-		except ValueError: self.data.CanAveData = self.data.CanPercentData * self.data.XRefCanData
-		self.CanMeanLabel.config(text= int(self.data.CanAveData))
-		self.CanTotalLabel.config(text= int(self.data.CanAveData+(self.data.CanAveData * self.data.CanBonusPctData)))
+		self.update_MedSal()
 
 	def set_SalPercents(self, *event):
 		try: self.data.B100PctData = float(self.B100PctEntry.get())
@@ -1036,10 +1024,9 @@ class Application(Frame):
 	
 	def update_MedSal(self, *event):
 		try:
-			if float(self.USOverrideEntry.get())!=0:
-				self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
-			else: self.data.MedSalData = int(self.data.MedPctData*self.data.XrefUSData)
-		except ValueError: pass
+			if float(self.USOverrideEntry.get())!=0: self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
+			else: self.data.MedSalData = int(self.data.MedPctData*self.data.XRefUSData)
+		except ValueError: print("MedSal Value error")
 		self.data.set_CalcData()
 		self.update_CalcLabels()
 	
@@ -1068,6 +1055,19 @@ class Application(Frame):
 		self.Low90thPercentileLabel.config(text= int(self.data.Low90thPercentileData))
 		if self.data.jobexec==0: self.Low90thPercentile_1MilLabel.config(text="    ")
 		else: self.Low90thPercentile_1MilLabel.config(text= int(self.data.Low90thPercentile_1MilData))
+
+	def update_CanValues(self, *event):
+		try: self.data.CanPercentData = float(self.CanPercentEntry.get())
+		except ValueError: self.data.CanPercentData = self.data.CanPercentData
+		try: self.data.CanBonusPctData = float(self.CanBonusPctEntry.get())
+		except ValueError: self.data.CanBonusPctData = self.data.CanBonusPctData
+		self.update_CanLabels()
+
+	def update_CanLabels(self, *event):
+		try: self.data.update_canavedata(float(self.CanOverrideEntry.get()))
+		except ValueError: self.data.CanAveData = self.data.CanPercentData * self.data.XRefCanData
+		self.CanMeanLabel.config(text= int(self.data.CanAveData))
+		self.CanTotalLabel.config(text= int(self.data.CanAveData+(self.data.CanAveData * self.data.CanBonusPctData)))
 
 	def write_output(self, *event):
 		self.send_entry()
