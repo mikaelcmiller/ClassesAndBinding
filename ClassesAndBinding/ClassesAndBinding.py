@@ -688,7 +688,6 @@ class Application(Frame):
 		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.JobIdSearchEntry.insert(0, "1")
 		self.JobDescriptionLabel.grid_configure(columnspan=8, sticky=NW)
-		#self.grid_columnconfigure(index=1, minsize=300) # Column 0 is 300 pixels minimum
 		self.RawDataLabel.grid_configure(rowspan=21, sticky=N)
 		self.SocOutputLabel.grid_configure(rowspan=2, sticky=NW)
 		self.WriteSQLBtn.grid_configure(sticky=W)
