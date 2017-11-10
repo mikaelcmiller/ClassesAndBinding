@@ -678,7 +678,7 @@ class Application(Frame):
 		self.CPCSalLabel.grid(row=31, column=4)
 		self.AdderLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.AdderLabel.grid(row=31, column=6)
-		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=950, width=160) #, wraplength=999, justify=LEFT, width=250)
+		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=950, width=160)
 		self.JobDescriptionLabel.grid(row=33, column=0)
 		####
 		## Special notes:
