@@ -28,10 +28,13 @@ class Dataverse:
 			, cast(HighPred as float)/MedPred as HighPredCalc
 			, bench.USBenchMed
 			, bench.CanBenchMed
-			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob 
+			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob
+			, jobdesc.ShortDesc
+			
 			FROM assessorwork.sa.pct pct 
 			left join assessorwork.sa.bench bench on bench.erijobid=pct.erijobid and bench.releaseid=pct.releaseid
 			join (select soccode, soctitle from [AssessorWork].[dbo].[SocDescription]) socdesc on pct.SOC = socdesc.SocCode
+			join (select eDOT, replace(replace(ShortDesc,'/duty','duty'),'<duty>','') as ShortDesc from [AssessorWork].[sa].[Sadescriptions]) jobdesc on jobdesc.eDOT = pct.jobdot
 			order by execjob desc, pct.erijobid"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		self.jobsdf['indexmaster'] = self.jobsdf.index
@@ -180,6 +183,7 @@ class Dataverse:
 		
 		## Other
 		self.jobexec = self.jobsdf.loc[current_selector,'execjob']
+		self.JobDescriptionData = self.jobsdf.loc[current_selector,'ShortDesc']
 		## Check Output before calculating
 		self.check_output()
 		## Calculations
@@ -674,7 +678,7 @@ class Application(Frame):
 		self.CPCSalLabel.grid(row=31, column=4)
 		self.AdderLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.AdderLabel.grid(row=31, column=6)
-		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove")
+		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=900, width=150) #, wraplength=999, justify=LEFT, width=250)
 		self.JobDescriptionLabel.grid(row=33, column=0)
 		####
 		## Special notes:
@@ -683,6 +687,8 @@ class Application(Frame):
 		self.JobTitleLabel.grid_configure(sticky=E)
 		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.JobIdSearchEntry.insert(0, "1")
+		self.JobDescriptionLabel.grid_configure(columnspan=8, sticky=NW)
+		#self.grid_columnconfigure(index=1, minsize=300) # Column 0 is 300 pixels minimum
 		self.RawDataLabel.grid_configure(rowspan=21, sticky=N)
 		self.SocOutputLabel.grid_configure(rowspan=2, sticky=NW)
 		self.WriteSQLBtn.grid_configure(sticky=W)
@@ -928,8 +934,8 @@ class Application(Frame):
 		self.DegreeNameLabel.config(text= self.data.DegreeNameData)
 		self.CPCSalLabel.config(text= self.data.CPCSalData)
 		self.AdderLabel.config(text= self.data.AdderData)
-		self.RawDataLabel.config(text="Raw data text")
-		self.JobDescriptionLabel.config(text="Job Description text")
+		#self.RawDataLabel.config(text="Raw data text")
+		self.JobDescriptionLabel.config(text= self.data.JobDescriptionData)
 		self.SocOutputLabel.config(text=self.data.SocTitleData)
 		## Entries
 		self.B100PctEntry.insert(0, str(self.data.B100PctData))
@@ -1079,7 +1085,7 @@ class Application(Frame):
 
 
 root = Tk()
-root.geometry("1100x750")
+root.geometry("1150x800")
 app = Application(root)
 root.mainloop()
 
