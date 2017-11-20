@@ -678,8 +678,8 @@ class Application(Frame):
 		self.CPCSalLabel.grid(row=31, column=4)
 		self.AdderLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.AdderLabel.grid(row=31, column=6)
-		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=950, width=160)
-		self.JobDescriptionLabel.grid(row=33, column=0)
+		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=900, width=150)
+		self.JobDescriptionLabel.grid(row=33, column=0, columnspan=8, sticky=NW)
 		####
 		## Special notes:
 			#self.JobTitleLabel ... width=45
@@ -687,7 +687,7 @@ class Application(Frame):
 		self.JobTitleLabel.grid_configure(sticky=E)
 		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.JobIdSearchEntry.insert(0, "1")
-		self.JobDescriptionLabel.grid_configure(columnspan=8, sticky=NW)
+		#self.JobDescriptionLabel.grid_configure(columnspan=7, sticky=NW)
 		self.RawDataLabel.grid_configure(rowspan=21, sticky=N)
 		self.SocOutputLabel.grid_configure(rowspan=2, sticky=NW)
 		self.WriteSQLBtn.grid_configure(sticky=W)
@@ -1084,7 +1084,7 @@ class Application(Frame):
 
 
 root = Tk()
-root.geometry("1150x800")
+root.geometry("1150x815")
 app = Application(root)
 root.mainloop()
 
