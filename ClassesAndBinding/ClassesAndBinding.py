@@ -284,27 +284,6 @@ class Dataverse:
 			else: self.ReptoData = int(self.outputdf.loc[current_selector,'Repto'])
 			self.XRefData = self.outputdf.loc[current_selector,'JobXRef']
 			self.CPCData = self.outputdf.loc[current_selector,'CPCNO']
-			## Entries Init
-			#if pd.isnull(self.outputdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.95
-			#else: self.B100PctDataInit = self.outputdf.loc[current_selector,'Pct_100Bil']
-			#self.HighPctDataInit = self.outputdf.loc[current_selector,'HIGH_F']
-			#self.MedPctDataInit = self.outputdf.loc[current_selector,'US_PCT']
-			#self.LowPctDataInit = self.outputdf.loc[current_selector,'LOW_F']
-			#if pd.isnull(self.outputdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctDataInit = 0.1
-			#else: self.Mil1PctDataInit = self.outputdf.loc[current_selector,'Pct_1Mil']
-			#self.B100BonusPctDataInit = self.outputdf.loc[current_selector,'BonusPct100Bil']
-			#self.HighBonusPctDataInit = self.outputdf.loc[current_selector,'HighBonusPct']
-			#self.MedBonusPctDataInit = self.outputdf.loc[current_selector,'MedBonusPct']
-			#self.LowBonusPctDataInit = self.outputdf.loc[current_selector,'LowBonusPct']
-			#self.Mil1BonusPctDataInit = self.outputdf.loc[current_selector,'BonusPct1Mil']
-			#self.StdErrDataInit = self.outputdf.loc[current_selector,'StdErr']
-			#self.MedYrsDataInit = self.outputdf.loc[current_selector,'Medyrs']
-			#self.CanPercentDataInit = self.outputdf.loc[current_selector,'CAN_PCT']
-			#self.CanBonusPctDataInit = self.outputdf.loc[current_selector,'CanBonusPct']
-			#if pd.isnull(self.outputdf.loc[current_selector,'Repto']): self.ReptoDataInit = int(self.current_id)
-			#else: self.ReptoDataInit = int(self.outputdf.loc[current_selector,'Repto'])
-			#self.XRefDataInit = self.outputdf.loc[current_selector,'JobXRef']
-			#self.CPCDataInit = self.outputdf.loc[current_selector,'CPCNO']
 			self.jobexec = self.outputdf.loc[current_selector,'execjob']
 
 	def write_to_outputdf(self, *event):
@@ -559,7 +538,7 @@ class Application(Frame):
 		self.Description = Label(self,text="Job Description")
 		self.Description.grid(row=32, column=0, sticky=W)
 		self.JobTitleLabel = Label(self, text="[Initial Text]", relief="groove", width=45, anchor=E)
-		self.JobTitleLabel.grid(row=2, column=0)
+		self.JobTitleLabel.grid(row=2, column=0, sticky=E)
 		self.JobDotLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.JobDotLabel.grid(row=2, column=3)
 		self.JobSocLabel = Label(self, text="[Initial Text]", relief="groove")
@@ -659,60 +638,28 @@ class Application(Frame):
 		self.CanPolyMeanQCLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.CanPolyMeanQCLabel.grid(row=27, column=6)
 		self.ReptoTitleLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.ReptoTitleLabel.grid(row=29, column=0)
+		self.ReptoTitleLabel.grid(row=29, column=0, sticky=E)
 		self.ReptoSalLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.ReptoSalLabel.grid(row=29, column=4)
 		self.ReptoYr3Label = Label(self, text="[Initial Text]", relief="groove")
 		self.ReptoYr3Label.grid(row=29, column=6)
 		self.XRefTitleLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.XRefTitleLabel.grid(row=30, column=0)
+		self.XRefTitleLabel.grid(row=30, column=0, sticky=E)
 		self.XRefUSLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.XRefUSLabel.grid(row=30, column=4)
 		self.XRefCanLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.XRefCanLabel.grid(row=30, column=6)
 		self.DegreeNameLabel = Label(self, text="[Initial Text]", relief="groove")
-		self.DegreeNameLabel.grid(row=31, column=0)
+		self.DegreeNameLabel.grid(row=31, column=0, sticky=E)
 		self.CPCSalLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.CPCSalLabel.grid(row=31, column=4)
 		self.AdderLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.AdderLabel.grid(row=31, column=6)
 		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=1000, width=169)
 		self.JobDescriptionLabel.grid(row=33, column=0, columnspan=8, sticky=NW)
-		####
-		## Special notes:
-			#self.JobTitleLabel ... width=45
-			#self.RawDataLabel ... width=45
-		self.JobTitleLabel.grid_configure(sticky=E)
+		## Real-time updates
 		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.JobIdSearchEntry.insert(0, "1")
-		#self.JobDescriptionLabel.grid_configure(columnspan=7, sticky=NW)
-		#self.RawDataLabel.grid_configure(rowspan=21, sticky=N)
-		#self.SocOutputLabel.grid_configure(rowspan=2, sticky=NW)
-		#self.WriteSQLBtn.grid_configure(sticky=W)
-		#self.B100Q1.grid_configure(sticky=W)
-		#self.HighQ1.grid_configure(sticky=W)
-		#self.MedQ1.grid_configure(sticky=W)
-		#self.LowQ1.grid_configure(sticky=W)
-		#self.Mil1Q1.grid_configure(sticky=W)
-		#self.QCCheck.grid_configure(sticky=W)
-		#self.SOCPred.grid_configure(sticky=W)
-		#self.SurveyMean.grid_configure(sticky=W)
-		#self.SurveyIncumbents.grid_configure(sticky=W)
-		#self.MeanPred.grid_configure(sticky=W)
-		#self.QCCheckCan.grid_configure(sticky=W)
-		#self.CanPoly1.grid_configure(sticky=W)
-		#self.CanPoly2.grid_configure(sticky=W)
-		#self.CanPoly3.grid_configure(sticky=W)
-		#self.CanPolyMean.grid_configure(sticky=W)
-		#self.CanQCPoly.grid_configure(sticky=W)
-		#self.ReptoYr3.grid_configure(sticky=W)
-		#self.XRefCanSal.grid_configure(sticky=W)
-		#self.Adder.grid_configure(sticky=W)
-		self.ReptoTitleLabel.grid_configure(sticky=E)
-		self.XRefTitleLabel.grid_configure(sticky=E)
-		self.DegreeNameLabel.grid_configure(sticky=E)
-		## Additional Labels
-		## Real-time updates
 		self.USOverrideEntry.bind('<Return>', self.update_MedSal)
 		self.CanOverrideEntry.bind('<Return>', self.update_CanLabels)
 		self.CanBonusPctEntry.bind('<Return>', self.update_CanValues)
