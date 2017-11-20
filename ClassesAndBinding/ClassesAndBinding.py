@@ -351,9 +351,9 @@ class Application(Frame):
 		
 ###########################
 #### Created from Google Sheet 
-		self.ReloadBtn = Button(self, text="Reload SQL Data", command=self.label_entry_reload)
+		self.ReloadBtn = Button(self, text="Reload Data", command=self.label_entry_reload)
 		self.ReloadBtn.grid(row=0, column=4)
-		self.CommitBtn = Button(self, text="Commit Changes", command=self.write_output)
+		self.CommitBtn = Button(self, text="Commit", command=self.write_output, width=9)
 		self.CommitBtn.grid(row=0, column=6)
 		self.WriteSQLBtn = Button(self, text="Write to SQL")
 		self.WriteSQLBtn.grid(row=0, column=7, sticky=W)
