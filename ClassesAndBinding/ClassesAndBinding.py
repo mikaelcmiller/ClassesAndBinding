@@ -566,7 +566,7 @@ class Application(Frame):
 		self.JobDotLabel.grid(row=2, column=3)
 		self.JobSocLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.JobSocLabel.grid(row=2, column=6)
-		self.SocOutputLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=200)
+		self.SocOutputLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=200, width=35)
 		self.SocOutputLabel.grid(row=2, column=7)
 		self.High10thPercentile_100BilLabel = Label(self, text="Initial Text", relief="groove")
 		self.High10thPercentile_100BilLabel.grid(row=4, column=2)
