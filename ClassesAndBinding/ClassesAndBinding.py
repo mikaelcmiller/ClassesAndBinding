@@ -678,7 +678,7 @@ class Application(Frame):
 		self.CPCSalLabel.grid(row=31, column=4)
 		self.AdderLabel = Label(self, text="[Initial Text]", relief="groove")
 		self.AdderLabel.grid(row=31, column=6)
-		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=900, width=150)
+		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=900, width=169)
 		self.JobDescriptionLabel.grid(row=33, column=0, columnspan=8, sticky=NW)
 		####
 		## Special notes:
@@ -1084,7 +1084,7 @@ class Application(Frame):
 
 
 root = Tk()
-root.geometry("1150x815")
+root.geometry("1025x815")
 app = Application(root)
 root.mainloop()
 
