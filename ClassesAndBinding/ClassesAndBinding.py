@@ -417,7 +417,7 @@ class Application(Frame):
 		self.RawData.grid(row=4, column=0, sticky=W)
 		self.B100 = Label(self,text="Exec/100 Bil")
 		self.B100.grid(row=4, column=1, sticky=E)
-		self.B100Q1 = Label(self,text="Q1 100 bil/Exec")
+		self.B100Q1 = Label(self,text="Q1 100 Bil/Exec")
 		self.B100Q1.grid(row=4, column=6, sticky=W)
 		self.High = Label(self,text="High Year/1 Bil")
 		self.High.grid(row=5, column=1, sticky=E)
