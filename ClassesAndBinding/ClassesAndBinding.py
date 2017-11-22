@@ -157,7 +157,7 @@ class Dataverse:
 		else: self.USOverrideData = float(self.jobsdf.loc[current_selector,'USPK_C'])
 		if pd.isnull(self.jobsdf.loc[current_selector,'CANPK_C']): self.CANOverrideData = 0
 		else: self.CANOverrideData = float(self.jobsdf.loc[current_selector,'CANPK_C'])
-		## Entries Init
+		## Init
 		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.95
 		else: self.B100PctDataInit = self.jobsdf.loc[current_selector,'Pct_100Bil']
 		self.HighPctDataInit = self.jobsdf.loc[current_selector,'HIGH_F']
@@ -184,7 +184,11 @@ class Dataverse:
 		else: self.USOverrideDataInit = float(self.jobsdf.loc[current_selector,'USPK_C'])
 		if pd.isnull(self.jobsdf.loc[current_selector,'CANPK_C']): self.CANOverrideDataInit = 0
 		else: self.CANOverrideDataInit = float(self.jobsdf.loc[current_selector,'CANPK_C'])
-		
+		self.B100TotalCompDataInit = self.jobsdf.loc[current_selector,'TotalComp100Bil']
+		self.HighTotalCompDataInit = self.jobsdf.loc[current_selector,'HighTotalComp']
+		self.MedTotalCompDataInit = self.jobsdf.loc[current_selector,'MedTotalComp']
+		self.LowTotalCompDataInit = self.jobsdf.loc[current_selector,'LowTotalComp']
+		self.Mil1TotalCompDataInit = self.jobsdf.loc[current_selector,'TotalComp1Mil']
 		## Other
 		self.jobexec = self.jobsdf.loc[current_selector,'execjob']
 		self.JobDescriptionData = self.jobsdf.loc[current_selector,'ShortDesc']
@@ -221,6 +225,11 @@ class Dataverse:
 		self.Med10thPercentileData = ((1 - self.StdErrData/100) * self.MedSalData)
 		self.Low10thPercentileData = ((1 - self.StdErrData/100) * self.LowSalData)
 		self.Low10thPercentile_1MilData = ((1 - self.StdErrData/100) * self.Sal1MilData)
+		self.B100TotalCompData = int(self.Sal100BilData + self.Sal100BilData * self.B100BonusPctData)
+		self.HighTotalCompData = int(self.HighSalData + self.HighSalData * self.HighBonusPctData)
+		self.MedTotalCompData = int(self.MedSalData + self.MedSalData * self.MedBonusPctData)
+		self.LowTotalCompData = int(self.LowSalData + self.LowSalData * self.LowBonusPctData)
+		self.Mil1TotalCompData = int(self.Sal1MilData + self.Sal1MilData * self.Mil1BonusPctData)
 
 	def check_output(self, *event):
 		try:
@@ -674,6 +683,11 @@ class Application(Frame):
 		self.MedPctEntry.bind('<Return>', self.set_SalPercents)
 		self.LowPctEntry.bind('<Return>', self.set_SalPercents)
 		self.StdErrEntry.bind('<Return>', self.set_SalPercents)
+		self.B100BonusPctEntry.bind('<Return>', self.set_SalPercents)
+		self.HighBonusPctEntry.bind('<Return>', self.set_SalPercents)
+		self.MedBonusPctEntry.bind('<Return>', self.set_SalPercents)
+		self.LowBonusPctEntry.bind('<Return>', self.set_SalPercents)
+		self.Mil1BonusPctEntry.bind('<Return>', self.set_SalPercents)
 		self.ReptoEntry.bind('<Return>', self.update_Repto)
 		self.XRefEntry.bind('<Return>', self.update_XRef)
 		self.BlankSpace = Label(self, text="    ")
@@ -826,6 +840,11 @@ class Application(Frame):
 		self.MedBonusPctEntry.insert(0, str(self.data.MedBonusPctDataInit))
 		self.LowBonusPctEntry.insert(0, str(self.data.LowBonusPctDataInit))
 		self.Mil1BonusPctEntry.insert(0, str(self.data.Mil1BonusPctDataInit))
+		self.B100TotalCompLabel.config(text= self.data.B100TotalCompDataInit)
+		self.HighTotalCompLabel.config(text= self.data.HighTotalCompDataInit)
+		self.MedTotalCompLabel.config(text= self.data.MedTotalCompDataInit)
+		self.LowTotalCompLabel.config(text= self.data.LowTotalCompDataInit)
+		self.Mil1TotalCompLabel.config(text= self.data.Mil1TotalCompDataInit)
 		self.StdErrEntry.insert(0, str(self.data.StdErrDataInit))
 		self.MedYrsEntry.insert(0, str(self.data.MedYrsDataInit))
 		self.CanPercentEntry.insert(0, str(self.data.CanPercentDataInit))
@@ -976,6 +995,11 @@ class Application(Frame):
 		except ValueError: print("Mil1err")
 		try: self.data.StdErrData = float(self.StdErrEntry.get())
 		except ValueError: print("Stderr Error")
+		self.data.B100BonusPctData = float(self.B100BonusPctEntry.get())
+		self.data.HighBonusPctData = float(self.HighBonusPctEntry.get())
+		self.data.MedBonusPctData = float(self.MedBonusPctEntry.get())
+		self.data.LowBonusPctData = float(self.LowBonusPctEntry.get())
+		self.data.Mil1BonusPctData = float(self.Mil1BonusPctEntry.get())
 		self.update_MedSal()
 	
 	def update_MedSal(self, *event):
@@ -1011,6 +1035,12 @@ class Application(Frame):
 		self.Low90thPercentileLabel.config(text= int(self.data.Low90thPercentileData))
 		if self.data.jobexec==0: self.Low90thPercentile_1MilLabel.config(text="    ")
 		else: self.Low90thPercentile_1MilLabel.config(text= int(self.data.Low90thPercentile_1MilData))
+		## Total Comp
+		self.B100TotalCompLabel.config(text= self.data.B100TotalCompData)
+		self.HighTotalCompLabel.config(text= self.data.HighTotalCompData)
+		self.MedTotalCompLabel.config(text= self.data.MedTotalCompData)
+		self.LowTotalCompLabel.config(text= self.data.LowTotalCompData)
+		self.Mil1TotalCompLabel.config(text= self.data.Mil1TotalCompData)
 
 	def update_CanValues(self, *event):
 		try: self.data.CanPercentData = float(self.CanPercentEntry.get())
