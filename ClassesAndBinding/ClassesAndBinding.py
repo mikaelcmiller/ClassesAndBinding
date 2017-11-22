@@ -155,6 +155,8 @@ class Dataverse:
 		self.CPCData = self.jobsdf.loc[current_selector,'CPCNO']
 		if pd.isnull(self.jobsdf.loc[current_selector,'USPK_C']): self.USOverrideData = 0
 		else: self.USOverrideData = float(self.jobsdf.loc[current_selector,'USPK_C'])
+		if pd.isnull(self.jobsdf.loc[current_selector,'CANPK_C']): self.CANOverrideData = 0
+		else: self.CANOverrideData = float(self.jobsdf.loc[current_selector,'CANPK_C'])
 		## Entries Init
 		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.95
 		else: self.B100PctDataInit = self.jobsdf.loc[current_selector,'Pct_100Bil']
