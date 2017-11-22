@@ -1063,7 +1063,6 @@ class Application(Frame):
 
 	def write_output(self, *event):
 		self.send_entry()
-		#If any changes are made, these will update those; else, these will input what was there before
 		self.data.write_to_outputdf()
 
 	def write_sql(self, *event):
