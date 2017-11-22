@@ -155,6 +155,8 @@ class Dataverse:
 		self.CPCData = self.jobsdf.loc[current_selector,'CPCNO']
 		if pd.isnull(self.jobsdf.loc[current_selector,'USPK_C']): self.USOverrideData = 0
 		else: self.USOverrideData = float(self.jobsdf.loc[current_selector,'USPK_C'])
+		if pd.isnull(self.jobsdf.loc[current_selector,'CANPK_C']): self.CANOverrideData = 0
+		else: self.CANOverrideData = float(self.jobsdf.loc[current_selector,'CANPK_C'])
 		## Entries Init
 		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.95
 		else: self.B100PctDataInit = self.jobsdf.loc[current_selector,'Pct_100Bil']
@@ -180,6 +182,8 @@ class Dataverse:
 		self.CPCDataInit = self.jobsdf.loc[current_selector,'CPCNO']
 		if pd.isnull(self.jobsdf.loc[current_selector,'USPK_C']): self.USOverrideDataInit = 0
 		else: self.USOverrideDataInit = float(self.jobsdf.loc[current_selector,'USPK_C'])
+		if pd.isnull(self.jobsdf.loc[current_selector,'CANPK_C']): self.CANOverrideDataInit = 0
+		else: self.CANOverrideDataInit = float(self.jobsdf.loc[current_selector,'CANPK_C'])
 		
 		## Other
 		self.jobexec = self.jobsdf.loc[current_selector,'execjob']
@@ -830,6 +834,7 @@ class Application(Frame):
 		self.XRefEntry.insert(0, str(self.data.XRefDataInit))
 		self.CPCEntry.insert(0, str(self.data.CPCDataInit))
 		self.USOverrideEntry.insert(0, str(self.data.USOverrideDataInit))
+		self.CanOverrideEntry.insert(0, str(self.data.CANOverrideDataInit))
 		self.MeanPredLabel.config(text=int(self.data.MeanPredData))
 		self.set_SalPercents()
 		self.update_MedSal()
@@ -900,6 +905,7 @@ class Application(Frame):
 		self.XRefEntry.insert(0, str(self.data.XRefData))
 		self.CPCEntry.insert(0, str(self.data.CPCData))
 		self.USOverrideEntry.insert(0, str(self.data.USOverrideData))
+		self.CanOverrideEntry.insert(0, str(self.data.CANOverrideData))
 		## Calc Labels
 		self.MeanPredLabel.config(text=int(self.data.MeanPredData))
 		self.set_SalPercents()
@@ -1014,7 +1020,9 @@ class Application(Frame):
 		self.update_CanLabels()
 
 	def update_CanLabels(self, *event):
-		try: self.data.update_canavedata(float(self.CanOverrideEntry.get()))
+		try: 
+			if float(self.CanOverrideEntry.get())==0: raise ValueError
+			else: self.data.update_canavedata(float(self.CanOverrideEntry.get()))
 		except ValueError: self.data.CanAveData = self.data.CanPercentData * self.data.XRefCanData
 		self.CanMeanLabel.config(text= int(self.data.CanAveData))
 		self.CanTotalLabel.config(text= int(self.data.CanAveData+(self.data.CanAveData * self.data.CanBonusPctData)))
