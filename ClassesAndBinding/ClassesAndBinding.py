@@ -19,7 +19,11 @@ class Dataverse:
 		self.jobname = "Chief Executive Officer"
 		self.set_vars(input="index")
 		print("DF Initialized")
-
+	
+	def initializerawdataframe(self):
+		#self.rawdatacnxn = pyodbc.connect()
+		pass
+	
 	def inititalizedataframe(self):
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		self.sql = """SELECT pct.*
@@ -37,6 +41,7 @@ class Dataverse:
 			join (select eDOT, replace(replace(ShortDesc,'/duty','duty'),'<duty>','') as ShortDesc from [AssessorWork].[sa].[Sadescriptions]) jobdesc on jobdesc.eDOT = pct.jobdot
 			order by execjob desc, pct.erijobid"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
+		self.pyocnxn.close()
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
