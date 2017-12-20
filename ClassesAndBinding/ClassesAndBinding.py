@@ -26,21 +26,43 @@ class Dataverse:
 	def initializerawdataframe(self):
 		#self.rawdatacnxn = pyodbc.connect()
 		self.sql = """SELECT TOP 50 [EriJobId]
-			, [S_Comp]
-			, [S_Year]
-			, [S_Month]
-			, isnull([Rev],Wgt) Wgt
-			, [No_Emp]
-			, [AveBase]
-			, [Y_Base]
-				
-			FROM [AssessorWork].[sa].[SurveyCan] surveycan
-			
-			ORDER BY erijobid, S_comp, S_Year"""
+		, left(REPLACE([S_Comp],'TARGET ->','TAR_CAN'), 15) S_Comp
+		, [S_Year]
+		, [S_Month]
+		, isnull([Rev], Wgt) Wgt
+		, [No_Emp]
+		, [AveBase]
+		, [Y_Base]
+		FROM [AssessorWork].[sa].[SurveyCan] surveycan
+		
+		UNION
+		
+		SELECT TOP 50 [EriJobId]
+		, left(REPLACE([S_Comp],'TARGET ->','TAR_EXEC'), 15) S_Comp
+		, [S_Year]
+		, [S_Month]
+		, [Rev] Wgt
+		, [No_Emp]
+		, [AveBase]
+		, [Y_Base]
+		FROM [AssessorWork].[sa].[SurveyExec]
+		
+		UNION
+		
+		SELECT TOP 50 [EriJobId]
+		, left(REPLACE([S_Comp],'TARGET ->','TAR_NONEX'), 15) S_Comp
+		, [S_Year]
+		, [S_Month]
+		, [Wgt]
+		, [No_Emp]
+		, [AveBase]
+		, [Y_Base]
+		FROM [AssessorWork].[sa].[SurveyNonExec]
+		
+		ORDER BY erijobid, S_comp, S_Year"""
 		self.rawdatadf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		print(self.rawdatadf)
-		pass
-	
+		
 	def inititalizedataframe(self):
 		self.sql = """SELECT pct.*
 			, left(socdesc.soctitle, 60) as SocTitle
@@ -438,7 +460,7 @@ class Application(Frame):
 		self.ERISearch.grid(row=0, column=1, sticky=E)
 		self.TitleEri = Label(self,text="Title")
 		self.TitleEri.grid(row=2, column=1, sticky=W)
-		self.eDOT = Label(self,text="eDOT     SOC")
+		self.eDOT = Label(self,text="eDOT	  SOC")
 		self.eDOT.grid(row=2, column=4)
 		#self.SOC = Label(self,text="SOC")
 		#self.SOC.grid(row=2, column=5, sticky=E)
@@ -554,19 +576,19 @@ class Application(Frame):
 		self.CanTotal.grid(row=27, column=3, sticky=E)
 		self.CanQCPoly = Label(self,text="Can QC/Poly Mean")
 		self.CanQCPoly.grid(row=27, column=6, sticky=W)
-		self.Repto = Label(self,text="Title    Repto   ERI")
+		self.Repto = Label(self,text="Title	 Repto	ERI")
 		self.Repto.grid(row=29, column=1)
 		self.ReptoSal = Label(self,text="Repto Salary")
 		self.ReptoSal.grid(row=29, column=3, sticky=E)
 		self.ReptoYr3 = Label(self,text="Repto Yr 3")
 		self.ReptoYr3.grid(row=29, column=6, sticky=W)
-		self.XRef = Label(self,text="Title    XRef    ERI")
+		self.XRef = Label(self,text="Title	 XRef	 ERI")
 		self.XRef.grid(row=30, column=1)
 		self.XRefUSSal = Label(self,text="XRef US Sal")
 		self.XRefUSSal.grid(row=30, column=3, sticky=E)
 		self.XRefCanSal = Label(self,text="XRef Can Salary")
 		self.XRefCanSal.grid(row=30, column=6, sticky=W)
-		self.CPC = Label(self,text="Deg    CPC     CPC")
+		self.CPC = Label(self,text="Deg	 CPC	  CPC")
 		self.CPC.grid(row=31, column=1)
 		self.CPCSal = Label(self,text="CPC Salary")
 		self.CPCSal.grid(row=31, column=3, sticky=E)
@@ -714,9 +736,9 @@ class Application(Frame):
 		self.Mil1BonusPctEntry.bind('<Return>', self.set_SalPercents)
 		self.ReptoEntry.bind('<Return>', self.update_Repto)
 		self.XRefEntry.bind('<Return>', self.update_XRef)
-		self.BlankSpace = Label(self, text="    ")
+		self.BlankSpace = Label(self, text="	 ")
 		self.BlankSpace.grid(row=28, column=2)
-		self.BlankSpace2 = Label(self, text="    ")
+		self.BlankSpace2 = Label(self, text="	 ")
 		self.BlankSpace2.grid(row=9, column=2)
 
 ## Navigation
@@ -755,47 +777,47 @@ class Application(Frame):
 
 	def label_entry_clear(self, *event):
 		## Labels
-		self.JobDotLabel.config(text="    ")
-		#self.ExecJobLabel.config(text="    ")
-		self.JobSocLabel.config(text="    ")
-		self.HighPredPctLabel.config(text="    ")
-		self.LowPredPctLabel.config(text="    ")
-		self.B100TotalCompLabel.config(text="    ")
-		self.HighTotalCompLabel.config(text="    ")
-		self.MedTotalCompLabel.config(text="    ")
-		self.LowTotalCompLabel.config(text="    ")
-		self.Mil1TotalCompLabel.config(text="    ")
-		self.EstimatedYearsLabel.config(text="    ")
-		self.B100Q1Label.config(text="    ")
-		self.HighQ1Label.config(text="    ")
-		self.MedQ1Label.config(text="    ")
-		self.LowQ1Label.config(text="    ")
-		self.Mil1Q1Label.config(text="    ")
-		self.QCCheckLabel.config(text= "    ")
-		self.SocPredLabel.config(text= "    ")
-		self.SurveyMeanLabel.config(text= "    ")
-		self.SurveyIncumbentsLabel.config(text= "    ")
-		self.QCCheckCanLabel.config(text="    ")
-		self.CanPoly1Label.config(text="    ")
-		self.CanPoly2Label.config(text="    ")
-		self.CanPoly3Label.config(text="    ")
-		self.CanPolyMeanLabel.config(text="    ")
-		self.CanPolyMeanQCLabel.config(text="    ")
-		self.CanMeanLabel.config(text="    ")
-		self.CanTotalLabel.config(text="    ")
-		self.ReptoTitleLabel.config(text="    ")
-		self.ReptoSalLabel.config(text="    ")
-		self.ReptoYr3Label.config(text="    ")
-		self.XRefTitleLabel.config(text="    ")
-		self.XRefUSLabel.config(text="    ")
-		self.XRefCanLabel.config(text="    ")
-		self.DegreeNameLabel.config(text="    ")
-		self.CPCSalLabel.config(text="    ")
-		self.AdderLabel.config(text="    ")
-		self.RawDataLabel.config(text="    ")
-		self.JobDescriptionLabel.config(text="    ")
-		#self.StdErrPredLabel.config(text="    ")
-		self.SocOutputLabel.config(text="    ")
+		self.JobDotLabel.config(text="	 ")
+		#self.ExecJobLabel.config(text="	 ")
+		self.JobSocLabel.config(text="	 ")
+		self.HighPredPctLabel.config(text="	 ")
+		self.LowPredPctLabel.config(text="	 ")
+		self.B100TotalCompLabel.config(text="	 ")
+		self.HighTotalCompLabel.config(text="	 ")
+		self.MedTotalCompLabel.config(text="	 ")
+		self.LowTotalCompLabel.config(text="	 ")
+		self.Mil1TotalCompLabel.config(text="	 ")
+		self.EstimatedYearsLabel.config(text="	 ")
+		self.B100Q1Label.config(text="	 ")
+		self.HighQ1Label.config(text="	 ")
+		self.MedQ1Label.config(text="	 ")
+		self.LowQ1Label.config(text="	 ")
+		self.Mil1Q1Label.config(text="	 ")
+		self.QCCheckLabel.config(text= "	 ")
+		self.SocPredLabel.config(text= "	 ")
+		self.SurveyMeanLabel.config(text= "	 ")
+		self.SurveyIncumbentsLabel.config(text= "	 ")
+		self.QCCheckCanLabel.config(text="	 ")
+		self.CanPoly1Label.config(text="	 ")
+		self.CanPoly2Label.config(text="	 ")
+		self.CanPoly3Label.config(text="	 ")
+		self.CanPolyMeanLabel.config(text="	 ")
+		self.CanPolyMeanQCLabel.config(text="	 ")
+		self.CanMeanLabel.config(text="	 ")
+		self.CanTotalLabel.config(text="	 ")
+		self.ReptoTitleLabel.config(text="	 ")
+		self.ReptoSalLabel.config(text="	 ")
+		self.ReptoYr3Label.config(text="	 ")
+		self.XRefTitleLabel.config(text="	 ")
+		self.XRefUSLabel.config(text="	 ")
+		self.XRefCanLabel.config(text="	 ")
+		self.DegreeNameLabel.config(text="	 ")
+		self.CPCSalLabel.config(text="	 ")
+		self.AdderLabel.config(text="	 ")
+		self.RawDataLabel.config(text="	 ")
+		self.JobDescriptionLabel.config(text="	 ")
+		#self.StdErrPredLabel.config(text="	 ")
+		self.SocOutputLabel.config(text="	 ")
 		## Entries
 		self.B100PctEntry.delete(0, END)
 		self.HighPctEntry.delete(0, END)
@@ -817,22 +839,22 @@ class Application(Frame):
 		self.XRefEntry.delete(0, END)
 		self.CPCEntry.delete(0, END)
 		## Calc Labels
-		self.Sal100BilLabel.config(text="    ")
-		self.MedSalLabel.config(text="    ")
-		self.HighSalLabel.config(text="    ")
-		self.LowSalLabel.config(text="    ")
-		self.Sal1MilLabel.config(text="    ")
-		self.High90thPercentile_100BilLabel.config(text="    ")
-		self.High90thPercentileLabel.config(text="    ")
-		self.Med90thPercentileLabel.config(text="    ")
-		self.Low90thPercentileLabel.config(text="    ")
-		self.Low90thPercentile_1MilLabel.config(text="    ")
-		self.High10thPercentile_100BilLabel.config(text="    ")
-		self.High10thPercentileLabel.config(text="    ")
-		self.Med10thPercentileLabel.config(text="    ")
-		self.Low10thPercentileLabel.config(text="    ")
-		self.Low10thPercentile_1MilLabel.config(text="    ")
-		self.MeanPredLabel.config(text="    ")
+		self.Sal100BilLabel.config(text="	 ")
+		self.MedSalLabel.config(text="	 ")
+		self.HighSalLabel.config(text="	 ")
+		self.LowSalLabel.config(text="	 ")
+		self.Sal1MilLabel.config(text="	 ")
+		self.High90thPercentile_100BilLabel.config(text="	 ")
+		self.High90thPercentileLabel.config(text="	 ")
+		self.Med90thPercentileLabel.config(text="	 ")
+		self.Low90thPercentileLabel.config(text="	 ")
+		self.Low90thPercentile_1MilLabel.config(text="	 ")
+		self.High10thPercentile_100BilLabel.config(text="	 ")
+		self.High10thPercentileLabel.config(text="	 ")
+		self.Med10thPercentileLabel.config(text="	 ")
+		self.Low10thPercentileLabel.config(text="	 ")
+		self.Low10thPercentile_1MilLabel.config(text="	 ")
+		self.MeanPredLabel.config(text="	 ")
 
 	def label_entry_reload(self, *event):
 		self.B100PctEntry.delete(0, END)
@@ -1036,28 +1058,28 @@ class Application(Frame):
 	
 	def update_CalcLabels(self, *event):
 		## 10th Percentile
-		if self.data.jobexec==0: self.High10thPercentile_100BilLabel.config(text="    ")
+		if self.data.jobexec==0: self.High10thPercentile_100BilLabel.config(text="	 ")
 		else: self.High10thPercentile_100BilLabel.config(text= int(self.data.High10thPercentile_100BilData))
 		self.High10thPercentileLabel.config(text= int(self.data.High10thPercentileData))
 		self.Med10thPercentileLabel.config(text= int(self.data.Med10thPercentileData))
 		self.Low10thPercentileLabel.config(text= int(self.data.Low10thPercentileData))
-		if self.data.jobexec==0: self.Low10thPercentile_1MilLabel.config(text="    ")
+		if self.data.jobexec==0: self.Low10thPercentile_1MilLabel.config(text="	 ")
 		else: self.Low10thPercentile_1MilLabel.config(text= int(self.data.Low10thPercentile_1MilData))
 		## Mean
-		if self.data.jobexec==0: self.Sal100BilLabel.config(text="    ")
+		if self.data.jobexec==0: self.Sal100BilLabel.config(text="	 ")
 		else: self.Sal100BilLabel.config(text= int(self.data.Sal100BilData))
 		self.HighSalLabel.config(text= int(self.data.HighSalData))
 		self.MedSalLabel.config(text= int(self.data.MedSalData))
 		self.LowSalLabel.config(text= int(self.data.LowSalData))
-		if self.data.jobexec==0: self.Sal1MilLabel.config(text="    ")
+		if self.data.jobexec==0: self.Sal1MilLabel.config(text="	 ")
 		else: self.Sal1MilLabel.config(text= int(self.data.Sal1MilData))
 		## 90th Percentile
-		if self.data.jobexec==0: self.High90thPercentile_100BilLabel.config(text="    ")
+		if self.data.jobexec==0: self.High90thPercentile_100BilLabel.config(text="	 ")
 		else: self.High90thPercentile_100BilLabel.config(text= int(self.data.High90thPercentile_100BilData))
 		self.High90thPercentileLabel.config(text= int(self.data.High90thPercentileData))
 		self.Med90thPercentileLabel.config(text= int(self.data.Med90thPercentileData))
 		self.Low90thPercentileLabel.config(text= int(self.data.Low90thPercentileData))
-		if self.data.jobexec==0: self.Low90thPercentile_1MilLabel.config(text="    ")
+		if self.data.jobexec==0: self.Low90thPercentile_1MilLabel.config(text="	 ")
 		else: self.Low90thPercentile_1MilLabel.config(text= int(self.data.Low90thPercentile_1MilData))
 		## Total Comp
 		self.B100TotalCompLabel.config(text= self.data.B100TotalCompData)
