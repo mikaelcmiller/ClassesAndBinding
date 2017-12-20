@@ -12,62 +12,54 @@ from tkinter.ttk import *
 
 class Dataverse:
 	def __init__(self):
-		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
-		self.inititalizedataframe()
-		self.initializerawdataframe()
-		self.pyocnxn.close()
 		self.current_index = 0
 		self.current_id = 1
 		self.jobexec=1
 		self.jobname = "Chief Executive Officer"
+		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
+		self.inititalizedataframe()
+		self.initializerawdataframe()
+		self.pyocnxn.close()
 		self.set_vars(input="index")
-		print("DF Initialized")
 	
 	def initializerawdataframe(self):
 		#self.rawdatacnxn = pyodbc.connect()
-		self.sql = """SELECT TOP 50 [EriJobId]
-		, left(REPLACE([S_Comp],'TARGET ->','TAR_CAN'), 15) S_Comp
-		, [S_Year]
-		, [S_Month]
-		, isnull([Rev], Wgt) Wgt
-		, [No_Emp]
-		, [AveBase]
-		, [Y_Base]
+		self.sql = """SELECT [EriJobId]
+				, left(REPLACE([S_Comp],'TARGET ->','TAR_CAN'), 15) S_Comp
+				, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
+				, isnull([Rev], Wgt) Wgt
+				, [No_Emp]
+				, [AveBase]
+				, [Y_Base]
 		FROM [AssessorWork].[sa].[SurveyCan] surveycan
 		
 		UNION
 		
-		SELECT TOP 50 [EriJobId]
-		, left(REPLACE([S_Comp],'TARGET ->','TAR_EXEC'), 15) S_Comp
-		, [S_Year]
-		, [S_Month]
-		, [Rev] Wgt
-		, [No_Emp]
-		, [AveBase]
-		, [Y_Base]
+		SELECT [EriJobId]
+				, left(REPLACE([S_Comp],'TARGET ->','TAR_EXEC'), 15) S_Comp
+				, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
+				, [Rev] Wgt
+				, [No_Emp]
+				, [AveBase]
+				, [Y_Base]
 		FROM [AssessorWork].[sa].[SurveyExec]
 		
 		UNION
 		
-		SELECT TOP 50 [EriJobId]
-		, left(REPLACE([S_Comp],'TARGET ->','TAR_NONEX'), 15) S_Comp
-		, [S_Year]
-		, [S_Month]
-		, [Wgt]
-		, [No_Emp]
-		, [AveBase]
-		, [Y_Base]
+		SELECT [EriJobId]
+				, left(REPLACE([S_Comp],'TARGET ->','TAR_NONEX'), 15) S_Comp
+				, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
+				, [Wgt]
+				, [No_Emp]
+				, [AveBase]
+				, [Y_Base]
 		FROM [AssessorWork].[sa].[SurveyNonExec]
-		
-		ORDER BY erijobid, S_comp, S_Year"""
-		self.rawdatadf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
-		print(self.rawdatadf)
-		self.rawdatadf.set_index('EriJobId', inplace=True)
 
-	def getrawdata(self):
-		try:
-			print(self.rawdatadf.loc[self.current_id])
-		except: pass
+		ORDER BY erijobid, S_comp, YEARMO"""
+		self.rawdatadf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
+		#print(self.rawdatadf)
+		self.rawdatadf.set_index('EriJobId', inplace=True)
+		self.getrawdata()
 
 	def inititalizedataframe(self):
 		self.sql = """SELECT pct.*
@@ -136,6 +128,9 @@ class Dataverse:
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.set_vars(input="index")
 		self.getrawdata()
+
+	def getrawdata(self):
+		print(self.rawdatadf.loc[self.current_id])
 
 	def set_vars(self, input="index"):
 		if(input=="index"):
