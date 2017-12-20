@@ -62,7 +62,13 @@ class Dataverse:
 		ORDER BY erijobid, S_comp, S_Year"""
 		self.rawdatadf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		print(self.rawdatadf)
-		
+		self.rawdatadf.set_index('EriJobId', inplace=True)
+
+	def getrawdata(self):
+		try:
+			print(self.rawdatadf.loc[self.current_id])
+		except: pass
+
 	def inititalizedataframe(self):
 		self.sql = """SELECT pct.*
 			, left(socdesc.soctitle, 60) as SocTitle
@@ -103,6 +109,7 @@ class Dataverse:
 			self.current_index = self.jobsdf.loc[self.current_id,'index1']
 			self.set_vars(input="id")
 			##Need to check if exists in outputdf, if so: pull from output df instead of jobsdf
+			self.getrawdata()
 		except KeyError:
 			self.jobname = "No job found"
 
@@ -116,6 +123,7 @@ class Dataverse:
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.set_vars(input="index")
+		self.getrawdata()
 
 	def index_prior(self, *event):
 		try:
@@ -127,6 +135,7 @@ class Dataverse:
 		self.jobname = self.jobsdf.loc[self.current_index,'jobdottitle']
 		self.current_id = self.jobsdf.loc[self.current_index,'erijobid']
 		self.set_vars(input="index")
+		self.getrawdata()
 
 	def set_vars(self, input="index"):
 		if(input=="index"):
