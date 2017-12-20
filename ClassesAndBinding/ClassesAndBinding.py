@@ -12,7 +12,10 @@ from tkinter.ttk import *
 
 class Dataverse:
 	def __init__(self):
+		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		self.inititalizedataframe()
+		self.initializerawdataframe()
+		self.pyocnxn.close()
 		self.current_index = 0
 		self.current_id = 1
 		self.jobexec=1
@@ -22,10 +25,23 @@ class Dataverse:
 	
 	def initializerawdataframe(self):
 		#self.rawdatacnxn = pyodbc.connect()
+		self.sql = """SELECT TOP 50 [EriJobId]
+			, [S_Comp]
+			, [S_Year]
+			, [S_Month]
+			, isnull([Rev],Wgt) Wgt
+			, [No_Emp]
+			, [AveBase]
+			, [Y_Base]
+				
+			FROM [AssessorWork].[sa].[SurveyCan] surveycan
+			
+			ORDER BY erijobid, S_comp, S_Year"""
+		self.rawdatadf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
+		print(self.rawdatadf)
 		pass
 	
 	def inititalizedataframe(self):
-		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		self.sql = """SELECT pct.*
 			, left(socdesc.soctitle, 60) as SocTitle
 			, cast(LowPred as float)/MedPred as LowPredCalc
@@ -41,7 +57,6 @@ class Dataverse:
 			join (select eDOT, replace(replace(ShortDesc,'/duty','duty'),'<duty>','') as ShortDesc from [AssessorWork].[sa].[Sadescriptions]) jobdesc on jobdesc.eDOT = pct.jobdot
 			order by execjob desc, pct.erijobid"""
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
-		self.pyocnxn.close()
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
