@@ -835,6 +835,7 @@ class Application(Frame):
 		#self.StdErrPredLabel.config(text="    ")
 		self.SocOutputLabel.config(text="    ")
 		## Entries
+		self.RawDataTextbox.config(state=NORMAL)
 		self.RawDataTextbox.delete('1.0', END)
 		self.B100PctEntry.delete(0, END)
 		self.HighPctEntry.delete(0, END)
@@ -919,6 +920,7 @@ class Application(Frame):
 		self.USOverrideEntry.insert(0, str(self.data.USOverrideDataInit))
 		self.CanOverrideEntry.insert(0, str(self.data.CANOverrideDataInit))
 		self.RawDataTextbox.insert(END, self.data.rawstring)
+		self.RawDataTextbox.config(state=DISABLED)
 		self.MeanPredLabel.config(text=int(self.data.MeanPredData))
 		self.set_SalPercents()
 		self.update_MedSal()
@@ -972,6 +974,7 @@ class Application(Frame):
 		self.SocOutputLabel.config(text=self.data.SocTitleData)
 		## Entries
 		self.RawDataTextbox.insert(END,self.data.rawstring)
+		self.RawDataTextbox.config(state=DISABLED)
 		self.B100PctEntry.insert(0, str(self.data.B100PctData))
 		self.HighPctEntry.insert(0, str(self.data.HighPctData))
 		self.MedPctEntry.insert(0, str(self.data.MedPctData))
