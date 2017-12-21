@@ -632,7 +632,7 @@ class Application(Frame):
 		self.RawDataScrollbar.pack(side='right', fill='both', expand=True)
 		self.RawDataTextbox.delete('1.0', END)
 		self.RawDataTextbox.insert(END,self.data.rawstring)
-		self.RawDataTextbox.config(yscrollcommand=self.RawDataScrollbar.set)
+		self.RawDataTextbox.config(state=DISABLED, yscrollcommand=self.RawDataScrollbar.set)
 		self.RawDataScrollbar.config(command=self.RawDataTextbox.yview)
 		self.High10thPercentileLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.High10thPercentileLabel.grid(row=5, column=2)
