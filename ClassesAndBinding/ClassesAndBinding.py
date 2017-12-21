@@ -29,8 +29,8 @@ class Dataverse:
 					, cast(REPLACE([S_Comp],'TARGET ->','TAR_CAN') as varchar(15)) S_Comp
 					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
 					, isnull([Rev], Wgt) Wgt
-					, [No_Emp] No_Emp
-					, [AveBase] AveBase
+					, isnull([No_Emp],0) No_Emp
+					, isnull([AveBase],0) AveBase
 					, isnull(cast([Y_Base] as int),0) Y_Base
 			FROM [AssessorWork].[sa].[SurveyCan] surveycan
  
@@ -40,8 +40,8 @@ class Dataverse:
 					, REPLACE([S_Comp],'TARGET ->','TAR_EXEC') S_Comp
 					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
 					, [Rev] Wgt
-					, [No_Emp] No_Emp
-					, [AveBase] AveBase
+					, isnull([No_Emp],0) No_Emp
+					, isnull([AveBase],0) AveBase
 					, isnull(cast([Y_Base] as int),0) Y_Base
 			FROM [AssessorWork].[sa].[SurveyExec]
 
@@ -51,8 +51,8 @@ class Dataverse:
 					, REPLACE([S_Comp],'TARGET ->','TAR_NONEX') S_Comp
 					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
 					, [Wgt] Wgt
-					, [No_Emp] No_Emp
-					, [AveBase] AveBase
+					, isnull([No_Emp],0) No_Emp
+					, isnull([AveBase],0) AveBase
 					, isnull(cast([Y_Base] as int),0) Y_Base
 			FROM [AssessorWork].[sa].[SurveyNonExec]
 
@@ -133,10 +133,12 @@ class Dataverse:
 
 	def getrawdata(self):
 		self.rawstring = "S_Comp          YEARMO  Wgt/Rev  No_Emp AveBase Y_Base\n----------------------------------------------------------\n" #self.rawdatadf.loc[self.current_id].to_string(index=FALSE, header=FALSE, columns=['S_Comp', 'YEARMO', 'Wgt', 'No_Emp', 'AveBase', 'Y_Base'])
-		self.temprawdf = self.rawdatadf.loc[self.current_id]
-		#print(self.temprawdf)
-		for index, row in self.temprawdf.iterrows():
-			self.rawstring = self.rawstring+(row[0][:15]).ljust(15)+' '+str(row[1])[:7].ljust(7)+' '+str(row[2])[:8].ljust(8)+' '+str(row[3])[:6].ljust(6)+' '+str(row[4])[:7].ljust(7)+' '+str(int(row[5]))[:10].ljust(10)+'\n'
+		try:
+			self.temprawdf = self.rawdatadf.loc[self.current_id]
+			#print(self.temprawdf)
+			for index, row in self.temprawdf.iterrows():
+				self.rawstring = self.rawstring+(row[0][:15]).ljust(15)+' '+str(row[1])[:7].ljust(7)+' '+str(row[2])[:8].ljust(8)+' '+str(row[3])[:6].ljust(6)+' '+str(row[4])[:7].ljust(7)+' '+str(int(row[5]))[:10].ljust(10)+'\n'
+		except: self.rawstring = self.rawstring+""
 
 	def set_vars(self, input="index"):
 		if(input=="index"):
@@ -623,8 +625,8 @@ class Application(Frame):
 		self.B100Q1Label = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.B100Q1Label.grid(row=4, column=5)
 		self.FrameR5C0 = Frame(self, height=5)
-		self.FrameR5C0.grid(row=5, column=0, columnspan=1, rowspan=21, sticky=NW)
-		self.RawDataTextbox = Text(self.FrameR5C0, height=21, width=60)
+		self.FrameR5C0.grid(row=5, column=0, columnspan=1, rowspan=29, sticky=NW)
+		self.RawDataTextbox = Text(self.FrameR5C0, height=29, width=60)
 		self.RawDataTextbox.pack(side='left', fill='both', expand=True) #.grid(row=5, column=0, rowspan=21, sticky=NW)
 		self.RawDataScrollbar = Scrollbar(self.FrameR5C0)
 		self.RawDataScrollbar.pack(side='right', fill='both', expand=True)
