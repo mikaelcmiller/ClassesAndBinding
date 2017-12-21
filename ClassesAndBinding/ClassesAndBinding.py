@@ -132,7 +132,7 @@ class Dataverse:
 		self.getrawdata()
 
 	def getrawdata(self):
-		self.rawstring = "S_Comp          YEARMO  Wgt/Rev  No_Emp AveBase Y_Base\n" #self.rawdatadf.loc[self.current_id].to_string(index=FALSE, header=FALSE, columns=['S_Comp', 'YEARMO', 'Wgt', 'No_Emp', 'AveBase', 'Y_Base'])
+		self.rawstring = "S_Comp          YEARMO  Wgt/Rev  No_Emp AveBase Y_Base\n----------------------------------------------------------\n" #self.rawdatadf.loc[self.current_id].to_string(index=FALSE, header=FALSE, columns=['S_Comp', 'YEARMO', 'Wgt', 'No_Emp', 'AveBase', 'Y_Base'])
 		self.temprawdf = self.rawdatadf.loc[self.current_id]
 		#print(self.temprawdf)
 		for index, row in self.temprawdf.iterrows():
