@@ -26,37 +26,37 @@ class Dataverse:
 		#self.rawdatacnxn = pyodbc.connect()
 		self.sql = """
 			SELECT [EriJobId]
-				, left(cast(REPLACE([S_Comp],'TARGET ->','TAR_CAN')+'                          ' as varchar(15)), 15) S_Comp
-				, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
-				, left(cast(isnull([Rev], Wgt) as varchar(8))+'        ',8) Wgt
-				, left(cast([No_Emp] as varchar(6))+'      ',6) No_Emp
-				, left(cast([AveBase] as varchar(6))+'      ',6) AveBase
-				, left(cast([Y_Base] as varchar(10))+'          ',10) Y_Base
+					, cast(REPLACE([S_Comp],'TARGET ->','TAR_CAN') as varchar(15)) S_Comp
+					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
+					, isnull([Rev], Wgt) Wgt
+					, [No_Emp] No_Emp
+					, [AveBase] AveBase
+					, isnull(cast([Y_Base] as int),0) Y_Base
 			FROM [AssessorWork].[sa].[SurveyCan] surveycan
  
 			UNION
 
 			SELECT [EriJobId]
-				, left(cast(REPLACE([S_Comp],'TARGET ->','TAR_EXEC')+'                          ' as varchar(15)), 15) S_Comp
-				, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
-				, left(cast([Rev] as varchar(8))+'        ',8) Wgt
-				, left(cast([No_Emp] as varchar(6))+'      ',6) No_Emp
-				, left(cast([AveBase] as varchar(6))+'      ',6) AveBase
-				, left(cast([Y_Base] as varchar(10))+'          ',10) Y_Base
+					, REPLACE([S_Comp],'TARGET ->','TAR_EXEC') S_Comp
+					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
+					, [Rev] Wgt
+					, [No_Emp] No_Emp
+					, [AveBase] AveBase
+					, isnull(cast([Y_Base] as int),0) Y_Base
 			FROM [AssessorWork].[sa].[SurveyExec]
 
 			UNION
 
 			SELECT [EriJobId]
-				, left(cast(REPLACE([S_Comp],'TARGET ->','TAR_NONEX')+'                          ' as varchar(15)), 15) S_Comp
-				, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
-				, left(cast([Wgt] as varchar(8))+'        ',8) Wgt
-				, left(cast([No_Emp] as varchar(6))+'      ',6) No_Emp
-				, left(cast([AveBase] as varchar(6))+'      ',6) AveBase
-				, left(cast([Y_Base] as varchar(10))+'          ',10) Y_Base
+					, REPLACE([S_Comp],'TARGET ->','TAR_NONEX') S_Comp
+					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
+					, [Wgt] Wgt
+					, [No_Emp] No_Emp
+					, [AveBase] AveBase
+					, isnull(cast([Y_Base] as int),0) Y_Base
 			FROM [AssessorWork].[sa].[SurveyNonExec]
 
-			ORDER BY erijobid, S_comp, YEARMO 
+			ORDER BY erijobid, S_comp, YEARMO
 		"""
 		self.rawdatadf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		#print(self.rawdatadf)
@@ -132,8 +132,11 @@ class Dataverse:
 		self.getrawdata()
 
 	def getrawdata(self):
-		self.rawstring = self.rawdatadf.loc[self.current_id].to_string(columns=['S_Comp', 'YEARMO', 'Wgt', 'No_Emp', 'AveBase', 'Y_Base'])
-		print(self.rawstring)
+		self.rawstring = "S_Comp          YEARMO  Wgt/Rev  No_Emp AveBase Y_Base\n" #self.rawdatadf.loc[self.current_id].to_string(index=FALSE, header=FALSE, columns=['S_Comp', 'YEARMO', 'Wgt', 'No_Emp', 'AveBase', 'Y_Base'])
+		self.temprawdf = self.rawdatadf.loc[self.current_id]
+		#print(self.temprawdf)
+		for index, row in self.temprawdf.iterrows():
+			self.rawstring = self.rawstring+(row[0][:15]).ljust(15)+' '+str(row[1])[:7].ljust(7)+' '+str(row[2])[:8].ljust(8)+' '+str(row[3])[:6].ljust(6)+' '+str(row[4])[:7].ljust(7)+' '+str(int(row[5]))[:10].ljust(10)+'\n'
 
 	def set_vars(self, input="index"):
 		if(input=="index"):
@@ -620,13 +623,14 @@ class Application(Frame):
 		self.B100Q1Label = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.B100Q1Label.grid(row=4, column=5)
 		self.FrameR5C0 = Frame(self, height=5)
-		self.FrameR5C0.grid(row=5, column=0, columnspan=1, rowspan=6, sticky=NW)
-		self.RawDataTextbox = Text(self.FrameR5C0, height=6, width=55)
+		self.FrameR5C0.grid(row=5, column=0, columnspan=1, rowspan=21, sticky=NW)
+		self.RawDataTextbox = Text(self.FrameR5C0, height=21, width=60)
 		self.RawDataTextbox.pack(side='left', fill='both', expand=True) #.grid(row=5, column=0, rowspan=21, sticky=NW)
 		self.RawDataScrollbar = Scrollbar(self.FrameR5C0)
 		self.RawDataScrollbar.pack(side='right', fill='both', expand=True)
+		self.RawDataTextbox.delete('1.0', END)
 		self.RawDataTextbox.insert(END,self.data.rawstring)
-		self.RawDataTextbox.config(state=DISABLED, yscrollcommand=self.RawDataScrollbar.set)
+		self.RawDataTextbox.config(yscrollcommand=self.RawDataScrollbar.set)
 		self.RawDataScrollbar.config(command=self.RawDataTextbox.yview)
 		self.High10thPercentileLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.High10thPercentileLabel.grid(row=5, column=2)
@@ -829,6 +833,7 @@ class Application(Frame):
 		#self.StdErrPredLabel.config(text="    ")
 		self.SocOutputLabel.config(text="    ")
 		## Entries
+		self.RawDataTextbox.delete('1.0', END)
 		self.B100PctEntry.delete(0, END)
 		self.HighPctEntry.delete(0, END)
 		self.MedPctEntry.delete(0, END)
@@ -886,6 +891,7 @@ class Application(Frame):
 		self.ReptoEntry.delete(0, END)
 		self.XRefEntry.delete(0, END)
 		self.CPCEntry.delete(0, END)
+		self.RawDataTextbox.delete('1.0', END)
 		self.B100PctEntry.insert(0, str(self.data.B100PctDataInit))
 		self.HighPctEntry.insert(0, str(self.data.HighPctDataInit))
 		self.MedPctEntry.insert(0, str(self.data.MedPctDataInit))
@@ -910,6 +916,7 @@ class Application(Frame):
 		self.CPCEntry.insert(0, str(self.data.CPCDataInit))
 		self.USOverrideEntry.insert(0, str(self.data.USOverrideDataInit))
 		self.CanOverrideEntry.insert(0, str(self.data.CANOverrideDataInit))
+		self.RawDataTextbox.insert(END, self.data.rawstring)
 		self.MeanPredLabel.config(text=int(self.data.MeanPredData))
 		self.set_SalPercents()
 		self.update_MedSal()
@@ -962,6 +969,7 @@ class Application(Frame):
 		self.JobDescriptionLabel.config(text= self.data.JobDescriptionData)
 		self.SocOutputLabel.config(text=self.data.SocTitleData)
 		## Entries
+		self.RawDataTextbox.insert(END,self.data.rawstring)
 		self.B100PctEntry.insert(0, str(self.data.B100PctData))
 		self.HighPctEntry.insert(0, str(self.data.HighPctData))
 		self.MedPctEntry.insert(0, str(self.data.MedPctData))
