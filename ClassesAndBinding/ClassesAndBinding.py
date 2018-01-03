@@ -27,36 +27,37 @@ class Dataverse:
 		self.sql = """
 			SELECT [EriJobId]
 					, cast(REPLACE([S_Comp],'TARGET ->','TAR_CAN') as varchar(15)) S_Comp
-					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
+
 					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
 					, isnull([Rev], Wgt) Wgt
 					, isnull([No_Emp],0) No_Emp
 					, isnull([AveBase],0) AveBase
 					, isnull(cast([Y_Base] as int),0) Y_Base
+					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
 			FROM [AssessorWork].[sa].[SurveyCan] surveycan
  
 			UNION
 
 			SELECT [EriJobId]
 					, REPLACE([S_Comp],'TARGET ->','TAR_EXEC') S_Comp
-					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
 					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
 					, [Rev] Wgt
 					, isnull([No_Emp],0) No_Emp
 					, isnull([AveBase],0) AveBase
 					, isnull(cast([Y_Base] as int),0) Y_Base
+					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
 			FROM [AssessorWork].[sa].[SurveyExec]
 
 			UNION
 
 			SELECT [EriJobId]
 					, REPLACE([S_Comp],'TARGET ->','TAR_NONEX') S_Comp
-					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
 					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
 					, [Wgt] Wgt
 					, isnull([No_Emp],0) No_Emp
 					, isnull([AveBase],0) AveBase
 					, isnull(cast([Y_Base] as int),0) Y_Base
+					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
 			FROM [AssessorWork].[sa].[SurveyNonExec]
 
 			ORDER BY erijobid, S_Order, S_comp, YEARMO
