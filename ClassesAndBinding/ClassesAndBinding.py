@@ -69,7 +69,7 @@ class Dataverse:
 
 	def inititalizedataframe(self):
 		self.sql = """SELECT pct.*
-			, left(socdesc.soctitle, 60) as SocTitle
+			, socdesc.soctitle as SocTitle
 			, cast(LowPred as float)/MedPred as LowPredCalc
 			, cast(HighPred as float)/MedPred as HighPredCalc
 			, bench.USBenchMed
@@ -443,6 +443,24 @@ class Application(Frame):
 		#self.JobIdSearchEntry.grid(row=0, column=2)
 		
 		
+		self.SOCFrame = Frame(self)
+		self.SOCFrame.grid(row=2, column=0, columnspan=8, sticky=NW)
+		self.eDOT = Label(self.SOCFrame,text="eDOT")
+		self.eDOT.pack(side=LEFT, padx=10)
+		self.JobDotLabel = Label(self.SOCFrame, text="[Initial Text]", relief="groove", width=10)
+		self.JobDotLabel.pack(side=LEFT, padx=10)
+		self.SOC = Label(self.SOCFrame,text="SOC")
+		self.SOC.pack(side=LEFT, padx=10)
+		self.JobSocLabel = Label(self.SOCFrame, text="[Initial Text]", relief="groove", width=10)
+		self.JobSocLabel.pack(side=LEFT)
+		self.SocOutputLabel = Label(self.SOCFrame, text="[Initial Text]", relief="groove", width=100)
+		self.SocOutputLabel.pack(side=LEFT)
+		#self.JobDotLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
+		#self.JobDotLabel.grid(row=2, column=3)
+		#self.JobSocLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
+		#self.JobSocLabel.grid(row=2, column=5)
+		
+		
 		self.ReloadBtn = Button(self, text="Reload Data", command=self.label_entry_reload)
 		self.ReloadBtn.grid(row=0, column=4)
 		self.CommitBtn = Button(self, text="Commit", command=self.write_output, width=9)
@@ -489,8 +507,8 @@ class Application(Frame):
 		self.XRefEntry.grid(row=30, column=2)
 		#self.ERISearch = Label(self,text="ERI # Search")
 		#self.ERISearch.grid(row=0, column=1, sticky=E)
-		self.eDOT = Label(self,text="eDOT     SOC")
-		self.eDOT.grid(row=2, column=4)
+		#self.eDOT = Label(self,text="eDOT     SOC")
+		#self.eDOT.grid(row=2, column=4)
 		#self.SOC = Label(self,text="SOC")
 		#self.SOC.grid(row=2, column=5, sticky=E)
 		self.Pct10 = Label(self,text="10th Pct")
@@ -627,12 +645,12 @@ class Application(Frame):
 		self.Description.grid(row=32, column=0, sticky=W)
 		#self.JobTitleLabel = Label(self, text="[Initial Text]", relief="groove", width=45, anchor=E)
 		#self.JobTitleLabel.grid(row=2, column=0, sticky=E)
-		self.JobDotLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.JobDotLabel.grid(row=2, column=3)
-		self.JobSocLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.JobSocLabel.grid(row=2, column=5)
-		self.SocOutputLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=200, width=35)
-		self.SocOutputLabel.grid(row=2, column=6, rowspan=2, sticky=NW)
+		#self.JobDotLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
+		#self.JobDotLabel.grid(row=2, column=3)
+		#self.JobSocLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
+		#self.JobSocLabel.grid(row=2, column=5)
+		#self.SocOutputLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=200, width=35)
+		#self.SocOutputLabel.grid(row=2, column=6, rowspan=2, sticky=NW)
 		self.High10thPercentile_100BilLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.High10thPercentile_100BilLabel.grid(row=4, column=2)
 		self.Sal100BilLabel = Label(self, text="Initial Text", relief="groove", width=10)
