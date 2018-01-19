@@ -193,7 +193,7 @@ class Dataverse:
 		self.AdderData = self.jobsdf.loc[current_selector,'Adder']
 		self.SocTitleData = self.jobsdf.loc[current_selector,'SocTitle']
 		## Entries
-		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.95
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 0 #1.95
 		else: self.B100PctData = self.jobsdf.loc[current_selector,'Pct_100Bil']
 		self.HighPctData = self.jobsdf.loc[current_selector,'HIGH_F']
 		self.MedPctData = self.jobsdf.loc[current_selector,'US_PCT']
@@ -220,7 +220,7 @@ class Dataverse:
 		if pd.isnull(self.jobsdf.loc[current_selector,'CANPK_C']): self.CANOverrideData = 0
 		else: self.CANOverrideData = float(self.jobsdf.loc[current_selector,'CANPK_C'])
 		## Init
-		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 1.95
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctDataInit = 0 #1.95
 		else: self.B100PctDataInit = self.jobsdf.loc[current_selector,'Pct_100Bil']
 		self.HighPctDataInit = self.jobsdf.loc[current_selector,'HIGH_F']
 		self.MedPctDataInit = self.jobsdf.loc[current_selector,'US_PCT']
@@ -339,7 +339,7 @@ class Dataverse:
 			self.CPCSalData = self.outputdf.loc[current_selector,'CPCSalary']
 			self.AdderData = self.outputdf.loc[current_selector,'Adder']
 			## Entries
-			if pd.isnull(self.outputdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 1.95
+			if pd.isnull(self.outputdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 0 #1.95
 			else: self.B100PctData = self.outputdf.loc[current_selector,'Pct_100Bil']
 			self.HighPctData = self.outputdf.loc[current_selector,'HIGH_F']
 			self.MedPctData = self.outputdf.loc[current_selector,'US_PCT']
