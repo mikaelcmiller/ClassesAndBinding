@@ -198,7 +198,7 @@ class Dataverse:
 		self.HighPctData = self.jobsdf.loc[current_selector,'HIGH_F']
 		self.MedPctData = self.jobsdf.loc[current_selector,'US_PCT']
 		self.LowPctData = self.jobsdf.loc[current_selector,'LOW_F']
-		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctData = 0.1
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctData = 0 #0.1
 		else: self.Mil1PctData = self.jobsdf.loc[current_selector,'Pct_1Mil']
 		if pd.isnull(self.jobsdf.loc[current_selector,'BonusPct100Bil']): self.B100BonusPctData = 0
 		else: self.B100BonusPctData = self.jobsdf.loc[current_selector,'BonusPct100Bil']
@@ -225,7 +225,7 @@ class Dataverse:
 		self.HighPctDataInit = self.jobsdf.loc[current_selector,'HIGH_F']
 		self.MedPctDataInit = self.jobsdf.loc[current_selector,'US_PCT']
 		self.LowPctDataInit = self.jobsdf.loc[current_selector,'LOW_F']
-		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctDataInit = 0.1
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctDataInit = 0 #0.1
 		else: self.Mil1PctDataInit = self.jobsdf.loc[current_selector,'Pct_1Mil']
 		if pd.isnull(self.jobsdf.loc[current_selector,'BonusPct100Bil']): self.B100BonusPctDataInit = 0
 		else: self.B100BonusPctDataInit = self.jobsdf.loc[current_selector,'BonusPct100Bil']
@@ -344,7 +344,7 @@ class Dataverse:
 			self.HighPctData = self.outputdf.loc[current_selector,'HIGH_F']
 			self.MedPctData = self.outputdf.loc[current_selector,'US_PCT']
 			self.LowPctData = self.outputdf.loc[current_selector,'LOW_F']
-			if pd.isnull(self.outputdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctData = 0.1
+			if pd.isnull(self.outputdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctData = 0 #0.1
 			else: self.Mil1PctData = self.outputdf.loc[current_selector,'Pct_1Mil']
 			self.B100BonusPctData = self.outputdf.loc[current_selector,'BonusPct100Bil']
 			self.HighBonusPctData = self.outputdf.loc[current_selector,'HighBonusPct']
@@ -426,14 +426,31 @@ class Application(Frame):
 		
 ###########################
 #### Created from Google Sheet 
+		self.TitleFrame = Frame(self)
+		self.TitleFrame.grid(row=0, column=0, columnspan=4, sticky=NW)
+		self.TitleFrame.config(pad=(5,0))
+		self.TitleEri = Label(self.TitleFrame,text="Title")
+		#self.TitleEri.grid(row=2, column=1, sticky=W)
+		self.TitleEri.pack(side=LEFT)
+		self.JobTitleLabel = Label(self.TitleFrame, text="[Initial Text]", relief="groove", width=45, anchor=W)
+		#self.JobTitleLabel.grid(row=2, column=0, sticky=E)
+		self.JobTitleLabel.pack(side=LEFT, padx=10)
+		self.ERISearch = Label(self.TitleFrame,text="ERI # Search")
+		self.ERISearch.pack(side=LEFT, padx=10)
+		#self.ERISearch.grid(row=0, column=1, sticky=E)
+		self.JobIdSearchEntry = Entry(self.TitleFrame, width=10)
+		self.JobIdSearchEntry.pack(side=LEFT)
+		#self.JobIdSearchEntry.grid(row=0, column=2)
+		
+		
 		self.ReloadBtn = Button(self, text="Reload Data", command=self.label_entry_reload)
 		self.ReloadBtn.grid(row=0, column=4)
 		self.CommitBtn = Button(self, text="Commit", command=self.write_output, width=9)
 		self.CommitBtn.grid(row=0, column=5)
 		self.WriteSQLBtn = Button(self, text="Write to SQL")
 		self.WriteSQLBtn.grid(row=0, column=6, sticky=W)
-		self.JobIdSearchEntry = Entry(self, width=10)
-		self.JobIdSearchEntry.grid(row=0, column=2)
+		#self.JobIdSearchEntry = Entry(self, width=10)
+		#self.JobIdSearchEntry.grid(row=0, column=2)
 		self.B100PctEntry = Entry(self, width=10)
 		self.B100PctEntry.grid(row=10, column=3)
 		self.HighPctEntry = Entry(self, width=10)
@@ -470,10 +487,8 @@ class Application(Frame):
 		self.ReptoEntry.grid(row=29, column=2)
 		self.XRefEntry = Entry(self, width=10)
 		self.XRefEntry.grid(row=30, column=2)
-		self.ERISearch = Label(self,text="ERI # Search")
-		self.ERISearch.grid(row=0, column=1, sticky=E)
-		self.TitleEri = Label(self,text="Title")
-		self.TitleEri.grid(row=2, column=1, sticky=W)
+		#self.ERISearch = Label(self,text="ERI # Search")
+		#self.ERISearch.grid(row=0, column=1, sticky=E)
 		self.eDOT = Label(self,text="eDOT     SOC")
 		self.eDOT.grid(row=2, column=4)
 		#self.SOC = Label(self,text="SOC")
@@ -610,8 +625,8 @@ class Application(Frame):
 		self.Adder.grid(row=31, column=6, sticky=W)
 		self.Description = Label(self,text="Job Description")
 		self.Description.grid(row=32, column=0, sticky=W)
-		self.JobTitleLabel = Label(self, text="[Initial Text]", relief="groove", width=45, anchor=E)
-		self.JobTitleLabel.grid(row=2, column=0, sticky=E)
+		#self.JobTitleLabel = Label(self, text="[Initial Text]", relief="groove", width=45, anchor=E)
+		#self.JobTitleLabel.grid(row=2, column=0, sticky=E)
 		self.JobDotLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.JobDotLabel.grid(row=2, column=3)
 		self.JobSocLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
@@ -626,7 +641,7 @@ class Application(Frame):
 		self.High90thPercentile_100BilLabel.grid(row=4, column=4)
 		self.B100Q1Label = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.B100Q1Label.grid(row=4, column=5)
-		self.FrameR5C0 = Frame(self, height=5)
+		self.FrameR5C0 = Frame(self) #, height=5)
 		self.FrameR5C0.grid(row=5, column=0, columnspan=1, rowspan=29, sticky=NW)
 		self.RawDataTextbox = Text(self.FrameR5C0, height=29, width=60)
 		self.RawDataTextbox.pack(side='left', fill='both', expand=True) #.grid(row=5, column=0, rowspan=21, sticky=NW)
