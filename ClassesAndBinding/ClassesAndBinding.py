@@ -144,6 +144,7 @@ class Dataverse:
 			#print(self.temprawdf)
 			for index, row in self.temprawdf.iterrows():
 				self.rawstring = self.rawstring+(row[0][:15]).ljust(15)+' '+str(row[1])[:7].ljust(7)+' '+str(row[2])[:8].ljust(8)+' '+str(row[3])[:6].ljust(6)+' '+str(row[4])[:7].ljust(7)+' '+str(int(row[5]))[:10].ljust(10)+'\n'
+				if ((row[0][:5]=="TAR_E" and str(row[2])[:5]=="10000") or row[0][:5]=="TAR_N"): self.rawstring = self.rawstring+"----------------------------------------------------------\n"
 		except: self.rawstring = self.rawstring+""
 
 	def set_vars(self, input="index"):
