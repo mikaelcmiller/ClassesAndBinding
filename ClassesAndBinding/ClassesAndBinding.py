@@ -166,11 +166,14 @@ class Dataverse:
 		self.Mil1TotalCompData = self.jobsdf.loc[current_selector,'TotalComp1Mil']
 		if pd.isnull(self.jobsdf.loc[current_selector,'EstimatedYears']) : self.EstimatedYears = "NA"
 		else: self.EstimatedYears = int(self.jobsdf.loc[current_selector,'EstimatedYears'])
-		self.B100Q1Data = self.jobsdf.loc[current_selector,'Q1100Bil']
+		if pd.isnull(self.jobsdf.loc[current_selector,'Q1100Bil']) : self.B100Q1Data=""
+		else: self.B100Q1Data = int(self.jobsdf.loc[current_selector,'Q1100Bil'])
 		self.HighQ1Data = self.jobsdf.loc[current_selector,'Q1High']
 		self.MedQ1Data = self.jobsdf.loc[current_selector,'Q1Med']
 		self.LowQ1Data = self.jobsdf.loc[current_selector,'Q1Low']
-		self.Mil1Q1Data = self.jobsdf.loc[current_selector,'Q11Mil']
+		if pd.isnull(self.jobsdf.loc[current_selector,'Q11Mil']) : self.Mil1Q1Data=""
+		else: self.Mil1Q1Data = int(self.jobsdf.loc[current_selector,'Q11Mil'])
+		#self.Mil1Q1Data = self.jobsdf.loc[current_selector,'Q11Mil']
 		try: self.QCCheckData = int(self.jobsdf.loc[current_selector,'MedPred'])
 		except: self.QCCheckData = self.jobsdf.loc[current_selector,'MedPred']
 		self.SocPredData = self.jobsdf.loc[current_selector,'OccAve']
