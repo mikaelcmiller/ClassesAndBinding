@@ -34,6 +34,7 @@ class Dataverse:
 					, isnull([AveBase],0) AveBase
 					, isnull(cast([Y_Base] as int),0) Y_Base
 					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
+					, 1 as Can_Order
 			FROM [AssessorWork].[sa].[SurveyCan] surveycan
  
 			UNION
@@ -46,6 +47,7 @@ class Dataverse:
 					, isnull([AveBase],0) AveBase
 					, isnull(cast([Y_Base] as int),0) Y_Base
 					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
+					, 0 as Can_Order
 			FROM [AssessorWork].[sa].[SurveyExec]
 
 			UNION
@@ -58,12 +60,12 @@ class Dataverse:
 					, isnull([AveBase],0) AveBase
 					, isnull(cast([Y_Base] as int),0) Y_Base
 					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
+					, 0 as Can_Order
 			FROM [AssessorWork].[sa].[SurveyNonExec]
 
-			ORDER BY erijobid, S_Order, S_comp, YEARMO
+			ORDER BY erijobid, Can_Order, S_Order, S_comp, YEARMO
 		"""
 		self.rawdatadf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
-		#print(self.rawdatadf)
 		self.rawdatadf.set_index('EriJobId', inplace=True)
 		self.getrawdata()
 
