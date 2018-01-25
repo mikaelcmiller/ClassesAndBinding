@@ -366,6 +366,8 @@ class Dataverse:
 			self.XRefData = self.outputdf.loc[current_selector,'JobXRef']
 			self.CPCData = self.outputdf.loc[current_selector,'CPCNO']
 			self.jobexec = self.outputdf.loc[current_selector,'execjob']
+			self.USOverrideData = self.outputdf.loc[current_selector,'USPK_C']
+			self.CANOverrideData = self.outputdf.loc[current_selector, 'CANPK_C']
 
 	def write_to_outputdf(self, *event):
 		try:
@@ -396,6 +398,9 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'High90thPercentile_100bil', float(self.High90thPercentile_100BilData))
 		self.outputdf.set_value(self.current_id,'TotalComp1Mil', self.Mil1TotalCompData)
 		self.outputdf.set_value(self.current_id,'TotalComp100Bil', self.B100TotalCompData)
+		self.outputdf.set_value(self.current_id,'USPK_C', self.USOverrideData)
+		self.outputdf.set_value(self.current_id,'CANPK_C', self.CANOverrideData)
+		print(self.outputdf.loc[self.current_id,:])
 		#print(self.outputdf.loc[self.current_id,['erijobid', 'jobdottitle', 'Pct_100Bil', 'HIGH_F', 'US_PCT', 'LOW_F', 'Pct_1Mil', 'timestamp']])
 		print("Data written to OutputDF")
 
@@ -1110,12 +1115,29 @@ class Application(Frame):
 			if float(self.USOverrideEntry.get())!=0:
 				self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
 				self.data.MedPctData = round(float(self.data.MedSalData)/float(self.data.XRefUSData),2)
-				self.MedPctEntry.delete(0,END)
-				self.MedPctEntry.insert(0, str(self.data.MedPctData))
-			else: self.data.MedSalData = int(self.data.MedPctData*self.data.XRefUSData)
+			else:
+				self.data.MedSalData = int(self.data.MedPctData*self.data.XRefUSData)
+				#self.data.MedPctData = self.data.MedPctDataInit
 		except ValueError: print("MedSal Value error")
+		self.data.USOverrideData = float(self.USOverrideEntry.get())
+		self.MedPctEntry.delete(0,END)
+		self.MedPctEntry.insert(0, str(self.data.MedPctData))
 		self.data.set_CalcData()
 		self.update_CalcLabels()
+	
+	def update_CanLabels(self, *event):
+		try: 
+			if float(self.CanOverrideEntry.get())==0: 
+				self.data.CanAveData = self.data.CanPercentData * self.data.XRefCanData
+			else: 
+				self.data.update_canavedata(float(self.CanOverrideEntry.get()))
+				self.data.CanPercentData = round(float(self.data.CanAveData)/float(self.data.XRefCanData),2)
+				self.CanPercentEntry.delete(0,END)
+				self.CanPercentEntry.insert(0,str(self.data.CanPercentData))
+		except ValueError: print("CanSal Value error")
+		self.data.CANOverrideData = float(self.CanOverrideEntry.get())
+		self.CanMeanLabel.config(text= int(self.data.CanAveData))
+		self.CanTotalLabel.config(text= int(self.data.CanAveData+(self.data.CanAveData * self.data.CanBonusPctData)))
 	
 	def update_CalcLabels(self, *event):
 		## 10th Percentile
@@ -1155,14 +1177,6 @@ class Application(Frame):
 		try: self.data.CanBonusPctData = float(self.CanBonusPctEntry.get())
 		except ValueError: self.data.CanBonusPctData = self.data.CanBonusPctData
 		self.update_CanLabels()
-
-	def update_CanLabels(self, *event):
-		try: 
-			if float(self.CanOverrideEntry.get())==0: raise ValueError
-			else: self.data.update_canavedata(float(self.CanOverrideEntry.get()))
-		except ValueError: self.data.CanAveData = self.data.CanPercentData * self.data.XRefCanData
-		self.CanMeanLabel.config(text= int(self.data.CanAveData))
-		self.CanTotalLabel.config(text= int(self.data.CanAveData+(self.data.CanAveData * self.data.CanBonusPctData)))
 
 	def write_output(self, *event):
 		self.send_entry()
