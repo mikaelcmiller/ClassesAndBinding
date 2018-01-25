@@ -1107,7 +1107,11 @@ class Application(Frame):
 	
 	def update_MedSal(self, *event):
 		try:
-			if float(self.USOverrideEntry.get())!=0: self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
+			if float(self.USOverrideEntry.get())!=0:
+				self.data.update_MedSalCalcData(float(self.USOverrideEntry.get()))
+				self.data.MedPctData = round(float(self.data.MedSalData)/float(self.data.XRefUSData),2)
+				self.MedPctEntry.delete(0,END)
+				self.MedPctEntry.insert(0, str(self.data.MedPctData))
 			else: self.data.MedSalData = int(self.data.MedPctData*self.data.XRefUSData)
 		except ValueError: print("MedSal Value error")
 		self.data.set_CalcData()
