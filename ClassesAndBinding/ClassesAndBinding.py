@@ -1089,7 +1089,7 @@ class Application(Frame):
 		self.XRefUSLabel.config(text= self.data.XRefUSData)
 		self.XRefCanLabel.config(text= self.data.XRefCanData)
 		self.update_MedSal()
-
+	
 	def set_SalPercents(self, *event):
 		try: self.data.B100PctData = float(self.B100PctEntry.get())
 		except ValueError: print("B100err")
@@ -1138,7 +1138,7 @@ class Application(Frame):
 		self.data.CANOverrideData = float(self.CanOverrideEntry.get())
 		self.CanMeanLabel.config(text= int(self.data.CanAveData))
 		self.CanTotalLabel.config(text= int(self.data.CanAveData+(self.data.CanAveData * self.data.CanBonusPctData)))
-	
+
 	def update_CalcLabels(self, *event):
 		## 10th Percentile
 		if self.data.jobexec==0: self.High10thPercentile_100BilLabel.config(text="    ")
