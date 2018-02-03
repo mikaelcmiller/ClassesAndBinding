@@ -74,8 +74,8 @@ class Dataverse:
 			, socdesc.soctitle as SocTitle
 			, cast(LowPred as float)/MedPred as LowPredCalc
 			, cast(HighPred as float)/MedPred as HighPredCalc
-			, bench.USBenchMed
-			, bench.CanBenchMed
+			, bench.USBenchMed -- remove
+			, bench.CanBenchMed -- remove
 			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob
 			, jobdesc.ShortDesc
 			
@@ -381,25 +381,138 @@ class Dataverse:
 		else: self.outputdf = self.outputdf.append(self.jobsdf.loc[self.current_id,:])
 		## Update output rows after creating
 		self.outputdf.update(self.jobsdf.loc[self.current_id,:])
+		self.outputdf.set_value(self.current_id,'erijobid', self.current_id) #[erijobid]
+		self.outputdf.set_value(self.current_id,'jobdot', self.JobDotData) #[jobdot]
+		self.outputdf.set_value(self.current_id,'Pct_100Bil', self.B100PctData) #[jobdottitle]
+		self.outputdf.set_value(self.current_id,'CAN_AVE', self.CanAveData) #[CAN_AVE]
+		self.outputdf.set_value(self.current_id,'Sal1Mil', self.Sal1MilData) #[Sal1Mil]
+		self.outputdf.set_value(self.current_id,'LOWSAL', self.LowSalData) #[LOWSAL]
+		self.outputdf.set_value(self.current_id,'MEDSAL', self.MedSalData) #[MEDSAL]
+		self.outputdf.set_value(self.current_id,'HIGHSAL', self.HighSalData) #[HIGHSAL]
+		self.outputdf.set_value(self.current_id,'Sal100Bil', self.Sal100BilData) #[Sal100Bil]
+		self.outputdf.set_value(self.current_id,'Yr3Sal', int(self.ReptoYr3Data)) #[Yr3Sal]
+		self.outputdf.set_value(self.current_id,'CAN_PCT', self.CanPercentData) #[CAN_PCT]
+		self.outputdf.set_value(self.current_id,'Pct_1Mil', self.Mil1PctData) #[Pct_1Mil]
+		self.outputdf.set_value(self.current_id,'LOW_F', self.LowPctData) #[LOW_F]
+		self.outputdf.set_value(self.current_id,'US_PCT', self.MedPctData) #[US_PCT]
+		self.outputdf.set_value(self.current_id,'HIGH_F', self.HighPctData) #[HIGH_F]
+		self.outputdf.set_value(self.current_id,'Pct_100Bil', self.B100PctData) #[Pct_100Bil]
+		self.outputdf.set_value(self.current_id,'CANPK_C', self.CANOverrideData) #[CANPK_C]
+		self.outputdf.set_value(self.current_id,'USPK_C', self.USOverrideData) #[USPK_C]
+		 #[USPK_C1]
+		self.outputdf.set_value(self.current_id,'CanBonusPct', self.CanBonusPctData) #[CanBonusPct]
+		self.outputdf.set_value(self.current_id,'BonusPct1Mil', self.Mil1BonusPctData) #[BonusPct1Mil]
+		self.outputdf.set_value(self.current_id,'LowBonusPct', self.LowBonusPctData) #[LowBonusPct]
+		self.outputdf.set_value(self.current_id,'MedBonusPct', self.MedBonusPctData) #[MedBonusPct]
+		self.outputdf.set_value(self.current_id,'HighBonusPct', self.HighBonusPctData) #[HighBonusPct]
+		self.outputdf.set_value(self.current_id,'BonusPct100Bil', self.B100PctData) #[BonusPct100Bil]
+		self.outputdf.set_value(self.current_id,'StdErr', self.StdErrData) #[StdErr]
+		self.outputdf.set_value(self.current_id,'Q11Mil', self.Mil1Q1Data) #[Q11Mil]
+		self.outputdf.set_value(self.current_id,'Q1Low', int(self.LowQ1Data)) #[Q1Low]
+		self.outputdf.set_value(self.current_id,'Q1Med', int(self.MedQ1Data)) #[Q1Med]
+		self.outputdf.set_value(self.current_id,'Q1High', int(self.HighQ1Data)) #[Q1High]
+		self.outputdf.set_value(self.current_id,'Q1100Bil', int(self.B100Q1Data)) #[Q1100Bil]
+		self.outputdf.set_value(self.current_id,'Repto', int(self.ReptoData)) #[Repto]
+		self.outputdf.set_value(self.current_id,'ReptoTitle', self.ReptoTitleData) #[ReptoTitle]
+		self.outputdf.set_value(self.current_id,'ReptoSal', int(self.ReptoSalData)) #[ReptoSal]
+		self.outputdf.set_value(self.current_id,'ReptoYr3', int(self.ReptoYr3Data)) #[ReptoYr3]
+		self.outputdf.set_value(self.current_id,'JobXRef', int(self.XRefData)) #[JobXRef]
+		self.outputdf.set_value(self.current_id,'XRefTitle', self.XRefTitleData) #[XRefTitle]
+		self.outputdf.set_value(self.current_id,'XRefMed', int(self.XRefUSData)) #[XRefMed]
+		self.outputdf.set_value(self.current_id,'XRefCan', int(self.XRefCanData)) #[XRefCan]
+		self.outputdf.set_value(self.current_id,'Medyrs', int(self.MedYrsData)) #[Medyrs]
+		##[OldMyrs]
+		##[N_Medyrs]
+		##[AverageYears]
+		##[EstimatedYears]
+		self.outputdf.set_value(self.current_id,'SurveySampleSize', int(self.SurveyIncumbentsData)) #[SurveySampleSize]
+		self.outputdf.set_value(self.current_id,'Y_Base', int(self.SurveyMeanData)) #[Y_Base]
+		##[Y_Bpct]
+		##[LowPred]
+		self.outputdf.set_value(self.current_id,'MedPred', int(self.QCCheckData)) #[MedPred]
+		##[HighPred]
+		self.outputdf.set_value(self.current_id,'CanPred', int(self.QCCheckCanData)) #[CanPred]
+		self.outputdf.set_value(self.current_id,'CanPoly1', int(self.CanPoly1Data)) #[CanPoly1]
+		self.outputdf.set_value(self.current_id,'CanPoly2', int(self.CanPoly2Data)) #[CanPoly2]
+		self.outputdf.set_value(self.current_id,'CanPoly3', self.CanPoly3Data) #[CanPoly3]
+		self.outputdf.set_value(self.current_id,'AvgCanPoly', int(self.CanPolyMeanData)) #[AvgCanPoly]
+		self.outputdf.set_value(self.current_id,'AvgCanModels', int(self.CanPolyMeanQCData)) #[AvgCanModels]
+		##[AvgCan3Qtr]
+		##[Low3QTR_1Mil]
+		##[Low3Qtr]
+		##[Med3Qtr]
+		##[High3Qtr]
+		##[High3Qtr_100Bil]
+		self.outputdf.set_value(self.current_id,'Low10thPercentile_1Mil', int(self.Low10thPercentile_1MilData)) #[Low10thPercentile_1Mil]
+		self.outputdf.set_value(self.current_id,'Low10thPercentile', int(self.Low10thPercentileData)) #[Low10thPercentile]
+		self.outputdf.set_value(self.current_id,'Med10thPercentile', int(self.Med10thPercentileData)) #[Med10thPercentile]
+		self.outputdf.set_value(self.current_id,'High10thPercentile', int(self.High10thPercentileData)) #[High10thPercentile]
+		self.outputdf.set_value(self.current_id,'High10thPercentile_100Bil', int(self.High10thPercentile_100BilData)) #[High10thPercentile_100Bil]
+		self.outputdf.set_value(self.current_id,'Low90thPercentile_1Mil', int(self.Low90thPercentile_1MilData)) #[Low90thPercentile_1Mil]
+		self.outputdf.set_value(self.current_id,'Low90thPercentile', int(self.Low90thPercentileData)) #[Low90thPercentile]
+		self.outputdf.set_value(self.current_id,'Med90thPercentile', int(self.Med90thPercentileData)) #[Med90thPercentile]
+		self.outputdf.set_value(self.current_id,'High90thPercentile', int(self.High90thPercentileData)) #[High90thPercentile]
+		self.outputdf.set_value(self.current_id,'High90thPercentile_100bil', int(self.High90thPercentile_100BilData)) #[High90thPercentile_100bil]
+		self.outputdf.set_value(self.current_id,'TotalComp1Mil', int(self.Mil1TotalCompData)) #[TotalComp1Mil]
+		self.outputdf.set_value(self.current_id,'LowTotalComp', int(self.LowTotalCompData)) #[LowTotalComp]
+		self.outputdf.set_value(self.current_id,'MedTotalComp', int(self.MedTotalCompData)) #[MedTotalComp]
+		self.outputdf.set_value(self.current_id,'HighTotalComp', int(self.HighTotalCompData)) #[HighTotalComp]
+		self.outputdf.set_value(self.current_id,'TotalComp100Bil', int(self.B100TotalCompData)) #[TotalComp100Bil]
+		self.outputdf.set_value(self.current_id,'CPCNO', int(self.CPCData)) #[CPCNO]
+		self.outputdf.set_value(self.current_id,'CPCSalary', int(self.CPCSalData)) #[CPCSalary]
+		##[CPCSampleSize]
+		##[DegreeType]
+		##[CPCYearlyIncrease]
+		self.outputdf.set_value(self.current_id,'Adder', int(self.AdderData)) #[Adder]
+		self.outputdf.set_value(self.current_id,'DegreeName', self.DegreeNameData) #[DegreeName]
+		self.outputdf.set_value(self.current_id,'SOC', self.JobSocData) #[SOC]
+		self.outputdf.set_value(self.current_id,'OccAve', int(self.SocPredData)) #[OccAve]
+		##[USPop]
+		##[JobPopPct]
+		##[Funno]
+		##[SOC16pct]
+		##[SOC66pct]
+		##[LowSOCGrowthPct]
+		##[HighSOCGrothPct]
+		##[GrowthRate]
+		##[LowGrowthRate]
+		##[HighGrowthRate]
+		##[Indusdiffcode]
+		##[eriSurveyCode]
+		##[Profile]
+		##[DOTMatch]
+		##[Math]
+		##[Verb]
+		##[Reas]
+		##[SVP]
+		##[ReleaseId]
+		#self.outputdf.set_value(self.current_id,'SocTitle', self.SocTitleData) #[SocTitle]
+		self.outputdf.set_value(self.current_id,'LowPredCalc', float(self.LowPredPctData)) #[LowPredCalc]
+		self.outputdf.set_value(self.current_id,'HighPredCalc', float(self.HighPredPctData)) #[HighPredCalc]
+		##[USBenchMed]
+		##[CanBenchMed]
+		##[ShortDesc]
+
+
 		self.outputdf.set_value(self.current_id,'timestamp',datetime.datetime.now())
-		self.outputdf.set_value(self.current_id,'Pct_100Bil', self.B100PctData)
-		self.outputdf.set_value(self.current_id,'HIGH_F', self.HighPctData)
-		self.outputdf.set_value(self.current_id,'US_PCT', self.MedPctData)
-		self.outputdf.set_value(self.current_id,'LOW_F', self.LowPctData)
-		self.outputdf.set_value(self.current_id,'Pct_1Mil', self.Mil1PctData)
-		self.outputdf.set_value(self.current_id,'BonusPct100Bil', self.B100BonusPctData)
-		self.outputdf.set_value(self.current_id,'HighBonusPct', self.HighBonusPctData)
-		self.outputdf.set_value(self.current_id,'MedBonusPct', self.MedBonusPctData)
-		self.outputdf.set_value(self.current_id,'LowBonusPct', self.LowBonusPctData)
-		self.outputdf.set_value(self.current_id,'BonusPct1Mil', self.Mil1BonusPctData)
-		self.outputdf.set_value(self.current_id,'Low10thPercentile_1Mil', self.Low10thPercentile_1MilData)
-		self.outputdf.set_value(self.current_id,'High10thPercentile_100Bil', self.High10thPercentile_100BilData)
-		self.outputdf.set_value(self.current_id,'Low90thPercentile_1Mil', self.Low90thPercentile_1MilData)
-		self.outputdf.set_value(self.current_id,'High90thPercentile_100bil', float(self.High90thPercentile_100BilData))
-		self.outputdf.set_value(self.current_id,'TotalComp1Mil', self.Mil1TotalCompData)
-		self.outputdf.set_value(self.current_id,'TotalComp100Bil', self.B100TotalCompData)
-		self.outputdf.set_value(self.current_id,'USPK_C', self.USOverrideData)
-		self.outputdf.set_value(self.current_id,'CANPK_C', self.CANOverrideData)
+		#self.outputdf.set_value(self.current_id,'Pct_100Bil', self.B100PctData)
+		#self.outputdf.set_value(self.current_id,'HIGH_F', self.HighPctData)
+		#self.outputdf.set_value(self.current_id,'US_PCT', self.MedPctData)
+		#self.outputdf.set_value(self.current_id,'LOW_F', self.LowPctData)
+		#self.outputdf.set_value(self.current_id,'Pct_1Mil', self.Mil1PctData)
+		#self.outputdf.set_value(self.current_id,'BonusPct100Bil', self.B100BonusPctData)
+		#self.outputdf.set_value(self.current_id,'HighBonusPct', self.HighBonusPctData)
+		#self.outputdf.set_value(self.current_id,'MedBonusPct', self.MedBonusPctData)
+		#self.outputdf.set_value(self.current_id,'LowBonusPct', self.LowBonusPctData)
+		#self.outputdf.set_value(self.current_id,'BonusPct1Mil', self.Mil1BonusPctData)
+		#self.outputdf.set_value(self.current_id,'Low10thPercentile_1Mil', self.Low10thPercentile_1MilData)
+		#self.outputdf.set_value(self.current_id,'High10thPercentile_100Bil', self.High10thPercentile_100BilData)
+		#self.outputdf.set_value(self.current_id,'Low90thPercentile_1Mil', self.Low90thPercentile_1MilData)
+		#self.outputdf.set_value(self.current_id,'High90thPercentile_100bil', float(self.High90thPercentile_100BilData))
+		#self.outputdf.set_value(self.current_id,'TotalComp1Mil', self.Mil1TotalCompData)
+		#self.outputdf.set_value(self.current_id,'TotalComp100Bil', self.B100TotalCompData)
+		#self.outputdf.set_value(self.current_id,'USPK_C', self.USOverrideData)
+		#self.outputdf.set_value(self.current_id,'CANPK_C', self.CANOverrideData)
 		print(self.outputdf.loc[self.current_id,:])
 		#print(self.outputdf.loc[self.current_id,['erijobid', 'jobdottitle', 'Pct_100Bil', 'HIGH_F', 'US_PCT', 'LOW_F', 'Pct_1Mil', 'timestamp']])
 		print("Data written to OutputDF")
