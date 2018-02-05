@@ -630,7 +630,7 @@ class Dataverse:
 		cursor = self.pyocnxn.cursor()
 		for index, row in self.sqldf.iterrows():
 			self.outputsql = """
-				update assessorwork.sa.pct_tmp
+				update assessorwork.sa.PCT
 				set CAN_AVE = ?
 				, Sal1Mil = ?
 				, LOWSAL = ?
@@ -1285,11 +1285,14 @@ class Application(Frame):
 		self.LowTotalCompLabel.config(text= self.data.LowTotalCompData)
 		self.Mil1TotalCompLabel.config(text= self.data.Mil1TotalCompData)
 		self.EstimatedYearsLabel.config(text= self.data.EstimatedYears)
-		self.B100Q1Label.config(text= self.data.B100Q1Data)
+		if self.data.jobexec==0: self.B100Q1Label.config(text="    ")
+		else: self.B100Q1Label.config(text= int(self.data.B100Q1Data))
 		self.HighQ1Label.config(text= self.data.HighQ1Data)
 		self.MedQ1Label.config(text= self.data.MedQ1Data)
 		self.LowQ1Label.config(text= self.data.LowQ1Data)
 		self.Mil1Q1Label.config(text= self.data.Mil1Q1Data)
+		if self.data.jobexec==0: self.Mil1Q1Label.config(text="    ")
+		else: self.Mil1Q1Label.config(text= int(self.data.Mil1Q1Data))
 		self.QCCheckLabel.config(text= self.data.QCCheckData)
 		self.SocPredLabel.config(text= self.data.SocPredData)
 		self.SurveyMeanLabel.config(text= self.data.SurveyMeanData)
