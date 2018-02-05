@@ -661,7 +661,11 @@ class Dataverse:
 				, XRefMed = ?
 				, XRefCan = ?
 				, Medyrs = ?
-				
+				, Low10thPercentile_1Mil = ?
+				, Low10thPercentile = ?
+				, Med10thPercentile = ?
+				, High10thPercentile = ?
+				, High10thPercentile_100Bil = ?
 				
 				where erijobid = ?"""
 			
@@ -683,7 +687,14 @@ class Dataverse:
 			if row['USPK_C']==0: USOverride_out = None
 			else: USOverride_out = row['USPK_C']
 			
-			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], int(row['erijobid']))
+			if row['Low10thPercentile_1Mil']==0: Low10thPercentile_1Mil_out = None
+			else: Low10thPercentile_1Mil_out = row['Low10thPercentile_1Mil']
+			
+			if row['High10thPercentile_100Bil']==0: High10thPercentile_100Bil_out = None
+			else: High10thPercentile_100Bil_out = row['High10thPercentile_100Bil']
+			
+			
+			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, int(row['erijobid']))
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
 		self.pyocnxn.close()
