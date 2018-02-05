@@ -21,6 +21,7 @@ class Dataverse:
 		self.initializerawdataframe()
 		self.pyocnxn.close()
 		self.set_vars(input="index")
+		pd.options.display.float_format = '{:20,.4f}'.format #
 	
 	def initializerawdataframe(self):
 		#self.rawdatacnxn = pyodbc.connect()
@@ -90,7 +91,6 @@ class Dataverse:
 		self.outputdf['timestamp']=""
 		#print(self.jobsdf[['indexmaster','indexsearch']])
 		#print(sorted(list(self.jobsdf.columns.values)))
-		#print(self.jobsdf)
 		#print(self.outputdf)
 		print("Dataframe loaded from SQL")
 
