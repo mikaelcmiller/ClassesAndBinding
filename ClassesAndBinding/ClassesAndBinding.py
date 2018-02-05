@@ -71,7 +71,111 @@ class Dataverse:
 		self.getrawdata()
 
 	def inititalizedataframe(self):
-		self.sql = """SELECT pct.*
+		self.sql = """SELECT pct.erijobid
+			, pct.jobdot
+			, pct.jobdottitle
+			, pct.CAN_AVE
+			, isnull(pct.Sal1Mil,0) Sal1Mil
+			, pct.LOWSAL
+			, pct.MEDSAL
+			, pct.HIGHSAL
+			, isnull(pct.Sal100Bil,0) Sal100Bil
+			, pct.Yr3Sal
+			, pct.CAN_PCT
+			, pct.Pct_1Mil
+			, pct.LOW_F
+			, pct.US_PCT
+			, pct.HIGH_F
+			, pct.Pct_100Bil
+			, pct.CANPK_C
+			, pct.USPK_C
+			, pct.USPK_C1
+			, pct.CanBonusPct
+			, pct.BonusPct1Mil
+			, pct.LowBonusPct
+			, pct.MedBonusPct
+			, pct.HighBonusPct
+			, pct.BonusPct100Bil
+			, pct.StdErr
+			, isnull(pct.Q11Mil,0) Q11Mil
+			, pct.Q1Low
+			, pct.Q1Med
+			, pct.Q1High
+			, isnull(pct.Q1100Bil,0) Q1100Bil
+			, pct.Repto
+			, pct.ReptoTitle
+			, pct.ReptoSal
+			, pct.ReptoYr3
+			, pct.JobXRef
+			, pct.XRefTitle
+			, pct.XRefMed
+			, pct.XRefCan
+			, pct.Medyrs
+			, pct.OldMyrs
+			, pct.N_Medyrs
+			, pct.AverageYears
+			, pct.EstimatedYears
+			, isnull(pct.SurveySampleSize,0) SurveySampleSize
+			, isnull(pct.Y_Base,0) Y_Base
+			, pct.Y_Bpct
+			, pct.LowPred
+			, pct.MedPred
+			, pct.HighPred
+			, pct.CanPred
+			, pct.CanPoly1
+			, pct.CanPoly2
+			, pct.CanPoly3
+			, pct.AvgCanPoly
+			, pct.AvgCanModels
+			, pct.AvgCan3Qtr
+			, pct.Low3QTR_1Mil
+			, pct.Low3Qtr
+			, pct.Med3Qtr
+			, pct.High3Qtr
+			, pct.High3Qtr_100Bil
+			, pct.Low10thPercentile_1Mil
+			, pct.Low10thPercentile
+			, pct.Med10thPercentile
+			, pct.High10thPercentile
+			, pct.High10thPercentile_100Bil
+			, pct.Low90thPercentile_1Mil
+			, pct.Low90thPercentile
+			, pct.Med90thPercentile
+			, pct.High90thPercentile
+			, pct.High90thPercentile_100bil
+			, pct.TotalComp1Mil
+			, pct.LowTotalComp
+			, pct.MedTotalComp
+			, pct.HighTotalComp
+			, pct.TotalComp100Bil
+			, pct.CPCNO
+			, pct.CPCSalary
+			, pct.CPCSampleSize
+			, pct.DegreeType
+			, pct.CPCYearlyIncrease
+			, pct.Adder
+			, pct.DegreeName
+			, pct.SOC
+			, pct.OccAve
+			, pct.USPop
+			, pct.JobPopPct
+			, pct.Funno
+			, pct.SOC16pct
+			, pct.SOC66pct
+			, pct.LowSOCGrowthPct
+			, pct.HighSOCGrothPct
+			, pct.GrowthRate
+			, pct.LowGrowthRate
+			, pct.HighGrowthRate
+			, pct.Indusdiffcode
+			, pct.eriSurveyCode
+			, pct.Profile
+			, pct.DOTMatch
+			, pct.Math
+			, pct.Verb
+			, pct.Reas
+			, pct.SVP
+			, pct.ReleaseId
 			, socdesc.soctitle as SocTitle
 			, cast(LowPred as float)/MedPred as LowPredCalc
 			, cast(HighPred as float)/MedPred as HighPredCalc
@@ -88,7 +192,9 @@ class Dataverse:
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 		self.last_index = self.jobsdf.last_valid_index()
 		self.outputdf = pd.DataFrame(columns=self.jobsdf.columns)
-		self.outputdf['timestamp']=""
+		self.outputdf['timestamp']="" #Might want to remove timestamp when using UPDATE sql code
+		self.jobsdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']] = self.jobsdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']].astype(int)
+		self.outputdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']] = self.outputdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']].astype(int)
 		#print(self.jobsdf[['indexmaster','indexsearch']])
 		#print(sorted(list(self.jobsdf.columns.values)))
 		#print(self.outputdf)
