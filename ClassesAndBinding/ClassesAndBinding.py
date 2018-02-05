@@ -486,7 +486,7 @@ class Dataverse:
 		self.outputdf.update(self.jobsdf.loc[self.current_id,:])
 		self.outputdf.set_value(self.current_id,'erijobid', self.current_id) #[erijobid]
 		self.outputdf.set_value(self.current_id,'jobdot', self.JobDotData) #[jobdot]
-		self.outputdf.set_value(self.current_id,'Pct_100Bil', self.B100PctData) #[jobdottitle]
+		self.outputdf.set_value(self.current_id,'jobdottitle', self.JobTitleData) #[jobdottitle]
 		self.outputdf.set_value(self.current_id,'CAN_AVE', self.CanAveData) #[CAN_AVE]
 		self.outputdf.set_value(self.current_id,'Sal1Mil', self.Sal1MilData) #[Sal1Mil]
 		self.outputdf.set_value(self.current_id,'LOWSAL', self.LowSalData) #[LOWSAL]
@@ -616,7 +616,8 @@ class Dataverse:
 		#self.outputdf.set_value(self.current_id,'TotalComp100Bil', self.B100TotalCompData)
 		#self.outputdf.set_value(self.current_id,'USPK_C', self.USOverrideData)
 		#self.outputdf.set_value(self.current_id,'CANPK_C', self.CANOverrideData)
-		print(self.outputdf.loc[self.current_id,:])
+		
+		#print(self.outputdf.loc[self.current_id,:])
 		#print(self.outputdf.loc[self.current_id,['erijobid', 'jobdottitle', 'Pct_100Bil', 'HIGH_F', 'US_PCT', 'LOW_F', 'Pct_1Mil', 'timestamp']])
 		print("Data written to OutputDF")
 
@@ -625,8 +626,16 @@ class Dataverse:
 		self.sqldf = self.outputdf.copy()
 		# Drop specific columns from SQL DataFrame before writing to SQL database
 		self.sqldf = self.sqldf.drop(['execjob','indexmaster','index1','indexsearch'],axis=1)
-		engine = sqlalchemy.create_engine('mssql+pyodbc://SNADSSQ3/AssessorWork?driver=SQL+Server+Native+Client+11.0')
-		self.sqldf.to_sql('AuditTest_',engine,schema='dbo',if_exists='append',index=False)
+		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
+		cursor = self.pyocnxn.cursor()
+		for index, row in self.sqldf.iterrows():
+			self.outputsql = "update assessorwork.sa.pct_tmp set MEDSAL=? where erijobid = ?"
+			args = (int(row['MEDSAL']),int(row['erijobid']))
+			cursor.execute(self.outputsql,args)
+			self.pyocnxn.commit()
+		self.pyocnxn.close()
+		#engine = sqlalchemy.create_engine('mssql+pyodbc://SNADSSQ3/AssessorWork?driver=SQL+Server+Native+Client+11.0')
+		#self.sqldf.to_sql('AuditTest_',engine,schema='dbo',if_exists='append',index=False)
 		print("Dataframe written to SQL")
 
 
