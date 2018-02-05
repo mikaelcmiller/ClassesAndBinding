@@ -74,13 +74,10 @@ class Dataverse:
 			, socdesc.soctitle as SocTitle
 			, cast(LowPred as float)/MedPred as LowPredCalc
 			, cast(HighPred as float)/MedPred as HighPredCalc
-			, bench.USBenchMed -- remove
-			, bench.CanBenchMed -- remove
 			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob
 			, jobdesc.ShortDesc
 			
-			FROM assessorwork.sa.pct pct 
-			left join assessorwork.sa.bench bench on bench.erijobid=pct.erijobid and bench.releaseid=pct.releaseid
+			FROM assessorwork.sa.pct pct
 			join (select soccode, soctitle from [AssessorWork].[dbo].[SocDescription]) socdesc on pct.SOC = socdesc.SocCode
 			join (select eDOT, replace(replace(ShortDesc,'/duty','duty'),'<duty>','') as ShortDesc from [AssessorWork].[sa].[Sadescriptions]) jobdesc on jobdesc.eDOT = pct.jobdot
 			order by execjob desc, pct.erijobid"""
