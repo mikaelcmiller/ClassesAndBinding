@@ -671,41 +671,41 @@ class Dataverse:
 				, Med90thPercentile = ?
 				, High90thPercentile = ?
 				, High90thPercentile_100bil = ?
+				, TotalComp1Mil = ?
+				, LowTotalComp = ?
+				, MedTotalComp = ?
+				, HighTotalComp = ?
+				, TotalComp100Bil = ?
 				
 				where erijobid = ?"""
 			
+			## Inserting Nulls to SQL DB for consistency
 			if row['Sal1Mil']<=0: Sal1Mil_out = None
 			else: Sal1Mil_out = row['Sal1Mil']
-			
 			if row['Sal100Bil']<=0: Sal100Bil_out = None
 			else: Sal100Bil_out = row['Sal100Bil']
-			
 			if row['BonusPct1Mil']==0: BonusPct1Mil_out = None
 			else: BonusPct1Mil_out = row['BonusPct1Mil']
-			
 			if row['BonusPct100Bil']==0: BonusPct100Bil_out = None
 			else: BonusPct100Bil_out = row['BonusPct100Bil']
-			
 			if row['CANPK_C']==0: CanOverride_out = None
 			else: CanOverride_out = row['CANPK_C']
-			
 			if row['USPK_C']==0: USOverride_out = None
 			else: USOverride_out = row['USPK_C']
-			
 			if row['Low10thPercentile_1Mil']==0: Low10thPercentile_1Mil_out = None
 			else: Low10thPercentile_1Mil_out = row['Low10thPercentile_1Mil']
-			
 			if row['High10thPercentile_100Bil']==0: High10thPercentile_100Bil_out = None
 			else: High10thPercentile_100Bil_out = row['High10thPercentile_100Bil']
-			
 			if row['Low90thPercentile_1Mil']==0: Low90thPercentile_1Mil_out = None
 			else: Low90thPercentile_1Mil_out = row['Low90thPercentile_1Mil']
-			
 			if row['High90thPercentile_100bil']==0: High90thPercentile_100bil_out = None
 			else: High90thPercentile_100bil_out = row['High90thPercentile_100bil']
+			if row['TotalComp1Mil']==0: TotalComp1Mil_out = None
+			else: TotalComp1Mil_out = row['TotalComp1Mil']
+			if row['TotalComp100Bil']==0: TotalComp100Bil_out = None
+			else: TotalComp100Bil_out = row['TotalComp100Bil']
 			
-			
-			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, int(row['erijobid']))
+			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, int(row['erijobid']))
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
 		self.pyocnxn.close()
