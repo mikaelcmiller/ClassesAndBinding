@@ -629,8 +629,72 @@ class Dataverse:
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		cursor = self.pyocnxn.cursor()
 		for index, row in self.sqldf.iterrows():
-			self.outputsql = "update assessorwork.sa.pct_tmp set MEDSAL=? where erijobid = ?"
-			args = (int(row['MEDSAL']),int(row['erijobid']))
+			self.outputsql = """
+				update assessorwork.sa.pct_tmp
+				set CAN_AVE = ?
+				, Sal1Mil = ?
+				, LOWSAL = ?
+				, MEDSAL = ?
+				, HIGHSAL = ?
+				, Sal100Bil = ?
+				, CAN_PCT = ?
+				, Pct_1Mil = ?
+				, LOW_F = ?
+				, US_PCT = ?
+				, HIGH_F = ?
+				, PCT_100Bil = ?
+				, CANPK_C = ?
+				, USPK_C = ?
+				, CanBonusPct = ?
+				, BonusPct1Mil = ?
+				, LowBonusPct = ?
+				, MedBonusPct = ?
+				, HighBonusPct = ?
+				, BonusPct100Bil = ?
+				, StdErr = ?
+				, Repto = ?
+				, ReptoTitle = ?
+				, ReptoSal = ?
+				, ReptoYr3 = ?
+				, JobXRef = ?
+				, XRefTitle = ?
+				, XRefMed = ?
+				, XRefCan = ?
+				, Medyrs = ?
+				, Low10thPercentile_1Mil = ?
+				, Low10thPercentile = ?
+				, Med10thPercentile = ?
+				, High10thPercentile = ?
+				, High10thPercentile_100Bil = ?
+				
+				where erijobid = ?"""
+			
+			if row['Sal1Mil']<=0: Sal1Mil_out = None
+			else: Sal1Mil_out = row['Sal1Mil']
+			
+			if row['Sal100Bil']<=0: Sal100Bil_out = None
+			else: Sal100Bil_out = row['Sal100Bil']
+			
+			if row['BonusPct1Mil']==0: BonusPct1Mil_out = None
+			else: BonusPct1Mil_out = row['BonusPct1Mil']
+			
+			if row['BonusPct100Bil']==0: BonusPct100Bil_out = None
+			else: BonusPct100Bil_out = row['BonusPct100Bil']
+			
+			if row['CANPK_C']==0: CanOverride_out = None
+			else: CanOverride_out = row['CANPK_C']
+			
+			if row['USPK_C']==0: USOverride_out = None
+			else: USOverride_out = row['USPK_C']
+			
+			if row['Low10thPercentile_1Mil']==0: Low10thPercentile_1Mil_out = None
+			else: Low10thPercentile_1Mil_out = row['Low10thPercentile_1Mil']
+			
+			if row['High10thPercentile_100Bil']==0: High10thPercentile_100Bil_out = None
+			else: High10thPercentile_100Bil_out = row['High10thPercentile_100Bil']
+			
+			
+			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, int(row['erijobid']))
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
 		self.pyocnxn.close()
@@ -1018,6 +1082,7 @@ class Application(Frame):
 		self.Mil1BonusPctEntry.bind('<Return>', self.set_SalPercents)
 		self.ReptoEntry.bind('<Return>', self.update_Repto)
 		self.XRefEntry.bind('<Return>', self.update_XRef)
+		self.MedYrsEntry.bind('<Return>', self.update_MedYrs)
 		self.BlankSpace = Label(self, text="    ")
 		self.BlankSpace.grid(row=28, column=2)
 		self.BlankSpace2 = Label(self, text="    ")
@@ -1278,8 +1343,12 @@ class Application(Frame):
 		self.data.LowBonusPctData = float(self.LowBonusPctEntry.get())
 		self.data.Mil1BonusPctData = float(self.Mil1BonusPctEntry.get())
 
+	def update_MedYrs(self, *event):
+		self.data.MedYrsData = int(self.MedYrsEntry.get())
+
 	def update_Repto(self, *event):
 		current_selector = int(self.ReptoEntry.get())
+		self.data.ReptoData = int(self.ReptoEntry.get())
 		try:
 			self.data.jobsdf.set_index('indexsearch', inplace=True)
 			self.data.jobsdf['indexsearch'] = self.data.jobsdf['erijobid']
@@ -1298,6 +1367,7 @@ class Application(Frame):
 
 	def update_XRef(self, *event):
 		current_selector = int(self.XRefEntry.get())
+		self.data.XRefData = int(self.XRefEntry.get())
 		try:
 			self.data.jobsdf.set_index('indexsearch', inplace=True)
 			self.data.jobsdf['indexsearch'] = self.data.jobsdf['erijobid']
