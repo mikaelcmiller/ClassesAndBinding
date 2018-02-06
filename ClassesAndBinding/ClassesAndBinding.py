@@ -64,7 +64,7 @@ class Dataverse:
 					, 0 as Can_Order
 			FROM [AssessorWork].[sa].[SurveyNonExec]
 
-			ORDER BY erijobid, Can_Order, S_Order, S_comp, YEARMO
+			ORDER BY erijobid, Can_Order, S_Order, YEARMO
 		"""
 		self.rawdatadf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		self.rawdatadf.set_index('EriJobId', inplace=True)
