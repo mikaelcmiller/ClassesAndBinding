@@ -1,11 +1,8 @@
-### DATA AUDIT WORK
+### PCT DATA AUDIT 
 
 import pandas as pd
-import numpy as np
 import pandas.io.sql as psql
 import pyodbc
-import sqlalchemy
-import datetime
 from tkinter import *
 from tkinter.ttk import *
 
@@ -24,7 +21,6 @@ class Dataverse:
 		pd.options.display.float_format = '{:20,.4f}'.format #
 	
 	def initializerawdataframe(self):
-		#self.rawdatacnxn = pyodbc.connect()
 		self.sql = """
 			SELECT [EriJobId]
 					, cast(REPLACE([S_Comp],'TARGET ->','TAR_CAN') as varchar(15)) S_Comp
@@ -192,7 +188,6 @@ class Dataverse:
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 		self.last_index = self.jobsdf.last_valid_index()
 		self.outputdf = pd.DataFrame(columns=self.jobsdf.columns)
-		self.outputdf['timestamp']="" #Might want to remove timestamp when using UPDATE sql code
 		self.jobsdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']] = self.jobsdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']].astype(int)
 		self.outputdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']] = self.outputdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']].astype(int)
 		#print(self.jobsdf[['indexmaster','indexsearch']])
@@ -201,6 +196,7 @@ class Dataverse:
 		print("Dataframe loaded from SQL")
 
 	def find_by_erijobid(self, entry):
+		# Pull up user-searched record (by entry)
 		idsearch = int(entry)
 		try:
 			try:
@@ -211,12 +207,12 @@ class Dataverse:
 			self.current_id = idsearch
 			self.current_index = self.jobsdf.loc[self.current_id,'index1']
 			self.set_vars(input="id")
-			##Need to check if exists in outputdf, if so: pull from output df instead of jobsdf
 			self.getrawdata()
 		except KeyError:
 			self.jobname = "No job found"
 
 	def index_next(self ,*event):
+		# Pull next available record from jobsdf
 		try:
 			self.jobsdf.set_index('index1', inplace=True)
 			self.jobsdf['index1'] = self.jobsdf['indexmaster']
@@ -229,6 +225,7 @@ class Dataverse:
 		self.getrawdata()
 
 	def index_prior(self, *event):
+		# Pull previous available record from jobsdf
 		try:
 			self.jobsdf.set_index('index1', inplace=True)
 			self.jobsdf['index1'] = self.jobsdf['indexmaster']
@@ -241,6 +238,7 @@ class Dataverse:
 		self.getrawdata()
 
 	def getrawdata(self):
+		# Format raw data from rawdata dataframe for given id
 		self.rawstring = "S_Comp          YEARMO  Wgt/Rev  No_Emp AveBase Y_Base\n----------------------------------------------------------\n" #self.rawdatadf.loc[self.current_id].to_string(index=FALSE, header=FALSE, columns=['S_Comp', 'YEARMO', 'Wgt', 'No_Emp', 'AveBase', 'Y_Base'])
 		try:
 			self.temprawdf = self.rawdatadf.loc[self.current_id]
@@ -251,6 +249,7 @@ class Dataverse:
 		except: self.rawstring = self.rawstring+""
 
 	def set_vars(self, input="index"):
+		# Set variables from jobs dataframe
 		if(input=="index"):
 			current_selector = self.current_index
 		else:
@@ -276,7 +275,6 @@ class Dataverse:
 		self.LowQ1Data = self.jobsdf.loc[current_selector,'Q1Low']
 		if pd.isnull(self.jobsdf.loc[current_selector,'Q11Mil']) : self.Mil1Q1Data=""
 		else: self.Mil1Q1Data = int(self.jobsdf.loc[current_selector,'Q11Mil'])
-		#self.Mil1Q1Data = self.jobsdf.loc[current_selector,'Q11Mil']
 		try: self.QCCheckData = int(self.jobsdf.loc[current_selector,'MedPred'])
 		except: self.QCCheckData = self.jobsdf.loc[current_selector,'MedPred']
 		self.SocPredData = self.jobsdf.loc[current_selector,'OccAve']
@@ -403,6 +401,7 @@ class Dataverse:
 		self.Mil1TotalCompData = int(self.Sal1MilData + self.Sal1MilData * self.Mil1BonusPctData)
 
 	def check_output(self, *event):
+		# Pull data from output dataframe (instead of jobs dataframe) if given erijobid is found in outputdf
 		try:
 			self.jobsdf.set_index('indexsearch', inplace=True)
 			self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
@@ -473,6 +472,7 @@ class Dataverse:
 			self.CANOverrideData = self.outputdf.loc[current_selector, 'CANPK_C']
 
 	def write_to_outputdf(self, *event):
+		# User wants to commit changes
 		try:
 			self.jobsdf.set_index('indexsearch', inplace=True)
 			self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
@@ -595,30 +595,8 @@ class Dataverse:
 		##[USBenchMed]
 		##[CanBenchMed]
 		##[ShortDesc]
-
-
-		self.outputdf.set_value(self.current_id,'timestamp',datetime.datetime.now())
-		#self.outputdf.set_value(self.current_id,'Pct_100Bil', self.B100PctData)
-		#self.outputdf.set_value(self.current_id,'HIGH_F', self.HighPctData)
-		#self.outputdf.set_value(self.current_id,'US_PCT', self.MedPctData)
-		#self.outputdf.set_value(self.current_id,'LOW_F', self.LowPctData)
-		#self.outputdf.set_value(self.current_id,'Pct_1Mil', self.Mil1PctData)
-		#self.outputdf.set_value(self.current_id,'BonusPct100Bil', self.B100BonusPctData)
-		#self.outputdf.set_value(self.current_id,'HighBonusPct', self.HighBonusPctData)
-		#self.outputdf.set_value(self.current_id,'MedBonusPct', self.MedBonusPctData)
-		#self.outputdf.set_value(self.current_id,'LowBonusPct', self.LowBonusPctData)
-		#self.outputdf.set_value(self.current_id,'BonusPct1Mil', self.Mil1BonusPctData)
-		#self.outputdf.set_value(self.current_id,'Low10thPercentile_1Mil', self.Low10thPercentile_1MilData)
-		#self.outputdf.set_value(self.current_id,'High10thPercentile_100Bil', self.High10thPercentile_100BilData)
-		#self.outputdf.set_value(self.current_id,'Low90thPercentile_1Mil', self.Low90thPercentile_1MilData)
-		#self.outputdf.set_value(self.current_id,'High90thPercentile_100bil', float(self.High90thPercentile_100BilData))
-		#self.outputdf.set_value(self.current_id,'TotalComp1Mil', self.Mil1TotalCompData)
-		#self.outputdf.set_value(self.current_id,'TotalComp100Bil', self.B100TotalCompData)
-		#self.outputdf.set_value(self.current_id,'USPK_C', self.USOverrideData)
-		#self.outputdf.set_value(self.current_id,'CANPK_C', self.CANOverrideData)
 		
 		#print(self.outputdf.loc[self.current_id,:])
-		#print(self.outputdf.loc[self.current_id,['erijobid', 'jobdottitle', 'Pct_100Bil', 'HIGH_F', 'US_PCT', 'LOW_F', 'Pct_1Mil', 'timestamp']])
 		print("Data written to OutputDF")
 
 	def write_to_sql(self, *event):
@@ -709,8 +687,6 @@ class Dataverse:
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
 		self.pyocnxn.close()
-		#engine = sqlalchemy.create_engine('mssql+pyodbc://SNADSSQ3/AssessorWork?driver=SQL+Server+Native+Client+11.0')
-		#self.sqldf.to_sql('AuditTest_',engine,schema='dbo',if_exists='append',index=False)
 		print("Dataframe written to SQL")
 
 
@@ -809,12 +785,6 @@ class Application(Frame):
 		self.ReptoEntry.grid(row=29, column=2)
 		self.XRefEntry = Entry(self, width=10)
 		self.XRefEntry.grid(row=30, column=2)
-		#self.ERISearch = Label(self,text="ERI # Search")
-		#self.ERISearch.grid(row=0, column=1, sticky=E)
-		#self.eDOT = Label(self,text="eDOT     SOC")
-		#self.eDOT.grid(row=2, column=4)
-		#self.SOC = Label(self,text="SOC")
-		#self.SOC.grid(row=2, column=5, sticky=E)
 		self.Pct10 = Label(self,text="10th Pct")
 		self.Pct10.grid(row=3, column=2)
 		self.Mean = Label(self,text="Mean")
@@ -891,8 +861,6 @@ class Application(Frame):
 		self.Mil1Total.grid(row=19, column=1, sticky=E)
 		self.Mil1Bonus = Label(self,text="1 Mil Bonus")
 		self.Mil1Bonus.grid(row=19, column=4, sticky=W)
-		#self.StdErrPred = Label(self,text="Std Error Pred")
-		#self.StdErrPred.grid(row=20, column=1, sticky=E)
 		self.StdErr = Label(self,text="Std Error")
 		self.StdErr.grid(row=20, column=4, sticky=W)
 		self.MedyrsPred = Label(self,text="Medyrs Pred")
@@ -947,14 +915,6 @@ class Application(Frame):
 		self.Adder.grid(row=31, column=6, sticky=W)
 		self.Description = Label(self,text="Job Description")
 		self.Description.grid(row=32, column=0, sticky=W)
-		#self.JobTitleLabel = Label(self, text="[Initial Text]", relief="groove", width=45, anchor=E)
-		#self.JobTitleLabel.grid(row=2, column=0, sticky=E)
-		#self.JobDotLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		#self.JobDotLabel.grid(row=2, column=3)
-		#self.JobSocLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		#self.JobSocLabel.grid(row=2, column=5)
-		#self.SocOutputLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=200, width=35)
-		#self.SocOutputLabel.grid(row=2, column=6, rowspan=2, sticky=NW)
 		self.High10thPercentile_100BilLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.High10thPercentile_100BilLabel.grid(row=4, column=2)
 		self.Sal100BilLabel = Label(self, text="Initial Text", relief="groove", width=10)
@@ -1029,8 +989,6 @@ class Application(Frame):
 		self.LowTotalCompLabel.grid(row=18, column=2)
 		self.Mil1TotalCompLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.Mil1TotalCompLabel.grid(row=19, column=2)
-		#self.StdErrPredLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		#self.StdErrPredLabel.grid(row=20, column=2)
 		self.EstimatedYearsLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.EstimatedYearsLabel.grid(row=21, column=2)
 		self.QCCheckCanLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
@@ -1136,7 +1094,6 @@ class Application(Frame):
 	def label_entry_clear(self, *event):
 		## Labels
 		self.JobDotLabel.config(text="    ")
-		#self.ExecJobLabel.config(text="    ")
 		self.JobSocLabel.config(text="    ")
 		self.HighPredPctLabel.config(text="    ")
 		self.LowPredPctLabel.config(text="    ")
@@ -1173,9 +1130,7 @@ class Application(Frame):
 		self.CPCLabel.config(text="    ")
 		self.CPCSalLabel.config(text="    ")
 		self.AdderLabel.config(text="    ")
-		#self.RawDataLabel.config(text="    ")
 		self.JobDescriptionLabel.config(text="    ")
-		#self.StdErrPredLabel.config(text="    ")
 		self.SocOutputLabel.config(text="    ")
 		## Entries
 		self.RawDataTextbox.config(state=NORMAL)
@@ -1272,8 +1227,6 @@ class Application(Frame):
 		self.label_entry_clear()
 		self.jobentryreplace()
 		## Labels
-		#if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
-		#else : self.ExecJobLabel.config(text="Non-Exec")
 		self.JobTitleLabel.config(text= self.data.jobname)
 		self.JobDotLabel.config(text= self.data.JobDotData)
 		self.JobSocLabel.config(text= self.data.JobSocData)
@@ -1313,7 +1266,6 @@ class Application(Frame):
 		self.CPCLabel.config(text=self.data.CPCData)
 		self.CPCSalLabel.config(text= self.data.CPCSalData)
 		self.AdderLabel.config(text= self.data.AdderData)
-		#self.RawDataLabel.config(text="Raw data text")
 		self.JobDescriptionLabel.config(text= self.data.JobDescriptionData)
 		self.SocOutputLabel.config(text=self.data.SocTitleData)
 		## Entries
@@ -1426,7 +1378,6 @@ class Application(Frame):
 				self.data.MedPctData = round(float(self.data.MedSalData)/float(self.data.XRefUSData),2)
 			else:
 				self.data.MedSalData = int(self.data.MedPctData*self.data.XRefUSData)
-				#self.data.MedPctData = self.data.MedPctDataInit
 		except ValueError: print("MedSal Value error")
 		self.data.USOverrideData = float(self.USOverrideEntry.get())
 		self.MedPctEntry.delete(0,END)
