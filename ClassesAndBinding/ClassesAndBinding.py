@@ -76,7 +76,7 @@ class Dataverse:
 			, pct.MEDSAL
 			, pct.HIGHSAL
 			, isnull(pct.Sal100Bil,0) Sal100Bil
-			, pct.Yr3Sal
+			, isnull(pct.Yr3Sal, 0) Yr3Sal
 			, pct.CAN_PCT
 			, pct.Pct_1Mil
 			, pct.LOW_F
@@ -259,7 +259,7 @@ class Dataverse:
 		self.MedTotalCompData = self.jobsdf.loc[current_selector,'MedTotalComp']
 		self.LowTotalCompData = self.jobsdf.loc[current_selector,'LowTotalComp']
 		self.Mil1TotalCompData = self.jobsdf.loc[current_selector,'TotalComp1Mil']
-		if pd.isnull(self.jobsdf.loc[current_selector,'EstimatedYears']) : self.EstimatedYears = "NA"
+		if pd.isnull(self.jobsdf.loc[current_selector,'EstimatedYears']) : self.EstimatedYears = 0
 		else: self.EstimatedYears = int(self.jobsdf.loc[current_selector,'EstimatedYears'])
 		if pd.isnull(self.jobsdf.loc[current_selector,'Q1100Bil']) : self.B100Q1Data=""
 		else: self.B100Q1Data = int(self.jobsdf.loc[current_selector,'Q1100Bil'])
@@ -414,7 +414,7 @@ class Dataverse:
 			self.MedTotalCompData = self.outputdf.loc[current_selector,'MedTotalComp']
 			self.LowTotalCompData = self.outputdf.loc[current_selector,'LowTotalComp']
 			self.Mil1TotalCompData = self.outputdf.loc[current_selector,'TotalComp1Mil']
-			if pd.isnull(self.outputdf.loc[current_selector,'EstimatedYears']) : self.EstimatedYears = "NA"
+			if pd.isnull(self.outputdf.loc[current_selector,'EstimatedYears']) : self.EstimatedYears = 0
 			else: self.EstimatedYears = int(self.outputdf.loc[current_selector,'EstimatedYears'])
 			self.B100Q1Data = self.outputdf.loc[current_selector,'Q1100Bil']
 			self.HighQ1Data = self.outputdf.loc[current_selector,'Q1High']
@@ -1032,7 +1032,7 @@ class Application(Frame):
 		self.CanMeanLabel.grid(row=23, column=4, sticky=W)
 		self.CanPoly1Label = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.CanPoly1Label.grid(row=23, column=5)
-		self.CanQ1Label = Label(self, text="[Initial Text]", relief="groove", width=10)
+		self.CanQ1Label = Label(self, text="", relief="groove", width=10)
 		self.CanQ1Label.grid(row=24, column=4, sticky=W)
 		self.CanPoly2Label = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.CanPoly2Label.grid(row=24, column=5)
@@ -1365,9 +1365,9 @@ class Application(Frame):
 			self.data.ReptoSalData = self.data.jobsdf.loc[current_selector,'MEDSAL']
 			self.data.ReptoYr3Data = self.data.jobsdf.loc[current_selector,'Yr3Sal']
 		except KeyError:
-			self.data.ReptoTitleData = 'NA'
-			self.data.ReptoSalData = 'NA'
-			self.data.ReptoYr3Data = 'NA'
+			self.data.ReptoTitleData = 0
+			self.data.ReptoSalData = 0
+			self.data.ReptoYr3Data = 0
 		self.ReptoTitleLabel.config(text= self.data.ReptoTitleData)
 		self.ReptoSalLabel.config(text= self.data.ReptoSalData)
 		self.ReptoYr3Label.config(text= self.data.ReptoYr3Data)
@@ -1384,9 +1384,9 @@ class Application(Frame):
 			self.data.XRefUSData = self.data.jobsdf.loc[current_selector,'MEDSAL']
 			self.data.XRefCanData = self.data.jobsdf.loc[current_selector,'CAN_AVE']
 		except KeyError:
-			self.data.XRefTitleData = 'NA'
-			self.data.XRefData = 'NA'
-			self.data.XRefCanData = 'NA'
+			self.data.XRefTitleData = 0
+			self.data.XRefData = 0
+			self.data.XRefCanData = 0
 		self.XRefTitleLabel.config(text= self.data.XRefTitleData)
 		self.XRefUSLabel.config(text= self.data.XRefUSData)
 		self.XRefCanLabel.config(text= self.data.XRefCanData)
