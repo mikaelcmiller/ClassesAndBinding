@@ -6,12 +6,15 @@
 import pandas as pd
 import pandas.io.sql as psql
 import pyodbc
+import os
 from tkinter import *
 from tkinter.ttk import *
 
 
 class Dataverse:
 	def __init__(self):
+		self.user = os.getlogin()
+		print("Logged in as: "+self.user)
 		self.current_index = 0
 		self.current_id = 1
 		self.jobexec=1
@@ -22,6 +25,7 @@ class Dataverse:
 		self.pyocnxn.close()
 		self.set_vars(input="index")
 		pd.options.display.float_format = '{:20,.4f}'.format #
+		
 	
 	def initializerawdataframe(self):
 		self.sql = """
@@ -592,29 +596,6 @@ class Dataverse:
 		##[CanBenchMed]
 		##[ShortDesc]
 
-
-		#self.outputdf.set_value(self.current_id,'timestamp',datetime.datetime.now())
-		#self.outputdf.set_value(self.current_id,'Pct_100Bil', self.B100PctData)
-		#self.outputdf.set_value(self.current_id,'HIGH_F', self.HighPctData)
-		#self.outputdf.set_value(self.current_id,'US_PCT', self.MedPctData)
-		#self.outputdf.set_value(self.current_id,'LOW_F', self.LowPctData)
-		#self.outputdf.set_value(self.current_id,'Pct_1Mil', self.Mil1PctData)
-		#self.outputdf.set_value(self.current_id,'BonusPct100Bil', self.B100BonusPctData)
-		#self.outputdf.set_value(self.current_id,'HighBonusPct', self.HighBonusPctData)
-		#self.outputdf.set_value(self.current_id,'MedBonusPct', self.MedBonusPctData)
-		#self.outputdf.set_value(self.current_id,'LowBonusPct', self.LowBonusPctData)
-		#self.outputdf.set_value(self.current_id,'BonusPct1Mil', self.Mil1BonusPctData)
-		#self.outputdf.set_value(self.current_id,'Low10thPercentile_1Mil', self.Low10thPercentile_1MilData)
-		#self.outputdf.set_value(self.current_id,'High10thPercentile_100Bil', self.High10thPercentile_100BilData)
-		#self.outputdf.set_value(self.current_id,'Low90thPercentile_1Mil', self.Low90thPercentile_1MilData)
-		#self.outputdf.set_value(self.current_id,'High90thPercentile_100bil', float(self.High90thPercentile_100BilData))
-		#self.outputdf.set_value(self.current_id,'TotalComp1Mil', self.Mil1TotalCompData)
-		#self.outputdf.set_value(self.current_id,'TotalComp100Bil', self.B100TotalCompData)
-		#self.outputdf.set_value(self.current_id,'USPK_C', self.USOverrideData)
-		#self.outputdf.set_value(self.current_id,'CANPK_C', self.CANOverrideData)
-		
-		#print(self.outputdf.loc[self.current_id,:])
-		#print(self.outputdf.loc[self.current_id,['erijobid', 'jobdottitle', 'Pct_100Bil', 'HIGH_F', 'US_PCT', 'LOW_F', 'Pct_1Mil', 'timestamp']])
 		print("Data written to OutputDF")
 
 	def write_to_sql(self, *event):
