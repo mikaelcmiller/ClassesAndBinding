@@ -7,6 +7,7 @@ import pandas as pd
 import pandas.io.sql as psql
 import pyodbc
 import os
+from datetime import datetime
 from tkinter import *
 from tkinter.ttk import *
 
@@ -685,6 +686,13 @@ class Dataverse:
 			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, int(row['erijobid']))
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
+			
+			logsql = """ insert into assessorwork.dbo.pctauditlog values (?,?,?) """
+			logargs = (int(row['erijobid']),self.user,datetime.now())
+			
+			cursor.execute(logsql, logargs)
+			self.pyocnxn.commit()
+			
 		self.pyocnxn.close()
 		#engine = sqlalchemy.create_engine('mssql+pyodbc://SNADSSQ3/AssessorWork?driver=SQL+Server+Native+Client+11.0')
 		#self.sqldf.to_sql('AuditTest_',engine,schema='dbo',if_exists='append',index=False)
