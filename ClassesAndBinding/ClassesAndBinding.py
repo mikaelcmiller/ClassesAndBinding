@@ -1,4 +1,7 @@
 ### DATA AUDIT WORK
+# cd /d S:\Users\mikael.miller
+# python PCTAudit.py
+
 
 import pandas as pd
 import pandas.io.sql as psql
@@ -175,7 +178,7 @@ class Dataverse:
 			, socdesc.soctitle as SocTitle
 			, cast(LowPred as float)/MedPred as LowPredCalc
 			, cast(HighPred as float)/MedPred as HighPredCalc
-			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob
+			, case when (pct.medyrs>40) then 1 else 0 end as execjob
 			, jobdesc.ShortDesc
 			
 			FROM assessorwork.sa.pct pct
