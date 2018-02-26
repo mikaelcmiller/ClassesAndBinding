@@ -1,14 +1,21 @@
 ### DATA AUDIT WORK
+# cd /d S:\Users\mikael.miller
+# python PCTAudit.py
+
 
 import pandas as pd
 import pandas.io.sql as psql
 import pyodbc
+import os
+from datetime import datetime
 from tkinter import *
 from tkinter.ttk import *
 
 
 class Dataverse:
 	def __init__(self):
+		self.user = os.getlogin()
+		print("Logged in as: "+self.user)
 		self.current_index = 0
 		self.current_id = 1
 		self.jobexec=1
@@ -19,6 +26,7 @@ class Dataverse:
 		self.pyocnxn.close()
 		self.set_vars(input="index")
 		pd.options.display.float_format = '{:20,.4f}'.format #
+		
 	
 	def initializerawdataframe(self):
 		self.sql = """
@@ -175,7 +183,7 @@ class Dataverse:
 			, socdesc.soctitle as SocTitle
 			, cast(LowPred as float)/MedPred as LowPredCalc
 			, cast(HighPred as float)/MedPred as HighPredCalc
-			, case when (pct.medyrs>40 and pct.medyrs<99) then 1 else 0 end as execjob
+			, case when (pct.medyrs>40) then 1 else 0 end as execjob
 			, jobdesc.ShortDesc
 			
 			FROM assessorwork.sa.pct pct
@@ -589,29 +597,6 @@ class Dataverse:
 		##[CanBenchMed]
 		##[ShortDesc]
 
-
-		#self.outputdf.set_value(self.current_id,'timestamp',datetime.datetime.now())
-		#self.outputdf.set_value(self.current_id,'Pct_100Bil', self.B100PctData)
-		#self.outputdf.set_value(self.current_id,'HIGH_F', self.HighPctData)
-		#self.outputdf.set_value(self.current_id,'US_PCT', self.MedPctData)
-		#self.outputdf.set_value(self.current_id,'LOW_F', self.LowPctData)
-		#self.outputdf.set_value(self.current_id,'Pct_1Mil', self.Mil1PctData)
-		#self.outputdf.set_value(self.current_id,'BonusPct100Bil', self.B100BonusPctData)
-		#self.outputdf.set_value(self.current_id,'HighBonusPct', self.HighBonusPctData)
-		#self.outputdf.set_value(self.current_id,'MedBonusPct', self.MedBonusPctData)
-		#self.outputdf.set_value(self.current_id,'LowBonusPct', self.LowBonusPctData)
-		#self.outputdf.set_value(self.current_id,'BonusPct1Mil', self.Mil1BonusPctData)
-		#self.outputdf.set_value(self.current_id,'Low10thPercentile_1Mil', self.Low10thPercentile_1MilData)
-		#self.outputdf.set_value(self.current_id,'High10thPercentile_100Bil', self.High10thPercentile_100BilData)
-		#self.outputdf.set_value(self.current_id,'Low90thPercentile_1Mil', self.Low90thPercentile_1MilData)
-		#self.outputdf.set_value(self.current_id,'High90thPercentile_100bil', float(self.High90thPercentile_100BilData))
-		#self.outputdf.set_value(self.current_id,'TotalComp1Mil', self.Mil1TotalCompData)
-		#self.outputdf.set_value(self.current_id,'TotalComp100Bil', self.B100TotalCompData)
-		#self.outputdf.set_value(self.current_id,'USPK_C', self.USOverrideData)
-		#self.outputdf.set_value(self.current_id,'CANPK_C', self.CANOverrideData)
-		
-		#print(self.outputdf.loc[self.current_id,:])
-		#print(self.outputdf.loc[self.current_id,['erijobid', 'jobdottitle', 'Pct_100Bil', 'HIGH_F', 'US_PCT', 'LOW_F', 'Pct_1Mil', 'timestamp']])
 		print("Data written to OutputDF")
 
 	def write_to_sql(self, *event):
@@ -701,6 +686,13 @@ class Dataverse:
 			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, int(row['erijobid']))
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
+			
+			logsql = """ insert into assessorwork.dbo.pctauditlog values (?,?,?) """
+			logargs = (int(row['erijobid']),self.user,datetime.now())
+			
+			cursor.execute(logsql, logargs)
+			self.pyocnxn.commit()
+			
 		self.pyocnxn.close()
 		#engine = sqlalchemy.create_engine('mssql+pyodbc://SNADSSQ3/AssessorWork?driver=SQL+Server+Native+Client+11.0')
 		#self.sqldf.to_sql('AuditTest_',engine,schema='dbo',if_exists='append',index=False)
