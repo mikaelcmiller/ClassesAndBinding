@@ -25,12 +25,12 @@ class Dataverse:
 		self.initializerawdataframe()
 		self.pyocnxn.close()
 		self.set_vars(input="index")
-		pd.options.display.float_format = '{:20,.4f}'.format #
+		pd.options.display.float_format = '{:20,.4f}'.format 
 		
 	
 	def initializerawdataframe(self):
 		self.sql = """
-			SELECT [EriJobId]
+			SELECT surveycan.[EriJobId]
 					, cast(REPLACE([S_Comp],'TARGET ->','TAR_CAN') as varchar(15)) S_Comp
 
 					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
@@ -40,11 +40,13 @@ class Dataverse:
 					, isnull(cast([Y_Base] as int),0) Y_Base
 					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
 					, 1 as Can_Order
+					,job.jobdottitle JobTitle
 			FROM [AssessorWork].[sa].[SurveyCan] surveycan
+			join (select erijobid, jobdottitle from SNADSSQ3.[AssessorWork].[dbo].[Job]) job on surveycan.erijobid=job.erijobid
  
 			UNION
 
-			SELECT [EriJobId]
+			SELECT surveyexec.[EriJobId]
 					, REPLACE([S_Comp],'TARGET ->','TAR_EXEC') S_Comp
 					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
 					, [Rev] Wgt
@@ -53,11 +55,13 @@ class Dataverse:
 					, isnull(cast([Y_Base] as int),0) Y_Base
 					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
 					, 0 as Can_Order
-			FROM [AssessorWork].[sa].[SurveyExec]
+					,job.jobdottitle JobTitle
+			FROM [AssessorWork].[sa].[SurveyExec] surveyexec
+			join (select erijobid, jobdottitle from SNADSSQ3.[AssessorWork].[dbo].[Job]) job on surveyexec.erijobid=job.erijobid
 
 			UNION
 
-			SELECT [EriJobId]
+			SELECT surveynonexec.[EriJobId]
 					, REPLACE([S_Comp],'TARGET ->','TAR_NONEX') S_Comp
 					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
 					, [Wgt] Wgt
@@ -66,7 +70,9 @@ class Dataverse:
 					, isnull(cast([Y_Base] as int),0) Y_Base
 					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
 					, 0 as Can_Order
-			FROM [AssessorWork].[sa].[SurveyNonExec]
+					,job.jobdottitle JobTitle
+			FROM [AssessorWork].[sa].[SurveyNonExec] surveynonexec
+			join (select erijobid, jobdottitle from SNADSSQ3.[AssessorWork].[dbo].[Job]) job on surveynonexec.erijobid=job.erijobid
 
 			ORDER BY erijobid, Can_Order, S_Order, YEARMO
 		"""
@@ -256,6 +262,7 @@ class Dataverse:
 		else:
 			current_selector = self.current_id
 		## Labels
+		self.Yr3Data = self.jobsdf.loc[current_selector,'Yr3Sal']
 		self.JobTitleData = self.jobsdf.loc[current_selector,'jobdottitle']
 		self.ERIJobIdData = self.jobsdf.loc[current_selector,'erijobid']
 		self.JobDotData = self.jobsdf.loc[current_selector,'jobdot']
@@ -411,6 +418,7 @@ class Dataverse:
 		## Check for current erijobid in output df, add or update as necessary
 		if (self.outputdf['erijobid']==self.current_id).any():
 			current_selector = self.current_id
+			self.Yr3Data = self.outputdf.loc[current_selector,'Yr3Sal']
 			self.JobTitleData = self.outputdf.loc[current_selector,'jobdottitle']
 			self.ERIJobIdData = self.outputdf.loc[current_selector,'erijobid']
 			self.JobDotData = self.outputdf.loc[current_selector,'jobdot']
@@ -494,7 +502,7 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'MEDSAL', self.MedSalData) #[MEDSAL]
 		self.outputdf.set_value(self.current_id,'HIGHSAL', self.HighSalData) #[HIGHSAL]
 		self.outputdf.set_value(self.current_id,'Sal100Bil', self.Sal100BilData) #[Sal100Bil]
-		self.outputdf.set_value(self.current_id,'Yr3Sal', int(self.ReptoYr3Data)) #[Yr3Sal]
+		self.outputdf.set_value(self.current_id,'Yr3Sal', int(self.Yr3Data)) #[Yr3Sal]
 		self.outputdf.set_value(self.current_id,'CAN_PCT', self.CanPercentData) #[CAN_PCT]
 		self.outputdf.set_value(self.current_id,'Pct_1Mil', self.Mil1PctData) #[Pct_1Mil]
 		self.outputdf.set_value(self.current_id,'LOW_F', self.LowPctData) #[LOW_F]
@@ -868,6 +876,8 @@ class Application(Frame):
 		self.B100Bonus.grid(row=15, column=4, sticky=W)
 		self.MeanPred = Label(self,text="Mean Predicted")
 		self.MeanPred.grid(row=15, column=6, sticky=W)
+		self.Yr3Sal = Label(self, text="Year 3 Sal")
+		self.Yr3Sal.grid(row=16, column=6, sticky=W)
 		self.HighTotal = Label(self,text="High Total Comp")
 		self.HighTotal.grid(row=16, column=1, sticky=E)
 		self.HighBonus = Label(self,text="High Bonus")
@@ -1014,6 +1024,8 @@ class Application(Frame):
 		self.B100TotalCompLabel.grid(row=15, column=2)
 		self.MeanPredLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.MeanPredLabel.grid(row=15, column=5)
+		self.Yr3SalLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
+		self.Yr3SalLabel.grid(row=16, column=5)
 		self.HighTotalCompLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.HighTotalCompLabel.grid(row=16, column=2)
 		self.MedTotalCompLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
@@ -1208,6 +1220,7 @@ class Application(Frame):
 		self.Low10thPercentileLabel.config(text="    ")
 		self.Low10thPercentile_1MilLabel.config(text="    ")
 		self.MeanPredLabel.config(text="    ")
+		self.Yr3SalLabel.config(text="    ")
 
 	def label_entry_reload(self, *event):
 		self.obsnumlabel.config(text=str(self.data.current_index))
@@ -1256,6 +1269,7 @@ class Application(Frame):
 		self.RawDataTextbox.insert(END, self.data.rawstring)
 		self.RawDataTextbox.config(state=DISABLED)
 		self.MeanPredLabel.config(text=int(self.data.MeanPredData))
+		self.Yr3SalLabel.config(text=int(self.data.Yr3Data))
 		self.set_SalPercents()
 		self.update_MedSal()
 		self.update_CanLabels()
@@ -1334,6 +1348,7 @@ class Application(Frame):
 		self.CanOverrideEntry.insert(0, str(self.data.CANOverrideData))
 		## Calc Labels
 		self.MeanPredLabel.config(text=int(self.data.MeanPredData))
+		self.Yr3SalLabel.config(text=int(self.data.Yr3Data))
 		self.set_SalPercents()
 		self.update_MedSal()
 		self.update_CanLabels()
