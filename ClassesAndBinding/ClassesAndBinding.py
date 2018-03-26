@@ -729,6 +729,12 @@ class Application(Frame):
 		# /End widget formats
 		
 ###########################
+		self.obsframe = Frame(self)
+		self.obsframe.grid(row=0, column=1, sticky=NW)
+		self.obsnum = Label(self.obsframe, text="Obs #:")
+		self.obsnum.pack(side=LEFT)
+		self.obsnumlabel = Label(self.obsframe, text="1")
+		self.obsnumlabel.pack(side=LEFT)
 		self.TitleFrame = Frame(self)
 		self.TitleFrame.grid(row=0, column=0, columnspan=4, sticky=NW)
 		self.TitleFrame.config(pad=(5,0))
@@ -1204,6 +1210,7 @@ class Application(Frame):
 		self.MeanPredLabel.config(text="    ")
 
 	def label_entry_reload(self, *event):
+		self.obsnumlabel.config(text=str(self.data.current_index))
 		self.B100PctEntry.delete(0, END)
 		self.HighPctEntry.delete(0, END)
 		self.MedPctEntry.delete(0, END)
@@ -1256,6 +1263,7 @@ class Application(Frame):
 		self.update_XRef()
 
 	def label_entry_initload(self, *event):
+		self.obsnumlabel.config(text=str(self.data.current_index))
 		self.label_entry_clear()
 		self.jobentryreplace()
 		## Labels
