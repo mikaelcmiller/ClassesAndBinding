@@ -23,10 +23,16 @@ class Dataverse:
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
 		self.inititalizedataframe()
 		self.initializerawdataframe()
+		self.initializesocdataframe()
 		self.pyocnxn.close()
 		self.set_vars(input="index")
 		pd.options.display.float_format = '{:20,.4f}'.format 
 		
+	def initializesocdataframe(self):
+		self.soc_sql = """ SELECT [SocCode],[SocTitle] FROM [AssessorWork].[dbo].[SocDescription] """
+		self.socdf = pd.DataFrame(psql.read_sql(self.soc_sql, self.pyocnxn))
+		self.socdf.set_index('SocCode', inplace=True)
+		#print(self.socdf)
 	
 	def initializerawdataframe(self):
 		self.sql = """
@@ -355,6 +361,7 @@ class Dataverse:
 		self.MedYrsDataInit = self.jobsdf.loc[current_selector,'Medyrs']
 		self.CanPercentDataInit = self.jobsdf.loc[current_selector,'CAN_PCT']
 		self.CanBonusPctDataInit = self.jobsdf.loc[current_selector,'CanBonusPct']
+		self.JobSocDataInit = self.jobsdf.loc[current_selector,'SOC']
 		if pd.isnull(self.jobsdf.loc[current_selector,'Repto']): self.ReptoDataInit = int(self.current_id)
 		else: self.ReptoDataInit = int(self.jobsdf.loc[current_selector,'Repto'])
 		self.XRefDataInit = self.jobsdf.loc[current_selector,'JobXRef']
@@ -473,6 +480,7 @@ class Dataverse:
 			self.MedYrsData = self.outputdf.loc[current_selector,'Medyrs']
 			self.CanPercentData = self.outputdf.loc[current_selector,'CAN_PCT']
 			self.CanBonusPctData = self.outputdf.loc[current_selector,'CanBonusPct']
+			self.JobSocData = self.outputdf.loc[current_selector,'SOC']
 			if pd.isnull(self.outputdf.loc[current_selector,'Repto']): self.ReptoData = int(self.current_id)
 			else: self.ReptoData = int(self.outputdf.loc[current_selector,'Repto'])
 			self.XRefData = self.outputdf.loc[current_selector,'JobXRef']
@@ -598,7 +606,7 @@ class Dataverse:
 		##[Reas]
 		##[SVP]
 		##[ReleaseId]
-		#self.outputdf.set_value(self.current_id,'SocTitle', self.SocTitleData) #[SocTitle]
+		self.outputdf.set_value(self.current_id,'SocTitle', self.SocTitleData) #[SocTitle]
 		self.outputdf.set_value(self.current_id,'LowPredCalc', float(self.LowPredPctData)) #[LowPredCalc]
 		self.outputdf.set_value(self.current_id,'HighPredCalc', float(self.HighPredPctData)) #[HighPredCalc]
 		##[USBenchMed]
@@ -662,6 +670,8 @@ class Dataverse:
 				, MedTotalComp = ?
 				, HighTotalComp = ?
 				, TotalComp100Bil = ?
+				, LastUpdateDate = ?
+				, SOC = ?
 				
 				where erijobid = ?"""
 			
@@ -691,7 +701,7 @@ class Dataverse:
 			if row['TotalComp100Bil']==0: TotalComp100Bil_out = None
 			else: TotalComp100Bil_out = row['TotalComp100Bil']
 			
-			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, int(row['erijobid']))
+			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, datetime.now(), row['SOC'],int(row['erijobid']))
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
 			
@@ -762,8 +772,10 @@ class Application(Frame):
 		self.JobDotLabel.pack(side=LEFT, padx=10)
 		self.SOC = Label(self.SOCFrame,text="SOC")
 		self.SOC.pack(side=LEFT, padx=10)
-		self.JobSocLabel = Label(self.SOCFrame, text="[Initial Text]", relief="groove", width=10)
-		self.JobSocLabel.pack(side=LEFT)
+		self.SOCEntry = Entry(self.SOCFrame, width=10)
+		self.SOCEntry.pack(side=LEFT, padx=10)
+		#self.JobSocLabel = Label(self.SOCFrame, text="[Initial Text]", relief="groove", width=10)
+		#self.JobSocLabel.pack(side=LEFT)
 		self.SocOutputLabel = Label(self.SOCFrame, text="[Initial Text]", relief="groove", width=100)
 		self.SocOutputLabel.pack(side=LEFT)
 		self.ReloadBtn = Button(self, text="Reload Data", command=self.label_entry_reload)
@@ -1079,6 +1091,7 @@ class Application(Frame):
 		self.JobDescriptionLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=1000, width=169)
 		self.JobDescriptionLabel.grid(row=33, column=0, columnspan=8, sticky=NW)
 		## Real-time updates
+		self.SOCEntry.bind('<Return>',self.update_Soc)
 		self.JobIdSearchEntry.bind('<Return>',self.jobidsearch)
 		self.JobIdSearchEntry.insert(0, "1")
 		self.USOverrideEntry.bind('<Return>', self.update_MedSal)
@@ -1142,7 +1155,7 @@ class Application(Frame):
 		## Labels
 		self.JobDotLabel.config(text="    ")
 		#self.ExecJobLabel.config(text="    ")
-		self.JobSocLabel.config(text="    ")
+		#self.JobSocLabel.config(text="    ")
 		self.HighPredPctLabel.config(text="    ")
 		self.LowPredPctLabel.config(text="    ")
 		self.B100TotalCompLabel.config(text="    ")
@@ -1201,6 +1214,7 @@ class Application(Frame):
 		self.CanOverrideEntry.delete(0, END)
 		self.CanPercentEntry.delete(0, END)
 		self.CanBonusPctEntry.delete(0, END)
+		self.SOCEntry.delete(0,END)
 		self.ReptoEntry.delete(0, END)
 		self.XRefEntry.delete(0, END)
 		## Calc Labels
@@ -1240,6 +1254,7 @@ class Application(Frame):
 		self.CanOverrideEntry.delete(0, END)
 		self.CanPercentEntry.delete(0, END)
 		self.CanBonusPctEntry.delete(0, END)
+		self.SOCEntry.delete(0, END)
 		self.ReptoEntry.delete(0, END)
 		self.XRefEntry.delete(0, END)
 		self.RawDataTextbox.delete('1.0', END)
@@ -1262,6 +1277,7 @@ class Application(Frame):
 		self.MedYrsEntry.insert(0, str(self.data.MedYrsDataInit))
 		self.CanPercentEntry.insert(0, str(self.data.CanPercentDataInit))
 		self.CanBonusPctEntry.insert(0, str(self.data.CanBonusPctDataInit))
+		self.SOCEntry.insert(0, str(self.data.JobSocDataInit))
 		self.ReptoEntry.insert(0, str(self.data.ReptoDataInit))
 		self.XRefEntry.insert(0, str(self.data.XRefDataInit))
 		self.USOverrideEntry.insert(0, str(self.data.USOverrideDataInit))
@@ -1275,6 +1291,7 @@ class Application(Frame):
 		self.update_CanLabels()
 		self.update_Repto()
 		self.update_XRef()
+		self.update_Soc()
 
 	def label_entry_initload(self, *event):
 		self.obsnumlabel.config(text=str(self.data.current_index))
@@ -1285,7 +1302,7 @@ class Application(Frame):
 		#else : self.ExecJobLabel.config(text="Non-Exec")
 		self.JobTitleLabel.config(text= self.data.jobname)
 		self.JobDotLabel.config(text= self.data.JobDotData)
-		self.JobSocLabel.config(text= self.data.JobSocData)
+		#self.JobSocLabel.config(text= self.data.JobSocData)
 		self.HighPredPctLabel.config(text= str(round(self.data.HighPredPctData, 2)))
 		self.LowPredPctLabel.config(text= str(round(self.data.LowPredPctData, 2)))
 		self.B100TotalCompLabel.config(text= self.data.B100TotalCompData)
@@ -1342,6 +1359,7 @@ class Application(Frame):
 		self.MedYrsEntry.insert(0, str(self.data.MedYrsData))
 		self.CanPercentEntry.insert(0, str(self.data.CanPercentData))
 		self.CanBonusPctEntry.insert(0, str(self.data.CanBonusPctData))
+		self.SOCEntry.insert(0, str(self.data.JobSocData))
 		self.ReptoEntry.insert(0, str(self.data.ReptoData))
 		self.XRefEntry.insert(0, str(self.data.XRefData))
 		self.USOverrideEntry.insert(0, str(self.data.USOverrideData))
@@ -1354,6 +1372,16 @@ class Application(Frame):
 		self.update_CanLabels()
 		self.update_Repto()
 		self.update_XRef()
+		self.update_Soc()
+
+	def update_Soc(self, *event):
+		current_selector = int(self.SOCEntry.get())
+		self.data.JobSocData = int(self.SOCEntry.get())
+		try:
+			self.data.SocTitleData = self.data.socdf.loc[current_selector,'SocTitle']
+		except KeyError:
+			self.data.SocTitleData = 'NA'
+		self.SocOutputLabel.config(text=self.data.SocTitleData)
 
 	def send_entry(self):
 		self.data.B100PctData = float(self.B100PctEntry.get())
