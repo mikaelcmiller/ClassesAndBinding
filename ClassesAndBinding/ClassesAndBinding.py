@@ -46,9 +46,8 @@ class Dataverse:
 					, isnull(cast([Y_Base] as int),0) Y_Base
 					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
 					, 1 as Can_Order
-					,job.jobdottitle JobTitle
+					, S_Title
 			FROM [AssessorWork].[sa].[SurveyCan] surveycan
-			join (select erijobid, jobdottitle from SNADSSQ3.[AssessorWork].[dbo].[Job]) job on surveycan.erijobid=job.erijobid
  
 			UNION
 
@@ -61,9 +60,8 @@ class Dataverse:
 					, isnull(cast([Y_Base] as int),0) Y_Base
 					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
 					, 0 as Can_Order
-					,job.jobdottitle JobTitle
+					, S_Title
 			FROM [AssessorWork].[sa].[SurveyExec] surveyexec
-			join (select erijobid, jobdottitle from SNADSSQ3.[AssessorWork].[dbo].[Job]) job on surveyexec.erijobid=job.erijobid
 
 			UNION
 
@@ -76,11 +74,10 @@ class Dataverse:
 					, isnull(cast([Y_Base] as int),0) Y_Base
 					, case when S_Comp like 'TARGET%' then 1 else 0 end as S_Order
 					, 0 as Can_Order
-					,job.jobdottitle JobTitle
+					, S_Title
 			FROM [AssessorWork].[sa].[SurveyNonExec] surveynonexec
-			join (select erijobid, jobdottitle from SNADSSQ3.[AssessorWork].[dbo].[Job]) job on surveynonexec.erijobid=job.erijobid
 
-			ORDER BY erijobid, Can_Order, S_Order, YEARMO
+			ORDER BY erijobid, Can_Order, S_Order, YEARMO, S_Title
 		"""
 		self.rawdatadf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
 		self.rawdatadf.set_index('EriJobId', inplace=True)
@@ -253,13 +250,14 @@ class Dataverse:
 		self.getrawdata()
 
 	def getrawdata(self):
-		self.rawstring = "S_Comp          YEARMO  Wgt/Rev  No_Emp AveBase Y_Base\n----------------------------------------------------------\n" #self.rawdatadf.loc[self.current_id].to_string(index=FALSE, header=FALSE, columns=['S_Comp', 'YEARMO', 'Wgt', 'No_Emp', 'AveBase', 'Y_Base'])
+		self.rawstring = "S_Comp          S_Title                        YEARMO  Wgt/Rev  No_Emp AveBase Y_Base\n---------------------------------------------------------------------------------------\n" #self.rawdatadf.loc[self.current_id].to_string(index=FALSE, header=FALSE, columns=['S_Comp', 'YEARMO', 'Wgt', 'No_Emp', 'AveBase', 'Y_Base'])
 		try:
 			self.temprawdf = self.rawdatadf.loc[self.current_id]
 			#print(self.temprawdf)
 			for index, row in self.temprawdf.iterrows():
-				self.rawstring = self.rawstring+(row[0][:15]).ljust(15)+' '+str(row[1])[:7].ljust(7)+' '+str(row[2])[:8].ljust(8)+' '+str(row[3])[:6].ljust(6)+' '+str(row[4])[:7].ljust(7)+' '+str(int(row[5]))[:10].ljust(10)+'\n'
-				if ((row[0][:5]=="TAR_E" and str(row[2])[:5]=="10000") or row[0][:5]=="TAR_N"): self.rawstring = self.rawstring+"----------------------------------------------------------\n"
+				#self.rawstring = self.rawstring+(row[0][:15]).ljust(15)+' '+str(row[1])[:7].ljust(7)+' '+str(row[2])[:8].ljust(8)+' '+str(row[3])[:6].ljust(6)+' '+str(row[4])[:7].ljust(7)+' '+str(int(row[5]))[:10].ljust(10)+'\n'
+				self.rawstring = self.rawstring+(row[0][:15]).ljust(15)+' '+str(row[8])[:30].ljust(30)+' '+str(row[1])[:7].ljust(7)+' '+str(row[2])[:8].ljust(8)+' '+str(row[3])[:6].ljust(6)+' '+str(row[4])[:7].ljust(7)+' '+str(int(row[5]))[:8].ljust(8)+'\n'
+				if ((row[0][:5]=="TAR_E" and str(row[2])[:5]=="10000") or row[0][:5]=="TAR_N"): self.rawstring = self.rawstring+"---------------------------------------------------------------------------------------\n"
 		except: self.rawstring = self.rawstring+""
 
 	def set_vars(self, input="index"):
@@ -747,12 +745,6 @@ class Application(Frame):
 		# /End widget formats
 		
 ###########################
-		self.obsframe = Frame(self)
-		self.obsframe.grid(row=0, column=1, sticky=NW)
-		self.obsnum = Label(self.obsframe, text="Obs #:")
-		self.obsnum.pack(side=LEFT)
-		self.obsnumlabel = Label(self.obsframe, text="1")
-		self.obsnumlabel.pack(side=LEFT)
 		self.TitleFrame = Frame(self)
 		self.TitleFrame.grid(row=0, column=0, columnspan=4, sticky=NW)
 		self.TitleFrame.config(pad=(5,0))
@@ -763,7 +755,11 @@ class Application(Frame):
 		self.ERISearch = Label(self.TitleFrame,text="ERI # Search")
 		self.ERISearch.pack(side=LEFT, padx=10)
 		self.JobIdSearchEntry = Entry(self.TitleFrame, width=10)
-		self.JobIdSearchEntry.pack(side=LEFT)
+		self.JobIdSearchEntry.pack(side=LEFT, padx=10)
+		self.obsnum = Label(self.TitleFrame, text="Obs #:")
+		self.obsnum.pack(side=LEFT)
+		self.obsnumlabel = Label(self.TitleFrame, text="1")
+		self.obsnumlabel.pack(side=LEFT)
 		self.SOCFrame = Frame(self)
 		self.SOCFrame.grid(row=2, column=0, columnspan=8, sticky=NW)
 		self.eDOT = Label(self.SOCFrame,text="eDOT")
@@ -774,8 +770,6 @@ class Application(Frame):
 		self.SOC.pack(side=LEFT, padx=10)
 		self.SOCEntry = Entry(self.SOCFrame, width=10)
 		self.SOCEntry.pack(side=LEFT, padx=10)
-		#self.JobSocLabel = Label(self.SOCFrame, text="[Initial Text]", relief="groove", width=10)
-		#self.JobSocLabel.pack(side=LEFT)
 		self.SocOutputLabel = Label(self.SOCFrame, text="[Initial Text]", relief="groove", width=100)
 		self.SocOutputLabel.pack(side=LEFT)
 		self.ReloadBtn = Button(self, text="Reload Data", command=self.label_entry_reload)
@@ -784,8 +778,6 @@ class Application(Frame):
 		self.CommitBtn.grid(row=0, column=5)
 		self.WriteSQLBtn = Button(self, text="Write to SQL", command=self.write_sql)
 		self.WriteSQLBtn.grid(row=0, column=6, sticky=W)
-		#self.JobIdSearchEntry = Entry(self, width=10)
-		#self.JobIdSearchEntry.grid(row=0, column=2)
 		self.B100PctEntry = Entry(self, width=10)
 		self.B100PctEntry.grid(row=10, column=3)
 		self.HighPctEntry = Entry(self, width=10)
@@ -822,12 +814,6 @@ class Application(Frame):
 		self.ReptoEntry.grid(row=29, column=2)
 		self.XRefEntry = Entry(self, width=10)
 		self.XRefEntry.grid(row=30, column=2)
-		#self.ERISearch = Label(self,text="ERI # Search")
-		#self.ERISearch.grid(row=0, column=1, sticky=E)
-		#self.eDOT = Label(self,text="eDOT     SOC")
-		#self.eDOT.grid(row=2, column=4)
-		#self.SOC = Label(self,text="SOC")
-		#self.SOC.grid(row=2, column=5, sticky=E)
 		self.Pct10 = Label(self,text="10th Pct")
 		self.Pct10.grid(row=3, column=2)
 		self.Mean = Label(self,text="Mean")
@@ -906,8 +892,6 @@ class Application(Frame):
 		self.Mil1Total.grid(row=19, column=1, sticky=E)
 		self.Mil1Bonus = Label(self,text="1 Mil Bonus")
 		self.Mil1Bonus.grid(row=19, column=4, sticky=W)
-		#self.StdErrPred = Label(self,text="Std Error Pred")
-		#self.StdErrPred.grid(row=20, column=1, sticky=E)
 		self.StdErr = Label(self,text="Std Error")
 		self.StdErr.grid(row=20, column=4, sticky=W)
 		self.MedyrsPred = Label(self,text="Medyrs Pred")
@@ -962,14 +946,6 @@ class Application(Frame):
 		self.Adder.grid(row=31, column=6, sticky=W)
 		self.Description = Label(self,text="Job Description")
 		self.Description.grid(row=32, column=0, sticky=W)
-		#self.JobTitleLabel = Label(self, text="[Initial Text]", relief="groove", width=45, anchor=E)
-		#self.JobTitleLabel.grid(row=2, column=0, sticky=E)
-		#self.JobDotLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		#self.JobDotLabel.grid(row=2, column=3)
-		#self.JobSocLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		#self.JobSocLabel.grid(row=2, column=5)
-		#self.SocOutputLabel = Label(self, text="[Initial Text]", relief="groove", wraplength=200, width=35)
-		#self.SocOutputLabel.grid(row=2, column=6, rowspan=2, sticky=NW)
 		self.High10thPercentile_100BilLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.High10thPercentile_100BilLabel.grid(row=4, column=2)
 		self.Sal100BilLabel = Label(self, text="Initial Text", relief="groove", width=10)
@@ -980,8 +956,8 @@ class Application(Frame):
 		self.B100Q1Label.grid(row=4, column=5)
 		self.FrameR5C0 = Frame(self) #, height=5)
 		self.FrameR5C0.grid(row=5, column=0, columnspan=1, rowspan=29, sticky=NW)
-		self.RawDataTextbox = Text(self.FrameR5C0, height=29, width=60)
-		self.RawDataTextbox.pack(side='left', fill='both', expand=True) #.grid(row=5, column=0, rowspan=21, sticky=NW)
+		self.RawDataTextbox = Text(self.FrameR5C0, height=29, width=90)
+		self.RawDataTextbox.pack(side='left', fill='both', expand=True)
 		self.RawDataScrollbar = Scrollbar(self.FrameR5C0)
 		self.RawDataScrollbar.pack(side='right', fill='both', expand=True)
 		self.RawDataTextbox.delete('1.0', END)
@@ -1046,8 +1022,6 @@ class Application(Frame):
 		self.LowTotalCompLabel.grid(row=18, column=2)
 		self.Mil1TotalCompLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.Mil1TotalCompLabel.grid(row=19, column=2)
-		#self.StdErrPredLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		#self.StdErrPredLabel.grid(row=20, column=2)
 		self.EstimatedYearsLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.EstimatedYearsLabel.grid(row=21, column=2)
 		self.QCCheckCanLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
@@ -1298,11 +1272,8 @@ class Application(Frame):
 		self.label_entry_clear()
 		self.jobentryreplace()
 		## Labels
-		#if self.data.jobexec==1 : self.ExecJobLabel.config(text="Exec")
-		#else : self.ExecJobLabel.config(text="Non-Exec")
 		self.JobTitleLabel.config(text= self.data.jobname)
 		self.JobDotLabel.config(text= self.data.JobDotData)
-		#self.JobSocLabel.config(text= self.data.JobSocData)
 		self.HighPredPctLabel.config(text= str(round(self.data.HighPredPctData, 2)))
 		self.LowPredPctLabel.config(text= str(round(self.data.LowPredPctData, 2)))
 		self.B100TotalCompLabel.config(text= self.data.B100TotalCompData)
@@ -1339,7 +1310,6 @@ class Application(Frame):
 		self.CPCLabel.config(text=self.data.CPCData)
 		self.CPCSalLabel.config(text= self.data.CPCSalData)
 		self.AdderLabel.config(text= self.data.AdderData)
-		#self.RawDataLabel.config(text="Raw data text")
 		self.JobDescriptionLabel.config(text= self.data.JobDescriptionData)
 		self.SocOutputLabel.config(text=self.data.SocTitleData)
 		## Entries
@@ -1534,7 +1504,7 @@ class Application(Frame):
 
 
 root = Tk()
-root.geometry("1025x800")
+root.geometry("1255x800")
 Application(root)
 root.mainloop()
 
