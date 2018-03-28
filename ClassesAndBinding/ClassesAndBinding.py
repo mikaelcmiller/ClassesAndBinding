@@ -48,9 +48,9 @@ class Dataverse:
 					, 1 as Can_Order
 					, S_Title
 			FROM [AssessorWork].[sa].[SurveyCan] surveycan
- 
+	
 			UNION
-
+	
 			SELECT surveyexec.[EriJobId]
 					, REPLACE([S_Comp],'TARGET ->','TAR_EXEC') S_Comp
 					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
@@ -62,9 +62,9 @@ class Dataverse:
 					, 0 as Can_Order
 					, S_Title
 			FROM [AssessorWork].[sa].[SurveyExec] surveyexec
-
+	
 			UNION
-
+	
 			SELECT surveynonexec.[EriJobId]
 					, REPLACE([S_Comp],'TARGET ->','TAR_NONEX') S_Comp
 					, cast([S_Year] AS VARCHAR(4))+'_'+right('000'+cast([S_Month] AS VARCHAR(2)),2) YEARMO
@@ -1127,6 +1127,7 @@ class Application(Frame):
 
 	def label_entry_clear(self, *event):
 		## Labels
+		self.obsnumlabel.config(text=" ")
 		self.JobDotLabel.config(text="    ")
 		#self.ExecJobLabel.config(text="    ")
 		#self.JobSocLabel.config(text="    ")
@@ -1268,10 +1269,10 @@ class Application(Frame):
 		self.update_Soc()
 
 	def label_entry_initload(self, *event):
-		self.obsnumlabel.config(text=str(self.data.current_index))
 		self.label_entry_clear()
 		self.jobentryreplace()
 		## Labels
+		self.obsnumlabel.config(text=str(self.data.current_index))
 		self.JobTitleLabel.config(text= self.data.jobname)
 		self.JobDotLabel.config(text= self.data.JobDotData)
 		self.HighPredPctLabel.config(text= str(round(self.data.HighPredPctData, 2)))
