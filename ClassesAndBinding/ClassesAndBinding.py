@@ -1212,7 +1212,7 @@ class Application(Frame):
 		self.Yr3SalLabel.config(text="    ")
 
 	def label_entry_reload(self, *event):
-		self.obsnumlabel.config(text=str(self.data.current_index))
+		self.obsnumlabel.config(text=str(self.data.current_index+1))
 		self.B100PctEntry.delete(0, END)
 		self.HighPctEntry.delete(0, END)
 		self.MedPctEntry.delete(0, END)
@@ -1272,7 +1272,7 @@ class Application(Frame):
 		self.label_entry_clear()
 		self.jobentryreplace()
 		## Labels
-		self.obsnumlabel.config(text=str(self.data.current_index))
+		self.obsnumlabel.config(text=str(self.data.current_index+1))
 		self.JobTitleLabel.config(text= self.data.jobname)
 		self.JobDotLabel.config(text= self.data.JobDotData)
 		self.HighPredPctLabel.config(text= str(round(self.data.HighPredPctData, 2)))
