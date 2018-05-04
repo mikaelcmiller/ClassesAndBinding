@@ -1,4 +1,5 @@
 ### DATA AUDIT WORK
+## Paste following into anaconda prompt
 # cd /d S:\Users\mikael.miller
 # python PCTAudit.py
 
@@ -198,8 +199,10 @@ class Dataverse:
 			FROM assessorwork.sa.pct pct
 			join (select soccode, soctitle from [AssessorWork].[dbo].[SocDescription]) socdesc on pct.SOC = socdesc.SocCode
 			join (select eDOT, replace(replace(ShortDesc,'/duty','duty'),'<duty>','') as ShortDesc from [AssessorWork].[sa].[Sadescriptions]) jobdesc on jobdesc.eDOT = pct.jobdot
-			order by execjob desc, pct.erijobid"""
-		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn))
+			where releaseid like ?
+			order by execjob desc, pct.erijobid asc"""
+		self.releaseid = str(input ("Enter year & quarter desired (i.e. 2018Q2): "))		
+		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn, params=(self.releaseid,)))
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
@@ -380,6 +383,7 @@ class Dataverse:
 		self.check_output()
 		## Calculations
 		self.CanAveData = self.CanPercentData * self.XRefCanData
+		# fix below
 		if pd.isnull(self.SurveyMeanData) and pd.isnull(self.QCCheckData): self.MeanPredData = self.SocPredData
 		elif pd.isnull(self.SurveyMeanData): self.MeanPredData = float((self.QCCheckData+self.SocPredData)/2)
 		elif pd.isnull(self.QCCheckData): self.MeanPredData = float((self.SocPredData+self.SurveyMeanData)/2)
@@ -611,7 +615,7 @@ class Dataverse:
 		##[CanBenchMed]
 		##[ShortDesc]
 
-		print("Data written to OutputDF")
+		print(str(self.current_id)+" - Data written to OutputDF")
 
 	def write_to_sql(self, *event):
 		# Copy output DataFrame to SQL DataFrame before printing
@@ -671,7 +675,7 @@ class Dataverse:
 				, LastUpdateDate = ?
 				, SOC = ?
 				
-				where erijobid = ?"""
+				where erijobid = ? and releaseid = ?"""
 			
 			## Inserting Nulls to SQL DB for consistency
 			if row['Sal1Mil']<=0: Sal1Mil_out = None
@@ -699,21 +703,20 @@ class Dataverse:
 			if row['TotalComp100Bil']==0: TotalComp100Bil_out = None
 			else: TotalComp100Bil_out = row['TotalComp100Bil']
 			
-			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, datetime.now(), row['SOC'],int(row['erijobid']))
+			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, datetime.now(), row['SOC'],int(row['erijobid']), self.releaseid)
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
 			
-			logsql = """ insert into assessorwork.dbo.pctauditlog values (?,?,?) """
-			logargs = (int(row['erijobid']),self.user,datetime.now())
-			
-			cursor.execute(logsql, logargs)
-			self.pyocnxn.commit()
+			#logsql = """ insert into assessorwork.dbo.pctauditlog values (?,?,?) """
+			#logargs = (int(row['erijobid']),self.user,datetime.now())
+			#cursor.execute(logsql, logargs)
+			#self.pyocnxn.commit()
 			
 		self.pyocnxn.close()
 		#engine = sqlalchemy.create_engine('mssql+pyodbc://SNADSSQ3/AssessorWork?driver=SQL+Server+Native+Client+11.0')
 		#self.sqldf.to_sql('AuditTest_',engine,schema='dbo',if_exists='append',index=False)
 		print("Dataframe written to SQL")
-		self.outputdf.drop(self.outputdf.index, inplace=True)
+		#self.outputdf.drop(self.outputdf.index, inplace=True)
 		self.sqldf.drop(self.sqldf.index, inplace=True)
 
 
@@ -730,6 +733,7 @@ class Application(Frame):
 		self.bind_all('<Next>', self.nextpage)
 		self.bind_all('<Prior>', self.priorpage)
 		self.bind_all('<Insert>', self.write_output)
+		self.bind_all('<Control-s>', self.write_output)
 		self.bind_all('<Control-p>', self.write_sql)
 
 	def create_widgets(self):
@@ -1435,6 +1439,7 @@ class Application(Frame):
 				self.data.MedPctData = round(float(self.data.MedSalData)/float(self.data.XRefUSData),2)
 			else:
 				self.data.MedSalData = int(self.data.MedPctData*self.data.XRefUSData)
+				#self.data.MedSalData = 1
 				#self.data.MedPctData = self.data.MedPctDataInit
 		except ValueError: print("MedSal Value error")
 		self.data.USOverrideData = float(self.USOverrideEntry.get())
