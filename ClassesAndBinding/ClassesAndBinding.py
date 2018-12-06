@@ -554,9 +554,12 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'MedPred', int(self.QCCheckData)) #[MedPred]
 		##[HighPred]
 		self.outputdf.set_value(self.current_id,'CanPred', int(self.QCCheckCanData)) #[CanPred]
+		print(self.CanPoly1Data)
+		print(self.CanPoly2Data)
+		print(self.CanPoly3Data)
 		self.outputdf.set_value(self.current_id,'CanPoly1', int(self.CanPoly1Data)) #[CanPoly1]
 		self.outputdf.set_value(self.current_id,'CanPoly2', int(self.CanPoly2Data)) #[CanPoly2]
-		self.outputdf.set_value(self.current_id,'CanPoly3', self.CanPoly3Data) #[CanPoly3]
+		self.outputdf.set_value(self.current_id,'CanPoly3', int(self.CanPoly3Data)) #[CanPoly3]
 		self.outputdf.set_value(self.current_id,'AvgCanPoly', int(self.CanPolyMeanData)) #[AvgCanPoly]
 		self.outputdf.set_value(self.current_id,'AvgCanModels', int(self.CanPolyMeanQCData)) #[AvgCanModels]
 		##[AvgCan3Qtr]
@@ -614,12 +617,19 @@ class Dataverse:
 		##[USBenchMed]
 		##[CanBenchMed]
 		##[ShortDesc]
+		print("Output DF")
+		with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+			print(self.outputdf)
 
 		print(str(self.current_id)+" - Data written to OutputDF")
 
 	def write_to_sql(self, *event):
 		# Copy output DataFrame to SQL DataFrame before printing
 		self.sqldf = self.outputdf.copy()
+		print("SQL DF")
+		with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+			print(self.sqldf)
+		#print(self.sqldf)
 		# Drop specific columns from SQL DataFrame before writing to SQL database
 		self.sqldf = self.sqldf.drop(['execjob','indexmaster','index1','indexsearch'],axis=1)
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
@@ -674,6 +684,12 @@ class Dataverse:
 				, TotalComp100Bil = ?
 				, LastUpdateDate = ?
 				, SOC = ?
+				, Yr3Sal = ?
+				, CanPoly1 = ?
+				, CanPoly2 = ?
+				, CanPoly3 = ?
+				, AvgCanPoly = ?
+				, AvgCanModels = ?
 				
 				where erijobid = ? and releaseid = ?"""
 			
@@ -703,7 +719,7 @@ class Dataverse:
 			if row['TotalComp100Bil']==0: TotalComp100Bil_out = None
 			else: TotalComp100Bil_out = row['TotalComp100Bil']
 			
-			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], int(self.MedYrsData), Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, datetime.now(), row['SOC'],int(row['erijobid']), self.releaseid)
+			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], int(self.MedYrsData), Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, datetime.now(), row['SOC'], row['Yr3Sal'], row['CanPoly1'], row['CanPoly2'], row['CanPoly3'], row['AvgCanPoly'], row['AvgCanModels'],int(row['erijobid']), self.releaseid)
 			#for item in args: print(item)
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
@@ -1512,6 +1528,12 @@ class Application(Frame):
 		c_mean3 = (-14.97877804) + (sqrt(x) * (7.28561872)) + (x * (0.17477767)) + (x * x * (0.00247309)) + (x * x * x * (-0.00000328))
 		self.data.CanPoly3Data = int(c_mean3*1000)
 		self.CanPoly3Label.config(text= int(self.data.CanPoly3Data))
+		##CanPolyMean
+		self.data.CanPolyMeanData = int((self.data.CanPoly1Data+self.data.CanPoly2Data+self.data.CanPoly3Data)/3)
+		self.CanPolyMeanLabel.config(text= int(self.data.CanPolyMeanData))
+		##CanPolyQCMean
+		self.data.CanPolyMeanQCData = int((self.data.CanPoly1Data+self.data.CanPoly2Data+self.data.CanPoly3Data+self.data.QCCheckCanData)/4)
+		self.CanPolyMeanQCLabel.config(text= int(self.data.CanPolyMeanQCData))
 		
 		
 
