@@ -617,19 +617,18 @@ class Dataverse:
 		##[USBenchMed]
 		##[CanBenchMed]
 		##[ShortDesc]
-		print("Output DF")
-		with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-			print(self.outputdf)
+		#print("Output DF")
+		#with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+		#	print(self.outputdf)
 
 		print(str(self.current_id)+" - Data written to OutputDF")
 
 	def write_to_sql(self, *event):
 		# Copy output DataFrame to SQL DataFrame before printing
 		self.sqldf = self.outputdf.copy()
-		print("SQL DF")
-		with pd.option_context('display.max_rows', None, 'display.max_columns', None):
-			print(self.sqldf)
-		#print(self.sqldf)
+		#print("SQL DF")
+		#with pd.option_context('display.max_rows', None, 'display.max_columns', None):
+		#	print(self.sqldf)
 		# Drop specific columns from SQL DataFrame before writing to SQL database
 		self.sqldf = self.sqldf.drop(['execjob','indexmaster','index1','indexsearch'],axis=1)
 		self.pyocnxn = pyodbc.connect("DRIVER={SQL Server};SERVER=SNADSSQ3;DATABASE=assessorwork;trusted_connection=yes;")
