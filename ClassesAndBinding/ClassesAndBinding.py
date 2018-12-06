@@ -554,9 +554,6 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'MedPred', int(self.QCCheckData)) #[MedPred]
 		##[HighPred]
 		self.outputdf.set_value(self.current_id,'CanPred', int(self.QCCheckCanData)) #[CanPred]
-		print(self.CanPoly1Data)
-		print(self.CanPoly2Data)
-		print(self.CanPoly3Data)
 		self.outputdf.set_value(self.current_id,'CanPoly1', int(self.CanPoly1Data)) #[CanPoly1]
 		self.outputdf.set_value(self.current_id,'CanPoly2', int(self.CanPoly2Data)) #[CanPoly2]
 		self.outputdf.set_value(self.current_id,'CanPoly3', int(self.CanPoly3Data)) #[CanPoly3]
