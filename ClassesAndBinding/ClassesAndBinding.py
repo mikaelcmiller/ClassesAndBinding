@@ -11,6 +11,7 @@ import os
 from datetime import datetime
 from tkinter import *
 from tkinter.ttk import *
+from math import sqrt
 
 
 class Dataverse:
@@ -94,7 +95,7 @@ class Dataverse:
 			, pct.MEDSAL
 			, pct.HIGHSAL
 			, isnull(pct.Sal100Bil,0) Sal100Bil
-			, isnull(pct.Yr3Sal, 0) Yr3Sal
+			, isnull(pct.Yr3Sal,0) Yr3Sal
 			, pct.CAN_PCT
 			, pct.Pct_1Mil
 			, pct.LOW_F
@@ -201,7 +202,7 @@ class Dataverse:
 			join (select eDOT, replace(replace(ShortDesc,'/duty','duty'),'<duty>','') as ShortDesc from [AssessorWork].[sa].[Sadescriptions]) jobdesc on jobdesc.eDOT = pct.jobdot
 			where releaseid like ?
 			order by execjob desc, pct.erijobid asc"""
-		self.releaseid = str(input ("Enter year & quarter desired (i.e. 2018Q2): "))		
+		self.releaseid = str(input ("Enter year & quarter desired (i.e. 2018Q2): "))
 		self.jobsdf = pd.DataFrame(psql.read_sql(self.sql, self.pyocnxn, params=(self.releaseid,)))
 		self.jobsdf['indexmaster'] = self.jobsdf.index
 		self.jobsdf['index1'] = self.jobsdf['indexmaster']
@@ -498,7 +499,6 @@ class Dataverse:
 		except: pass
 		## Check for current erijobid in output df, add or update as necessary
 		if (self.outputdf['erijobid']==self.current_id).any():
-			#print("Overwriting "+str(self.current_id))
 			self.outputdf.update(self.jobsdf.loc[self.current_id,:])
 		else: self.outputdf = self.outputdf.append(self.jobsdf.loc[self.current_id,:])
 		## Update output rows after creating
@@ -527,7 +527,7 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'LowBonusPct', self.LowBonusPctData) #[LowBonusPct]
 		self.outputdf.set_value(self.current_id,'MedBonusPct', self.MedBonusPctData) #[MedBonusPct]
 		self.outputdf.set_value(self.current_id,'HighBonusPct', self.HighBonusPctData) #[HighBonusPct]
-		self.outputdf.set_value(self.current_id,'BonusPct100Bil', self.B100PctData) #[BonusPct100Bil]
+		self.outputdf.set_value(self.current_id,'BonusPct100Bil', self.B100BonusPctData) #[BonusPct100Bil]
 		self.outputdf.set_value(self.current_id,'StdErr', self.StdErrData) #[StdErr]
 		self.outputdf.set_value(self.current_id,'Q11Mil', self.Mil1Q1Data) #[Q11Mil]
 		self.outputdf.set_value(self.current_id,'Q1Low', int(self.LowQ1Data)) #[Q1Low]
@@ -703,7 +703,8 @@ class Dataverse:
 			if row['TotalComp100Bil']==0: TotalComp100Bil_out = None
 			else: TotalComp100Bil_out = row['TotalComp100Bil']
 			
-			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, datetime.now(), row['SOC'],int(row['erijobid']), self.releaseid)
+			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], int(self.MedYrsData), Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, datetime.now(), row['SOC'],int(row['erijobid']), self.releaseid)
+			#for item in args: print(item)
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
 			
@@ -1089,7 +1090,7 @@ class Application(Frame):
 		self.Mil1BonusPctEntry.bind('<Return>', self.set_SalPercents)
 		self.ReptoEntry.bind('<Return>', self.update_Repto)
 		self.XRefEntry.bind('<Return>', self.update_XRef)
-		self.MedYrsEntry.bind('<Return>', self.update_MedYrs)
+		self.MedYrsEntry.bind('<Return>', self.update_MedSal)
 		self.BlankSpace = Label(self, text="    ")
 		self.BlankSpace.grid(row=28, column=2)
 		self.BlankSpace2 = Label(self, text="    ")
@@ -1370,8 +1371,8 @@ class Application(Frame):
 		self.data.LowBonusPctData = float(self.LowBonusPctEntry.get())
 		self.data.Mil1BonusPctData = float(self.Mil1BonusPctEntry.get())
 
-	def update_MedYrs(self, *event):
-		self.data.MedYrsData = int(self.MedYrsEntry.get())
+	#def update_MedYrs(self, *event):
+	#	self.data.MedYrsData = int(self.MedYrsEntry.get())
 
 	def update_Repto(self, *event):
 		current_selector = int(self.ReptoEntry.get())
@@ -1413,6 +1414,7 @@ class Application(Frame):
 		self.update_MedSal()
 	
 	def set_SalPercents(self, *event):
+		self.send_entry()
 		try: self.data.B100PctData = float(self.B100PctEntry.get())
 		except ValueError: print("B100err")
 		try: self.data.HighPctData = float(self.HighPctEntry.get())
@@ -1443,6 +1445,7 @@ class Application(Frame):
 				#self.data.MedPctData = self.data.MedPctDataInit
 		except ValueError: print("MedSal Value error")
 		self.data.USOverrideData = float(self.USOverrideEntry.get())
+		self.data.MedYrsData = int(self.MedYrsEntry.get())
 		self.MedPctEntry.delete(0,END)
 		self.MedPctEntry.insert(0, str(self.data.MedPctData))
 		self.data.set_CalcData()
@@ -1493,6 +1496,24 @@ class Application(Frame):
 		self.MedTotalCompLabel.config(text= self.data.MedTotalCompData)
 		self.LowTotalCompLabel.config(text= self.data.LowTotalCompData)
 		self.Mil1TotalCompLabel.config(text= self.data.Mil1TotalCompData)
+		## Yr3
+		self.data.Yr3Data = (self.data.LowSalData + (2*((self.data.MedSalData - self.data.LowSalData)/(self.data.MedYrsData - 1))))
+		self.Yr3SalLabel.config(text= int(self.data.Yr3Data))
+		##CanPoly1
+		x = self.data.MedSalData / 1000 #used over all canpolys
+		c_mean1 = (1.428197939) + (sqrt(x) * (0.026290736)) + (x * 1.211187086) + (x * x * ( -0.002949176 )) + (x * x * x * ( 0.000005412 ))
+		self.data.CanPoly1Data = int(c_mean1*1000)
+		self.CanPoly1Label.config(text= int(self.data.CanPoly1Data))
+		##CanPoly2
+		c_mean2 = (-23.05331731) + (sqrt(x) * (12.52969784)) + (x * (-0.53745324)) + (x * x * (0.00564765)) + (x * x * x * (-0.00001242))
+		self.data.CanPoly2Data = int(c_mean2*1000)
+		self.CanPoly2Label.config(text= int(self.data.CanPoly2Data))
+		##CanPoly3
+		c_mean3 = (-14.97877804) + (sqrt(x) * (7.28561872)) + (x * (0.17477767)) + (x * x * (0.00247309)) + (x * x * x * (-0.00000328))
+		self.data.CanPoly3Data = int(c_mean3*1000)
+		self.CanPoly3Label.config(text= int(self.data.CanPoly3Data))
+		
+		
 
 	def update_CanValues(self, *event):
 		try: self.data.CanPercentData = float(self.CanPercentEntry.get())
