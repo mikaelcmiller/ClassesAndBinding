@@ -94,6 +94,7 @@ class Dataverse:
 			, pct.LOWSAL
 			, pct.MEDSAL
 			, pct.HIGHSAL
+			, isnull(pct.Sal10Bil,0) Sal10Bil
 			, isnull(pct.Sal100Bil,0) Sal100Bil
 			, isnull(pct.Yr3Sal,0) Yr3Sal
 			, pct.CAN_PCT
@@ -101,6 +102,7 @@ class Dataverse:
 			, pct.LOW_F
 			, pct.US_PCT
 			, pct.HIGH_F
+			, pct.Pct_10Bil
 			, pct.Pct_100Bil
 			, pct.CANPK_C
 			, pct.USPK_C
@@ -209,8 +211,8 @@ class Dataverse:
 		self.jobsdf['indexsearch'] = self.jobsdf['erijobid']
 		self.last_index = self.jobsdf.last_valid_index()
 		self.outputdf = pd.DataFrame(columns=self.jobsdf.columns)
-		self.jobsdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']] = self.jobsdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']].astype(int)
-		self.outputdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']] = self.outputdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal100Bil']].astype(int)
+		self.jobsdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal10Bil','Sal100Bil']] = self.jobsdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal10Bil','Sal100Bil']].astype(int)
+		self.outputdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal10Bil','Sal100Bil']] = self.outputdf[['Sal1Mil','LOWSAL','MEDSAL','HIGHSAL','Sal10Bil','Sal100Bil']].astype(int)
 		#print(self.outputdf)
 		print("Dataframe loaded from SQL")
 
@@ -318,6 +320,8 @@ class Dataverse:
 		self.AdderData = self.jobsdf.loc[current_selector,'Adder']
 		self.SocTitleData = self.jobsdf.loc[current_selector,'SocTitle']
 		## Entries
+		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_10Bil']): self.B10PctData = 0
+		else: self.B10PctData = self.jobsdf.loc[current_selector,'Pct_10Bil']
 		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 0 #1.95
 		else: self.B100PctData = self.jobsdf.loc[current_selector,'Pct_100Bil']
 		self.HighPctData = self.jobsdf.loc[current_selector,'HIGH_F']
@@ -400,6 +404,7 @@ class Dataverse:
 		self.set_CalcData()
 
 	def set_CalcData(self, *event):
+		self.Sal10BilData = self.MedSalData * self.B10PctData
 		self.Sal100BilData = self.MedSalData * self.B100PctData
 		self.HighSalData = self.MedSalData * self.HighPctData
 		self.LowSalData = self.MedSalData * self.LowPctData
@@ -467,6 +472,8 @@ class Dataverse:
 			self.CPCSalData = self.outputdf.loc[current_selector,'CPCSalary']
 			self.AdderData = self.outputdf.loc[current_selector,'Adder']
 			## Entries
+			if pd.isnull(self.outputdf.loc[current_selector,'Pct_10Bil']): self.B10PctData = 0 #1.95
+			else: self.B10PctData = self.outputdf.loc[current_selector,'Pct_10Bil']
 			if pd.isnull(self.outputdf.loc[current_selector,'Pct_100Bil']): self.B100PctData = 0 #1.95
 			else: self.B100PctData = self.outputdf.loc[current_selector,'Pct_100Bil']
 			self.HighPctData = self.outputdf.loc[current_selector,'HIGH_F']
@@ -511,6 +518,7 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'LOWSAL', self.LowSalData) #[LOWSAL]
 		self.outputdf.set_value(self.current_id,'MEDSAL', self.MedSalData) #[MEDSAL]
 		self.outputdf.set_value(self.current_id,'HIGHSAL', self.HighSalData) #[HIGHSAL]
+		self.outputdf.set_value(self.current_id,'Sal10Bil', self.Sal10BilData) #[Sal10Bil]
 		self.outputdf.set_value(self.current_id,'Sal100Bil', self.Sal100BilData) #[Sal100Bil]
 		self.outputdf.set_value(self.current_id,'Yr3Sal', int(self.Yr3Data)) #[Yr3Sal]
 		self.outputdf.set_value(self.current_id,'CAN_PCT', self.CanPercentData) #[CAN_PCT]
@@ -518,6 +526,7 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'LOW_F', self.LowPctData) #[LOW_F]
 		self.outputdf.set_value(self.current_id,'US_PCT', self.MedPctData) #[US_PCT]
 		self.outputdf.set_value(self.current_id,'HIGH_F', self.HighPctData) #[HIGH_F]
+		self.outputdf.set_value(self.current_id,'Pct_10Bil', self.B100PctData) #[Pct_10Bil]
 		self.outputdf.set_value(self.current_id,'Pct_100Bil', self.B100PctData) #[Pct_100Bil]
 		self.outputdf.set_value(self.current_id,'CANPK_C', self.CANOverrideData) #[CANPK_C]
 		self.outputdf.set_value(self.current_id,'USPK_C', self.USOverrideData) #[USPK_C]
@@ -638,12 +647,14 @@ class Dataverse:
 				, LOWSAL = ?
 				, MEDSAL = ?
 				, HIGHSAL = ?
+				, Sal10Bil = 12
 				, Sal100Bil = ?
 				, CAN_PCT = ?
 				, Pct_1Mil = ?
 				, LOW_F = ?
 				, US_PCT = ?
 				, HIGH_F = ?
+				, PCT_10Bil = 1.2
 				, PCT_100Bil = ?
 				, CANPK_C = ?
 				, USPK_C = ?
@@ -715,7 +726,7 @@ class Dataverse:
 			if row['TotalComp100Bil']==0: TotalComp100Bil_out = None
 			else: TotalComp100Bil_out = row['TotalComp100Bil']
 			
-			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], int(self.MedYrsData), Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, datetime.now(), row['SOC'], row['Yr3Sal'], row['CanPoly1'], row['CanPoly2'], row['CanPoly3'], row['AvgCanPoly'], row['AvgCanModels'],int(row['erijobid']), self.releaseid)
+			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'], High10thPercentile_100Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, datetime.now(), row['SOC'], row['Yr3Sal'], row['CanPoly1'], row['CanPoly2'], row['CanPoly3'], row['AvgCanPoly'], row['AvgCanModels'],int(row['erijobid']), self.releaseid)
 			#for item in args: print(item)
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
