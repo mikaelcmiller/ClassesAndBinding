@@ -112,6 +112,7 @@ class Dataverse:
 			, pct.LowBonusPct
 			, pct.MedBonusPct
 			, pct.HighBonusPct
+			, pct.BonusPct10Bil
 			, pct.BonusPct100Bil
 			, pct.StdErr
 			, isnull(pct.Q11Mil,0) Q11Mil
@@ -119,6 +120,7 @@ class Dataverse:
 			, pct.Q1Med
 			, pct.Q1High
 			, isnull(pct.Q1100Bil,0) Q1100Bil
+			, isnull(pct.Q110Bil,0) Q110Bil
 			, pct.Repto
 			, pct.ReptoTitle
 			, pct.ReptoSal
@@ -160,11 +162,13 @@ class Dataverse:
 			, pct.Low90thPercentile
 			, pct.Med90thPercentile
 			, pct.High90thPercentile
+			, pct.High90thPercentile_10bil
 			, pct.High90thPercentile_100bil
 			, pct.TotalComp1Mil
 			, pct.LowTotalComp
 			, pct.MedTotalComp
 			, pct.HighTotalComp
+			, pct.TotalComp10Bil
 			, pct.TotalComp100Bil
 			, pct.CPCNO
 			, pct.CPCSalary
@@ -281,6 +285,7 @@ class Dataverse:
 		self.HighPredPctData = self.jobsdf.loc[current_selector,'HighPredCalc']
 		self.LowPredPctData = self.jobsdf.loc[current_selector,'LowPredCalc']
 		self.B100TotalCompData = self.jobsdf.loc[current_selector,'TotalComp100Bil']
+		self.B10TotalCompData = self.jobsdf.loc[current_selector,'TotalComp10Bil']
 		self.HighTotalCompData = self.jobsdf.loc[current_selector,'HighTotalComp']
 		self.MedTotalCompData = self.jobsdf.loc[current_selector,'MedTotalComp']
 		self.LowTotalCompData = self.jobsdf.loc[current_selector,'LowTotalComp']
@@ -289,6 +294,8 @@ class Dataverse:
 		else: self.EstimatedYears = int(self.jobsdf.loc[current_selector,'EstimatedYears'])
 		if pd.isnull(self.jobsdf.loc[current_selector,'Q1100Bil']) : self.B100Q1Data=""
 		else: self.B100Q1Data = int(self.jobsdf.loc[current_selector,'Q1100Bil'])
+		if pd.isnull(self.jobsdf.loc[current_selector,'Q110Bil']) : self.B10Q1Data=""
+		else: self.B10Q1Data = int(self.jobsdf.loc[current_selector,'Q110Bil'])
 		self.HighQ1Data = self.jobsdf.loc[current_selector,'Q1High']
 		self.MedQ1Data = self.jobsdf.loc[current_selector,'Q1Med']
 		self.LowQ1Data = self.jobsdf.loc[current_selector,'Q1Low']
@@ -332,6 +339,8 @@ class Dataverse:
 		else: self.Mil1PctData = self.jobsdf.loc[current_selector,'Pct_1Mil']
 		if pd.isnull(self.jobsdf.loc[current_selector,'BonusPct100Bil']): self.B100BonusPctData = 0
 		else: self.B100BonusPctData = self.jobsdf.loc[current_selector,'BonusPct100Bil']
+		if pd.isnull(self.jobsdf.loc[current_selector,'BonusPct10Bil']): self.B10BonusPctData = 0
+		else: self.B10BonusPctData = self.jobsdf.loc[current_selector,'BonusPct10Bil']
 		self.HighBonusPctData = self.jobsdf.loc[current_selector,'HighBonusPct']
 		self.MedBonusPctData = self.jobsdf.loc[current_selector,'MedBonusPct']
 		self.LowBonusPctData = self.jobsdf.loc[current_selector,'LowBonusPct']
@@ -359,6 +368,8 @@ class Dataverse:
 		self.LowPctDataInit = self.jobsdf.loc[current_selector,'LOW_F']
 		if pd.isnull(self.jobsdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctDataInit = 0 #0.1
 		else: self.Mil1PctDataInit = self.jobsdf.loc[current_selector,'Pct_1Mil']
+		if pd.isnull(self.jobsdf.loc[current_selector,'BonusPct10Bil']): self.B10BonusPctDataInit = 0
+		else: self.B10BonusPctDataInit = self.jobsdf.loc[current_selector,'BonusPct10Bil']
 		if pd.isnull(self.jobsdf.loc[current_selector,'BonusPct100Bil']): self.B100BonusPctDataInit = 0
 		else: self.B100BonusPctDataInit = self.jobsdf.loc[current_selector,'BonusPct100Bil']
 		self.HighBonusPctDataInit = self.jobsdf.loc[current_selector,'HighBonusPct']
@@ -380,6 +391,7 @@ class Dataverse:
 		if pd.isnull(self.jobsdf.loc[current_selector,'CANPK_C']): self.CANOverrideDataInit = 0
 		else: self.CANOverrideDataInit = float(self.jobsdf.loc[current_selector,'CANPK_C'])
 		self.B100TotalCompDataInit = self.jobsdf.loc[current_selector,'TotalComp100Bil']
+		self.B10TotalCompDataInit = self.jobsdf.loc[current_selector,'TotalComp10Bil']
 		self.HighTotalCompDataInit = self.jobsdf.loc[current_selector,'HighTotalComp']
 		self.MedTotalCompDataInit = self.jobsdf.loc[current_selector,'MedTotalComp']
 		self.LowTotalCompDataInit = self.jobsdf.loc[current_selector,'LowTotalComp']
@@ -413,6 +425,7 @@ class Dataverse:
 		self.LowSalData = self.MedSalData * self.LowPctData
 		self.Sal1MilData = self.MedSalData * self.Mil1PctData
 		self.High90thPercentile_100BilData = ((self.StdErrData/100*1.6)+1) * self.Sal100BilData
+		self.High90thPercentile_10BilData = ((self.StdErrData/100*1.6)+1) * self.Sal10BilData
 		self.High90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.HighSalData
 		self.Med90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.MedSalData
 		self.Low90thPercentileData = ((self.StdErrData/100*1.6)+1) * self.LowSalData
@@ -424,6 +437,7 @@ class Dataverse:
 		self.Low10thPercentileData = ((1 - self.StdErrData/100) * self.LowSalData)
 		self.Low10thPercentile_1MilData = ((1 - self.StdErrData/100) * self.Sal1MilData)
 		self.B100TotalCompData = int(self.Sal100BilData + self.Sal100BilData * self.B100BonusPctData)
+		self.B10TotalCompData = int(self.Sal10BilData + self.Sal10BilData * self.B10BonusPctData)
 		self.HighTotalCompData = int(self.HighSalData + self.HighSalData * self.HighBonusPctData)
 		self.MedTotalCompData = int(self.MedSalData + self.MedSalData * self.MedBonusPctData)
 		self.LowTotalCompData = int(self.LowSalData + self.LowSalData * self.LowBonusPctData)
@@ -445,6 +459,7 @@ class Dataverse:
 			self.HighPredPctData = self.outputdf.loc[current_selector,'HighPredCalc']
 			self.LowPredPctData = self.outputdf.loc[current_selector,'LowPredCalc']
 			self.B100TotalCompData = self.outputdf.loc[current_selector,'TotalComp100Bil']
+			self.B10TotalCompData = self.outputdf.loc[current_selector,'TotalComp10Bil']
 			self.HighTotalCompData = self.outputdf.loc[current_selector,'HighTotalComp']
 			self.MedTotalCompData = self.outputdf.loc[current_selector,'MedTotalComp']
 			self.LowTotalCompData = self.outputdf.loc[current_selector,'LowTotalComp']
@@ -486,6 +501,7 @@ class Dataverse:
 			if pd.isnull(self.outputdf.loc[current_selector,'Pct_1Mil']): self.Mil1PctData = 0 #0.1
 			else: self.Mil1PctData = self.outputdf.loc[current_selector,'Pct_1Mil']
 			self.B100BonusPctData = self.outputdf.loc[current_selector,'BonusPct100Bil']
+			self.B10BonusPctData = self.outputdf.loc[current_selector,'BonusPct10Bil']
 			self.HighBonusPctData = self.outputdf.loc[current_selector,'HighBonusPct']
 			self.MedBonusPctData = self.outputdf.loc[current_selector,'MedBonusPct']
 			self.LowBonusPctData = self.outputdf.loc[current_selector,'LowBonusPct']
@@ -540,6 +556,7 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'LowBonusPct', self.LowBonusPctData) #[LowBonusPct]
 		self.outputdf.set_value(self.current_id,'MedBonusPct', self.MedBonusPctData) #[MedBonusPct]
 		self.outputdf.set_value(self.current_id,'HighBonusPct', self.HighBonusPctData) #[HighBonusPct]
+		self.outputdf.set_value(self.current_id,'BonusPct10Bil', self.B10BonusPctData) #[BonusPct10Bil]
 		self.outputdf.set_value(self.current_id,'BonusPct100Bil', self.B100BonusPctData) #[BonusPct100Bil]
 		self.outputdf.set_value(self.current_id,'StdErr', self.StdErrData) #[StdErr]
 		self.outputdf.set_value(self.current_id,'Q11Mil', self.Mil1Q1Data) #[Q11Mil]
@@ -588,11 +605,13 @@ class Dataverse:
 		self.outputdf.set_value(self.current_id,'Low90thPercentile', int(self.Low90thPercentileData)) #[Low90thPercentile]
 		self.outputdf.set_value(self.current_id,'Med90thPercentile', int(self.Med90thPercentileData)) #[Med90thPercentile]
 		self.outputdf.set_value(self.current_id,'High90thPercentile', int(self.High90thPercentileData)) #[High90thPercentile]
+		self.outputdf.set_value(self.current_id,'High90thPercentile_10bil', int(self.High90thPercentile_10BilData)) #[High90thPercentile_10bil]
 		self.outputdf.set_value(self.current_id,'High90thPercentile_100bil', int(self.High90thPercentile_100BilData)) #[High90thPercentile_100bil]
 		self.outputdf.set_value(self.current_id,'TotalComp1Mil', int(self.Mil1TotalCompData)) #[TotalComp1Mil]
 		self.outputdf.set_value(self.current_id,'LowTotalComp', int(self.LowTotalCompData)) #[LowTotalComp]
 		self.outputdf.set_value(self.current_id,'MedTotalComp', int(self.MedTotalCompData)) #[MedTotalComp]
 		self.outputdf.set_value(self.current_id,'HighTotalComp', int(self.HighTotalCompData)) #[HighTotalComp]
+		self.outputdf.set_value(self.current_id,'TotalComp10Bil', int(self.B10TotalCompData)) #[TotalComp100Bil]
 		self.outputdf.set_value(self.current_id,'TotalComp100Bil', int(self.B100TotalCompData)) #[TotalComp100Bil]
 		self.outputdf.set_value(self.current_id,'CPCNO', int(self.CPCData)) #[CPCNO]
 		self.outputdf.set_value(self.current_id,'CPCSalary', int(self.CPCSalData)) #[CPCSalary]
@@ -652,7 +671,7 @@ class Dataverse:
 				, LOWSAL = ?
 				, MEDSAL = ?
 				, HIGHSAL = ?
-				, Sal10Bil = 12
+				, Sal10Bil = ?
 				, Sal100Bil = ?
 				, CAN_PCT = ?
 				, Pct_1Mil = ?
@@ -668,6 +687,7 @@ class Dataverse:
 				, LowBonusPct = ?
 				, MedBonusPct = ?
 				, HighBonusPct = ?
+				, BonusPct10Bil = ?
 				, BonusPct100Bil = ?
 				, StdErr = ?
 				, Repto = ?
@@ -689,11 +709,13 @@ class Dataverse:
 				, Low90thPercentile = ?
 				, Med90thPercentile = ?
 				, High90thPercentile = ?
+				, High90thPercentile_10bil = ?
 				, High90thPercentile_100bil = ?
 				, TotalComp1Mil = ?
 				, LowTotalComp = ?
 				, MedTotalComp = ?
 				, HighTotalComp = ?
+				, TotalComp10Bil = ?
 				, TotalComp100Bil = ?
 				, LastUpdateDate = ?
 				, SOC = ?
@@ -711,8 +733,12 @@ class Dataverse:
 			else: Sal1Mil_out = row['Sal1Mil']
 			if row['Sal100Bil']<=0: Sal100Bil_out = None
 			else: Sal100Bil_out = row['Sal100Bil']
+			if row['Sal10Bil']<=0: Sal10Bil_out = None
+			else: Sal10Bil_out = row['Sal10Bil']
 			if row['BonusPct1Mil']==0: BonusPct1Mil_out = None
 			else: BonusPct1Mil_out = row['BonusPct1Mil']
+			if row['BonusPct10Bil']==0: BonusPct10Bil_out = None
+			else: BonusPct10Bil_out = row['BonusPct10Bil']
 			if row['BonusPct100Bil']==0: BonusPct100Bil_out = None
 			else: BonusPct100Bil_out = row['BonusPct100Bil']
 			if row['CANPK_C']==0: CanOverride_out = None
@@ -727,14 +753,18 @@ class Dataverse:
 			else: High10thPercentile_10Bil_out = row['High10thPercentile_10Bil']
 			if row['Low90thPercentile_1Mil']==0: Low90thPercentile_1Mil_out = None
 			else: Low90thPercentile_1Mil_out = row['Low90thPercentile_1Mil']
+			if row['High90thPercentile_10bil']==0: High90thPercentile_10bil_out = None
+			else: High90thPercentile_10bil_out = row['High90thPercentile_10bil']
 			if row['High90thPercentile_100bil']==0: High90thPercentile_100bil_out = None
 			else: High90thPercentile_100bil_out = row['High90thPercentile_100bil']
 			if row['TotalComp1Mil']==0: TotalComp1Mil_out = None
 			else: TotalComp1Mil_out = row['TotalComp1Mil']
+			if row['TotalComp10Bil']==0: TotalComp10Bil_out = None
+			else: TotalComp10Bil_out = row['TotalComp10Bil']
 			if row['TotalComp100Bil']==0: TotalComp100Bil_out = None
 			else: TotalComp100Bil_out = row['TotalComp100Bil']
 			
-			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'],row['Pct_10Bil'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'],High10thPercentile_100Bil_out, High10thPercentile_10Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp100Bil_out, datetime.now(), row['SOC'], row['Yr3Sal'], row['CanPoly1'], row['CanPoly2'], row['CanPoly3'], row['AvgCanPoly'], row['AvgCanModels'],int(row['erijobid']), self.releaseid)
+			args = (int(row['CAN_AVE']), Sal1Mil_out, int(row['LOWSAL']), int(row['MEDSAL']), int(row['HIGHSAL']), Sal10Bil_out, Sal100Bil_out, row['CAN_PCT'], row['Pct_1Mil'], row['LOW_F'], row['US_PCT'], row['HIGH_F'],row['Pct_10Bil'], row['Pct_100Bil'], CanOverride_out, USOverride_out, row['CanBonusPct'], BonusPct1Mil_out, row['LowBonusPct'], row['MedBonusPct'], row['HighBonusPct'], BonusPct10Bil_out, BonusPct100Bil_out, row['StdErr'], row['Repto'], row['ReptoTitle'], row['ReptoSal'], row['ReptoYr3'], row['JobXRef'], row['XRefTitle'], row['XRefMed'], row['XRefCan'], row['Medyrs'], Low10thPercentile_1Mil_out, row['Low10thPercentile'], row['Med10thPercentile'], row['High10thPercentile'],High10thPercentile_100Bil_out, High10thPercentile_10Bil_out, Low90thPercentile_1Mil_out, row['Low90thPercentile'], row['Med90thPercentile'], row['High90thPercentile'], High90thPercentile_10bil_out, High90thPercentile_100bil_out, TotalComp1Mil_out, row['LowTotalComp'], row['MedTotalComp'], row['HighTotalComp'], TotalComp10Bil_out, TotalComp100Bil_out, datetime.now(), row['SOC'], row['Yr3Sal'], row['CanPoly1'], row['CanPoly2'], row['CanPoly3'], row['AvgCanPoly'], row['AvgCanModels'],int(row['erijobid']), self.releaseid)
 			#for item in args: print(item)
 			cursor.execute(self.outputsql,args)
 			self.pyocnxn.commit()
@@ -1173,6 +1203,8 @@ class Application(Frame):
 		self.Mil1PctEntry.grid(row=16, column=3)
 		self.B100BonusPctEntry = Entry(self, width=10)
 		self.B100BonusPctEntry.grid(row=17, column=3)
+		self.B10BonusPctEntry = Entry(self, width=10)
+		self.B10BonusPctEntry.grid(row=18, column=3)
 		self.HighBonusPctEntry = Entry(self, width=10)
 		self.HighBonusPctEntry.grid(row=19, column=3)
 		self.MedBonusPctEntry = Entry(self, width=10)
@@ -1213,60 +1245,62 @@ class Application(Frame):
 		self.B100.grid(row=5, column=1, sticky=E)
 		self.B100Q1 = Label(self,text="Q1 100 Bil/Exec")
 		self.B100Q1.grid(row=4, column=6, sticky=W)
+		self.B10Q1 = Label(self,text="Q1 10 Bil/Exec")
+		self.B10Q1.grid(row=5, column=6, sticky=W)
 		self.High = Label(self,text="High Year/1 Bil")
 		self.High.grid(row=6, column=1, sticky=E)
 		self.HighQ1 = Label(self,text="Q1 Highsal")
-		self.HighQ1.grid(row=5, column=6, sticky=W)
+		self.HighQ1.grid(row=6, column=6, sticky=W)
 		self.Med = Label(self,text="Med Year/100 Mil")
 		self.Med.grid(row=7, column=1, sticky=E)
 		self.MedQ1 = Label(self,text="Q1 Medsal")
-		self.MedQ1.grid(row=6, column=6, sticky=W)
+		self.MedQ1.grid(row=7, column=6, sticky=W)
 		self.Low = Label(self,text="Low Year/10 Mil")
 		self.Low.grid(row=8, column=1, sticky=E)
 		self.LowQ1 = Label(self,text="Q1 Lowsal")
-		self.LowQ1.grid(row=7, column=6, sticky=W)
+		self.LowQ1.grid(row=8, column=6, sticky=W)
 		self.Mil1 = Label(self,text="Exec/1 Mil")
 		self.Mil1.grid(row=9, column=1, sticky=E)
 		self.Mil1Q1 = Label(self,text="Q1 1 Mil/Exec")
-		self.Mil1Q1.grid(row=8, column=6, sticky=W)
+		self.Mil1Q1.grid(row=9, column=6, sticky=W)
 		self.B100Pct = Label(self,text="100B Percent")
 		self.B100Pct.grid(row=11, column=4, sticky=W)
 		self.B10Pct = Label(self,text="10B Percent")
 		self.B10Pct.grid(row=12, column=4, sticky=W)
 		self.PredUS = Label(self,text="Pred US")
-		self.PredUS.grid(row=10, column=5)
+		self.PredUS.grid(row=11, column=5)
 		self.HighPredPct = Label(self,text="High Pred %")
 		self.HighPredPct.grid(row=13, column=1, sticky=E)
 		self.HighPct = Label(self,text="High Percent")
 		self.HighPct.grid(row=13, column=4, sticky=W)
 		self.QCCheck = Label(self,text="QC Check")
-		self.QCCheck.grid(row=11, column=6, sticky=W)
+		self.QCCheck.grid(row=12, column=6, sticky=W)
 		self.MedPct = Label(self,text="Med Percent")
 		self.MedPct.grid(row=14, column=4, sticky=W)
 		self.SOCPred = Label(self,text="SOC Pred")
-		self.SOCPred.grid(row=12, column=6, sticky=W)
+		self.SOCPred.grid(row=13, column=6, sticky=W)
 		self.LowPredPct = Label(self,text="Low Pred %")
 		self.LowPredPct.grid(row=15, column=1, sticky=E)
 		self.LowPct = Label(self,text="Low Percent")
 		self.LowPct.grid(row=15, column=4, sticky=W)
 		self.SurveyMean = Label(self,text="Survey Mean")
-		self.SurveyMean.grid(row=13, column=6, sticky=W)
+		self.SurveyMean.grid(row=14, column=6, sticky=W)
 		self.Mil1Pct = Label(self,text="1 Mil Percent")
 		self.Mil1Pct.grid(row=16, column=4, sticky=W)
 		self.SurveyIncumbents = Label(self,text="Survey Incumbents")
-		self.SurveyIncumbents.grid(row=14, column=6, sticky=W)
+		self.SurveyIncumbents.grid(row=15, column=6, sticky=W)
 		self.B100Total = Label(self,text="Exec/100B Total")
 		self.B100Total.grid(row=17, column=1, sticky=E)
-		self.B100Total = Label(self,text="Exec/10B Total")
-		self.B100Total.grid(row=18, column=1, sticky=E)
+		self.B10Total = Label(self,text="Exec/10B Total")
+		self.B10Total.grid(row=18, column=1, sticky=E)
 		self.B100Bonus = Label(self,text="100B Bonus")
 		self.B100Bonus.grid(row=17, column=4, sticky=W)
 		self.B10Bonus = Label(self,text="10B Bonus")
 		self.B10Bonus.grid(row=18, column=4, sticky=W)
 		self.MeanPred = Label(self,text="Mean Predicted")
-		self.MeanPred.grid(row=15, column=6, sticky=W)
+		self.MeanPred.grid(row=16, column=6, sticky=W)
 		self.Yr3Sal = Label(self, text="Year 3 Sal")
-		self.Yr3Sal.grid(row=16, column=6, sticky=W)
+		self.Yr3Sal.grid(row=17, column=6, sticky=W)
 		self.HighTotal = Label(self,text="High Total Comp")
 		self.HighTotal.grid(row=19, column=1, sticky=E)
 		self.HighBonus = Label(self,text="High Bonus")
@@ -1343,12 +1377,16 @@ class Application(Frame):
 		self.Sal100BilLabel.grid(row=4, column=3)
 		self.High90thPercentile_100BilLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.High90thPercentile_100BilLabel.grid(row=4, column=4)
+		self.High90thPercentile_10BilLabel = Label(self, text="Initial Text", relief="groove", width=10)
+		self.High90thPercentile_10BilLabel.grid(row=5, column=4)
 		self.High10thPercentile_10BilLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.High10thPercentile_10BilLabel.grid(row=5, column=2)
 		self.Sal10BilLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.Sal10BilLabel.grid(row=5, column=3)
 		self.B100Q1Label = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.B100Q1Label.grid(row=4, column=5)
+		self.B10Q1Label = Label(self, text="[Initial Text]", relief="groove", width=10)
+		self.B10Q1Label.grid(row=5, column=5)
 		self.FrameR5C0 = Frame(self) #, height=5)
 		self.FrameR5C0.grid(row=5, column=0, columnspan=1, rowspan=29, sticky=NW)
 		self.RawDataTextbox = Text(self.FrameR5C0, height=29, width=90)
@@ -1366,7 +1404,7 @@ class Application(Frame):
 		self.High90thPercentileLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.High90thPercentileLabel.grid(row=6, column=4)
 		self.HighQ1Label = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.HighQ1Label.grid(row=5, column=5)
+		self.HighQ1Label.grid(row=6, column=5)
 		self.Med10thPercentileLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.Med10thPercentileLabel.grid(row=7, column=2)
 		self.MedSalLabel = Label(self, text="Initial Text", relief="groove", width=10)
@@ -1374,7 +1412,7 @@ class Application(Frame):
 		self.Med90thPercentileLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.Med90thPercentileLabel.grid(row=7, column=4)
 		self.MedQ1Label = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.MedQ1Label.grid(row=6, column=5)
+		self.MedQ1Label.grid(row=7, column=5)
 		self.Low10thPercentileLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.Low10thPercentileLabel.grid(row=8, column=2)
 		self.LowSalLabel = Label(self, text="Initial Text", relief="groove", width=10)
@@ -1382,7 +1420,7 @@ class Application(Frame):
 		self.Low90thPercentileLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.Low90thPercentileLabel.grid(row=8, column=4)
 		self.LowQ1Label = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.LowQ1Label.grid(row=7, column=5)
+		self.LowQ1Label.grid(row=8, column=5)
 		self.Low10thPercentile_1MilLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.Low10thPercentile_1MilLabel.grid(row=9, column=2)
 		self.Sal1MilLabel = Label(self, text="Initial Text", relief="groove", width=10)
@@ -1390,25 +1428,27 @@ class Application(Frame):
 		self.Low90thPercentile_1MilLabel = Label(self, text="Initial Text", relief="groove", width=10)
 		self.Low90thPercentile_1MilLabel.grid(row=9, column=4)
 		self.Mil1Q1Label = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.Mil1Q1Label.grid(row=8, column=5)
+		self.Mil1Q1Label.grid(row=9, column=5)
 		self.HighPredPctLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.HighPredPctLabel.grid(row=13, column=2)
 		self.QCCheckLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.QCCheckLabel.grid(row=11, column=5)
+		self.QCCheckLabel.grid(row=12, column=5)
 		self.SocPredLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.SocPredLabel.grid(row=12, column=5)
+		self.SocPredLabel.grid(row=13, column=5)
 		self.LowPredPctLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.LowPredPctLabel.grid(row=15, column=2)
 		self.SurveyMeanLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.SurveyMeanLabel.grid(row=13, column=5)
+		self.SurveyMeanLabel.grid(row=14, column=5)
 		self.SurveyIncumbentsLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.SurveyIncumbentsLabel.grid(row=14, column=5)
+		self.SurveyIncumbentsLabel.grid(row=15, column=5)
 		self.B100TotalCompLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.B100TotalCompLabel.grid(row=17, column=2)
+		self.B10TotalCompLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
+		self.B10TotalCompLabel.grid(row=18, column=2)
 		self.MeanPredLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.MeanPredLabel.grid(row=15, column=5)
+		self.MeanPredLabel.grid(row=16, column=5)
 		self.Yr3SalLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
-		self.Yr3SalLabel.grid(row=16, column=5)
+		self.Yr3SalLabel.grid(row=17, column=5)
 		self.HighTotalCompLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
 		self.HighTotalCompLabel.grid(row=19, column=2)
 		self.MedTotalCompLabel = Label(self, text="[Initial Text]", relief="groove", width=10)
@@ -1475,6 +1515,7 @@ class Application(Frame):
 		self.LowPctEntry.bind('<Return>', self.set_SalPercents)
 		self.StdErrEntry.bind('<Return>', self.set_SalPercents)
 		self.B100BonusPctEntry.bind('<Return>', self.set_SalPercents)
+		self.B10BonusPctEntry.bind('<Return>', self.set_SalPercents)
 		self.HighBonusPctEntry.bind('<Return>', self.set_SalPercents)
 		self.MedBonusPctEntry.bind('<Return>', self.set_SalPercents)
 		self.LowBonusPctEntry.bind('<Return>', self.set_SalPercents)
@@ -1530,12 +1571,14 @@ class Application(Frame):
 		self.HighPredPctLabel.config(text="    ")
 		self.LowPredPctLabel.config(text="    ")
 		self.B100TotalCompLabel.config(text="    ")
+		self.B10TotalCompLabel.config(text="    ")
 		self.HighTotalCompLabel.config(text="    ")
 		self.MedTotalCompLabel.config(text="    ")
 		self.LowTotalCompLabel.config(text="    ")
 		self.Mil1TotalCompLabel.config(text="    ")
 		self.EstimatedYearsLabel.config(text="    ")
 		self.B100Q1Label.config(text="    ")
+		self.B10Q1Label.config(text="    ")
 		self.HighQ1Label.config(text="    ")
 		self.MedQ1Label.config(text="    ")
 		self.LowQ1Label.config(text="    ")
@@ -1576,6 +1619,7 @@ class Application(Frame):
 		self.LowPctEntry.delete(0, END)
 		self.Mil1PctEntry.delete(0, END)
 		self.B100BonusPctEntry.delete(0, END)
+		self.B10BonusPctEntry.delete(0, END)
 		self.HighBonusPctEntry.delete(0, END)
 		self.MedBonusPctEntry.delete(0, END)
 		self.LowBonusPctEntry.delete(0, END)
@@ -1597,6 +1641,7 @@ class Application(Frame):
 		self.LowSalLabel.config(text="    ")
 		self.Sal1MilLabel.config(text="    ")
 		self.High90thPercentile_100BilLabel.config(text="    ")
+		self.High90thPercentile_10BilLabel.config(text="    ")
 		self.High90thPercentileLabel.config(text="    ")
 		self.Med90thPercentileLabel.config(text="    ")
 		self.Low90thPercentileLabel.config(text="    ")
@@ -1619,6 +1664,7 @@ class Application(Frame):
 		self.LowPctEntry.delete(0, END)
 		self.Mil1PctEntry.delete(0, END)
 		self.B100BonusPctEntry.delete(0, END)
+		self.B10BonusPctEntry.delete(0, END)
 		self.HighBonusPctEntry.delete(0, END)
 		self.MedBonusPctEntry.delete(0, END)
 		self.LowBonusPctEntry.delete(0, END)
@@ -1640,11 +1686,13 @@ class Application(Frame):
 		self.LowPctEntry.insert(0, str(self.data.LowPctDataInit))
 		self.Mil1PctEntry.insert(0, str(self.data.Mil1PctDataInit))
 		self.B100BonusPctEntry.insert(0, str(self.data.B100BonusPctDataInit))
+		self.B10BonusPctEntry.insert(0, str(self.data.B10BonusPctDataInit))
 		self.HighBonusPctEntry.insert(0, str(self.data.HighBonusPctDataInit))
 		self.MedBonusPctEntry.insert(0, str(self.data.MedBonusPctDataInit))
 		self.LowBonusPctEntry.insert(0, str(self.data.LowBonusPctDataInit))
 		self.Mil1BonusPctEntry.insert(0, str(self.data.Mil1BonusPctDataInit))
 		self.B100TotalCompLabel.config(text= self.data.B100TotalCompDataInit)
+		self.B10TotalCompLabel.config(text= self.data.B10TotalCompDataInit)
 		self.HighTotalCompLabel.config(text= self.data.HighTotalCompDataInit)
 		self.MedTotalCompLabel.config(text= self.data.MedTotalCompDataInit)
 		self.LowTotalCompLabel.config(text= self.data.LowTotalCompDataInit)
@@ -1679,6 +1727,7 @@ class Application(Frame):
 		self.HighPredPctLabel.config(text= str(round(self.data.HighPredPctData, 2)))
 		self.LowPredPctLabel.config(text= str(round(self.data.LowPredPctData, 2)))
 		self.B100TotalCompLabel.config(text= self.data.B100TotalCompData)
+		self.B10TotalCompLabel.config(text= self.data.B10TotalCompData)
 		self.HighTotalCompLabel.config(text= self.data.HighTotalCompData)
 		self.MedTotalCompLabel.config(text= self.data.MedTotalCompData)
 		self.LowTotalCompLabel.config(text= self.data.LowTotalCompData)
@@ -1686,6 +1735,8 @@ class Application(Frame):
 		self.EstimatedYearsLabel.config(text= self.data.EstimatedYears)
 		if self.data.jobexec==0: self.B100Q1Label.config(text="    ")
 		else: self.B100Q1Label.config(text= int(self.data.B100Q1Data))
+		if self.data.jobexec==0: self.B10Q1Label.config(text="    ")
+		else: self.B10Q1Label.config(text= int(self.data.B10Q1Data))
 		self.HighQ1Label.config(text= self.data.HighQ1Data)
 		self.MedQ1Label.config(text= self.data.MedQ1Data)
 		self.LowQ1Label.config(text= self.data.LowQ1Data)
@@ -1724,6 +1775,7 @@ class Application(Frame):
 		self.LowPctEntry.insert(0, str(self.data.LowPctData))
 		self.Mil1PctEntry.insert(0, str(self.data.Mil1PctData))
 		self.B100BonusPctEntry.insert(0, str(self.data.B100BonusPctData))
+		self.B10BonusPctEntry.insert(0, str(self.data.B10BonusPctData))
 		self.HighBonusPctEntry.insert(0, str(self.data.HighBonusPctData))
 		self.MedBonusPctEntry.insert(0, str(self.data.MedBonusPctData))
 		self.LowBonusPctEntry.insert(0, str(self.data.LowBonusPctData))
@@ -1764,6 +1816,7 @@ class Application(Frame):
 		self.data.LowPctData = float(self.LowPctEntry.get())
 		self.data.Mil1PctData = float(self.Mil1PctEntry.get())
 		self.data.B100BonusPctData = float(self.B100BonusPctEntry.get())
+		self.data.B10BonusPctData = float(self.B10BonusPctEntry.get())
 		self.data.HighBonusPctData = float(self.HighBonusPctEntry.get())
 		self.data.MedBonusPctData = float(self.MedBonusPctEntry.get())
 		self.data.LowBonusPctData = float(self.LowBonusPctEntry.get())
@@ -1828,6 +1881,7 @@ class Application(Frame):
 		try: self.data.StdErrData = float(self.StdErrEntry.get())
 		except ValueError: print("Stderr Error")
 		self.data.B100BonusPctData = float(self.B100BonusPctEntry.get())
+		self.data.B10BonusPctData = float(self.B10BonusPctEntry.get())
 		self.data.HighBonusPctData = float(self.HighBonusPctEntry.get())
 		self.data.MedBonusPctData = float(self.MedBonusPctEntry.get())
 		self.data.LowBonusPctData = float(self.LowBonusPctEntry.get())
@@ -1889,6 +1943,8 @@ class Application(Frame):
 		## 90th Percentile
 		if self.data.jobexec==0: self.High90thPercentile_100BilLabel.config(text="    ")
 		else: self.High90thPercentile_100BilLabel.config(text= int(self.data.High90thPercentile_100BilData))
+		if self.data.jobexec==0: self.High90thPercentile_10BilLabel.config(text="    ")
+		else: self.High90thPercentile_10BilLabel.config(text= int(self.data.High90thPercentile_10BilData))
 		self.High90thPercentileLabel.config(text= int(self.data.High90thPercentileData))
 		self.Med90thPercentileLabel.config(text= int(self.data.Med90thPercentileData))
 		self.Low90thPercentileLabel.config(text= int(self.data.Low90thPercentileData))
@@ -1896,6 +1952,7 @@ class Application(Frame):
 		else: self.Low90thPercentile_1MilLabel.config(text= int(self.data.Low90thPercentile_1MilData))
 		## Total Comp
 		self.B100TotalCompLabel.config(text= self.data.B100TotalCompData)
+		self.B10TotalCompLabel.config(text= self.data.B10TotalCompData)
 		self.HighTotalCompLabel.config(text= self.data.HighTotalCompData)
 		self.MedTotalCompLabel.config(text= self.data.MedTotalCompData)
 		self.LowTotalCompLabel.config(text= self.data.LowTotalCompData)
