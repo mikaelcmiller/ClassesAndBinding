@@ -140,7 +140,7 @@ class Dataverse:
 			, pct.LowPred
 			, pct.MedPred
 			, pct.HighPred
-			, pct.CanQ1
+			, isnull(pct.CanQ1,0) CanQ1
 			, pct.CanPred
 			, pct.CanPoly1
 			, pct.CanPoly2
